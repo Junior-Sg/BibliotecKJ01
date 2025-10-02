@@ -1,0 +1,51 @@
+biblioteca/                # Carpeta raíz del proyecto
+│
+├── app/                   # Lógica principal de la aplicación
+│   ├── controllers/       # Controladores (manejan la lógica de negocio)
+│   │   ├── LibroController.php
+│   │   ├── UsuarioController.php
+│   │   ├── ReservaController.php
+│   │   ├── PrestamoController.php
+│   │   └── AuthController.php
+│   │
+│   ├── models/            # Modelos (acceso a la BD)
+│   │   ├── Libro.php
+│   │   ├── Usuario.php
+│   │   ├── Reserva.php
+│   │   ├── Prestamo.php
+│   │   └── Rol.php
+│   │
+│   ├── views/             # Vistas (HTML + Bootstrap)
+│   │   ├── layouts/       # Plantillas base
+│   │   │   └── header.php
+│   │   │   └── footer.php
+│   │   │
+│   │   ├── libros/        # Vistas relacionadas con libros
+│   │   │   ├── index.php
+│   │   │   ├── create.php
+│   │   │   └── edit.php
+│   │   │
+│   │   ├── usuarios/      # Vistas relacionadas con usuarios
+│   │   ├── reservas/      # Vistas de reservas
+│   │   ├── prestamos/     # Vistas de préstamos
+│   │   └── auth/          # Login / Registro
+│   │       ├── login.php
+│   │       └── register.php
+│   │
+│   └── core/              # Núcleo de la app (clases de utilidad)
+│       ├── Database.php   # Conexión a la BD
+│       ├── Controller.php # Clase base para controladores
+│       └── Model.php      # Clase base para modelos
+│
+├── public/                # Carpeta pública (se expone en el servidor)
+│   ├── css/               # Archivos CSS
+│   ├── js/                # Archivos JS
+│   ├── img/               # Imágenes
+│   └── index.php          # Punto de entrada de la app
+│
+├── config/                # Configuraciones
+│   └── config.php         # Config BD, rutas, etc.
+│
+├── vendor/                # Dependencias externas (si usas Composer)
+│
+└── .htaccess              # Reescritura de URLs para MVC (opcional)
