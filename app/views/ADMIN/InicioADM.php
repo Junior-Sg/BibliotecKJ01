@@ -7,6 +7,6 @@
     <title>Document</title>
 </head>
 <body>
-  <?php include '../layouts/nav.php'; ?>
+  <?php include '../layouts/'; ?>
 </body>
 </html>
