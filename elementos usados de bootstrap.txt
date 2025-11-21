@@ -1,0 +1,15 @@
+barra nav Admin: 
+
+| Clase Bootstrap | Función                    |
+| --------------- | -------------------------- |
+| `d-flex`        | Layout flexible horizontal |
+| `bg-dark`       | Fondo oscuro               |
+| `text-white`    | Texto blanco               |
+| `p-3`           | Padding interno            |
+| `text-center`   | Centrar contenido          |
+| `mb-4`, `mb-2`  | Márgenes inferiores        |
+| `fw-bold`       | Texto en negrita           |
+| `nav`           | Estilo base de navegación  |
+| `flex-column`   | Lista vertical             |
+| `nav-item`      | Elemento de navegación     |
+| `nav-link`      | Enlace estilizado          |
