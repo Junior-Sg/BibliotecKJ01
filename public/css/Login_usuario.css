@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #bca87a, #a8915e);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.book {
+  position: relative;
+  width: 850px;
+  height: 520px;
+  perspective: 1800px;
+}
+
+/* ---------- PORTADA ---------- */
+.cover {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #6b4949, #4b2e2e);
+  border-radius: 10px;
+  color: #fff;
+  transform-origin: left;
+  transform: rotateY(0deg);
+  transition: transform 1.2s ease;
+  z-index: 3;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cover-content {
+  text-align: center;
+}
+
+.cover h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.cover p {
+  font-size: 1.1rem;
+  margin-bottom: 25px;
+}
+
+.cover button {
+  background: #fff;
+  color: #4b2e2e;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.cover button:hover {
+  background: #f3e7d1;
+}
+
+/* ---------- PÁGINAS ---------- */
+.page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #fdf8f0;
+  border-radius: 10px;
+  padding: 40px;
+  backface-visibility: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  transform-origin: left;
+  transition: transform 1.2s ease;
+}
+
+.page-login {
+  z-index: 2;
+}
+
+.page-register {
+  transform: rotateY(180deg);
+}
+
+/* EFECTOS DE APERTURA */
+.book.open .cover {
+  transform: rotateY(-160deg);
+}
+
+.book.flip .page-login {
+  transform: rotateY(-180deg);
+}
+
+.book.flip .page-register {
+  transform: rotateY(0deg);
+}
+
+/* ---------- FORMULARIOS ---------- */
+h2 {
+  text-align: center;
+  color: #5b3a3a;
+  margin-bottom: 25px;
+}
+
+.input-group {
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  color: #4a3535;
+  font-size: 0.9rem;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #b89c84;
+  border-radius: 6px;
+  background: #fff;
+}
+
+button[type="submit"] {
+  background: #6b4949;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+button[type="submit"]:hover {
+  background: #4b2e2e;
+}
+
+.extra, .back {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.extra a, .back a {
+  color: #5b3a3a;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.extra a:hover, .back a:hover {
+  text-decoration: underline;
+}
