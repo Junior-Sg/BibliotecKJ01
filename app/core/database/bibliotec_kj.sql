@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-10-2025 a las 19:48:14
+-- Tiempo de generación: 21-11-2025 a las 21:40:29
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Versión de PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -154,16 +154,13 @@ CREATE TABLE `rol` (
   `nombre` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
--- Estructura de tabla para la tabla `rol_permiso`
+-- Volcado de datos para la tabla `rol`
 --
 
-CREATE TABLE `rol_permiso` (
-  `id_rol` int(11) NOT NULL,
-  `id_permiso` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `rol` (`id_rol`, `nombre`) VALUES
+(1, 'Administrador '),
+(2, 'Cliente ');
 
 -- --------------------------------------------------------
 
@@ -175,6 +172,13 @@ CREATE TABLE `rol_user` (
   `id_usuario` int(11) NOT NULL,
   `id_rol` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `rol_user`
+--
+
+INSERT INTO `rol_user` (`id_usuario`, `id_rol`) VALUES
+(1, 1);
 
 -- --------------------------------------------------------
 
@@ -188,6 +192,14 @@ CREATE TABLE `usuario` (
   `correo` varchar(100) NOT NULL,
   `contraseña` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuario`
+--
+
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `correo`, `contraseña`) VALUES
+(1, 'Admin', 'admid@gmail.com', '$2y$10$UN2yuKpUbkpWHOM.tRHqGu21oSiXJpBlvtTvvOWsCJ56TbrSL1WWW'),
+(2, 'Dana Kasandra Cifuentes Garcia', 'danacici04@gmail.com', '$2y$10$m0A15/MI5qnAnUuiS89baeAID/ZhJgRvYPxWLIZ3ZYChTjn5eQgn.');
 
 --
 -- Índices para tablas volcadas
@@ -268,13 +280,6 @@ ALTER TABLE `rol`
   ADD PRIMARY KEY (`id_rol`);
 
 --
--- Indices de la tabla `rol_permiso`
---
-ALTER TABLE `rol_permiso`
-  ADD PRIMARY KEY (`id_rol`,`id_permiso`),
-  ADD KEY `id_permiso` (`id_permiso`);
-
---
 -- Indices de la tabla `rol_user`
 --
 ALTER TABLE `rol_user`
@@ -344,13 +349,13 @@ ALTER TABLE `reserva`
 -- AUTO_INCREMENT de la tabla `rol`
 --
 ALTER TABLE `rol`
-  MODIFY `id_rol` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas
@@ -395,13 +400,6 @@ ALTER TABLE `prestamo`
 ALTER TABLE `reserva`
   ADD CONSTRAINT `reserva_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`),
   ADD CONSTRAINT `reserva_ibfk_2` FOREIGN KEY (`id_libro`) REFERENCES `libro` (`id_libro`);
-
---
--- Filtros para la tabla `rol_permiso`
---
-ALTER TABLE `rol_permiso`
-  ADD CONSTRAINT `rol_permiso_ibfk_1` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`),
-  ADD CONSTRAINT `rol_permiso_ibfk_2` FOREIGN KEY (`id_permiso`) REFERENCES `permiso` (`id_permiso`);
 
 --
 -- Filtros para la tabla `rol_user`

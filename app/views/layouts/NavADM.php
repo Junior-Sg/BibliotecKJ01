@@ -39,6 +39,8 @@
       <li class="nav-item">
         <a class="nav-link text-white" href="/">📊 Informes</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" href="../../Controllers/LogoutController.php">🚪 Cerrar sesión</a>
     </ul>
 
   </nav>
