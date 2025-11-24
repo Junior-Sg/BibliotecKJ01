@@ -178,6 +178,16 @@
           setTimeout(() => { try { alert.remove(); } catch(e){} }, 500);
         }, 5000);
       });
+
+      // Quitar parámetros de la URL para que la alerta no reaparezca al recargar
+      try {
+        if (window.history && history.replaceState) {
+          const cleanUrl = window.location.pathname + window.location.hash;
+          history.replaceState(null, '', cleanUrl);
+        }
+      } catch (e) {
+       
+      }
     })();
   </script>
 

@@ -6,6 +6,10 @@ body {
   margin: 0;
   padding: 0;
   background: linear-gradient(135deg, #bca87a, #a8915e);
+  background-image: url(../img/Fondos/F3.png);
+  background-size: cover;
+  background-position: center;  
+  background-repeat: no-repeat;
 }
 
 /* CONTENEDOR CENTRAL DEL LIBRO */
@@ -90,13 +94,20 @@ form {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  border-radius: 20px;
 }
+
 
 .input-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  border-radius: 15px;
+  background: #fdf8f0; 
+  padding: 10px;       
+  border: 1px solid #ccc;
 }
+
 
 button {
   padding: 10px 15px;
@@ -118,20 +129,7 @@ button {
   font-weight: 600;
 }
 
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .book { aspect-ratio: 4/3; }
-  .page { padding: 30px 25px; }
-  .cover h1 { font-size: 2rem; }
-}
-
-@media (max-width: 600px) {
-  .book { aspect-ratio: 4/4.8; }
-  .page { padding: 20px; }
-  button, input { font-size: 0.9rem; padding: 8px; }
-}
-
-/* ALERTAS PERSONALIZADAS (tonalidades cafeces) */
+/* ALERTAS PERSONALIZADAS  */
 .alert-custom {
   position: fixed;
   top: 24px;
@@ -189,4 +187,17 @@ button {
   color: #3b2b21;
   font-weight: 700;
   cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .book { aspect-ratio: 4/3; }
+  .page { padding: 30px 25px; }
+  .cover h1 { font-size: 2rem; }
+}
+
+@media (max-width: 600px) {
+  .book { aspect-ratio: 4/4.8; }
+  .page { padding: 20px; }
+  button, input { font-size: 0.9rem; padding: 8px; }
 }
