@@ -35,7 +35,7 @@
 <body>
 <?php include __DIR__ . '/../layouts/NavADM.php'; ?>
 <?php
-// Si la variable $usuarios no fue proporcionada por un controlador, cargarla aquí.
+
 if (!isset($usuarios)) {
   require_once __DIR__ . '/../../../config/Conexion.php';
   require_once __DIR__ . '/../../../app/models/Usuario.php';
@@ -63,12 +63,16 @@ $error = $_GET['error'] ?? null;
   <?php endif; ?>
 </div>
 <main class="main-content">
-  <div class="container mt-4">
-    <h2 class="text-center">Gestión de Usuarios</h2>
+    <div class="container mt-4">
+        <div class="titulo-banda">
+        <h1 class="text-center mb-4 fw-bold display-4"> <i class="bi bi-journal-bookmark-fill"></i> Gestión de Usuarios </h1>
+    </div>
+
+    
 
     <!-- Botón abrir modal crear -->
-    <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modalCrear">
-        + Nuevo Usuario
+    <button class="btn btn-nuevo mb-3" data-bs-toggle="modal" data-bs-target="#modalCrear">
+      + Nuevo Usuario
     </button>
 
     <table class="table table-striped table-bordered">
@@ -314,5 +318,17 @@ document.addEventListener('DOMContentLoaded', function () {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </main>
+
+<script>
+// Mover modales al body para evitar problemas de stacking context
+document.addEventListener('DOMContentLoaded', function() {
+  var modals = document.querySelectorAll('.modal');
+  modals.forEach(function(modal){
+    modal.addEventListener('show.bs.modal', function () {
+      document.body.appendChild(modal);
+    });
+  });
+});
+</script>
 
 

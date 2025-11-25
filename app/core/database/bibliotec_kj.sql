@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-11-2025 a las 21:40:29
+-- Tiempo de generación: 25-11-2025 a las 19:46:01
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -32,6 +32,13 @@ CREATE TABLE `autor` (
   `nombre` varchar(150) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `autor`
+--
+
+INSERT INTO `autor` (`id_autor`, `nombre`) VALUES
+(1, 'Antoine de Saint-Exupéry');
+
 -- --------------------------------------------------------
 
 --
@@ -55,6 +62,13 @@ CREATE TABLE `editorial` (
   `nombre` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `editorial`
+--
+
+INSERT INTO `editorial` (`id_editorial`, `nombre`) VALUES
+(1, 'Reynal & Hitchcock');
+
 -- --------------------------------------------------------
 
 --
@@ -66,6 +80,13 @@ CREATE TABLE `genero` (
   `nombre` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `genero`
+--
+
+INSERT INTO `genero` (`id_genero`, `nombre`) VALUES
+(1, 'Novela corta');
+
 -- --------------------------------------------------------
 
 --
@@ -75,11 +96,19 @@ CREATE TABLE `genero` (
 CREATE TABLE `libro` (
   `id_libro` int(11) NOT NULL,
   `titulo` varchar(200) NOT NULL,
-  `isbn` varchar(20) DEFAULT NULL,
+  `Estante` varchar(20) DEFAULT NULL,
   `año_publicacion` year(4) DEFAULT NULL,
   `id_editorial` int(11) DEFAULT NULL,
-  `cantidad_total` int(11) NOT NULL
+  `cantidad_total` int(11) NOT NULL,
+  `Imagen` varchar(225) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `libro`
+--
+
+INSERT INTO `libro` (`id_libro`, `titulo`, `Estante`, `año_publicacion`, `id_editorial`, `cantidad_total`, `Imagen`) VALUES
+(1, 'El principito', 'A1', '1943', 1, 10, '');
 
 -- --------------------------------------------------------
 
@@ -92,6 +121,13 @@ CREATE TABLE `libro_autor` (
   `id_autor` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `libro_autor`
+--
+
+INSERT INTO `libro_autor` (`id_libro`, `id_autor`) VALUES
+(1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -102,6 +138,13 @@ CREATE TABLE `libro_genero` (
   `id_libro` int(11) NOT NULL,
   `id_genero` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `libro_genero`
+--
+
+INSERT INTO `libro_genero` (`id_libro`, `id_genero`) VALUES
+(1, 1);
 
 -- --------------------------------------------------------
 
@@ -178,7 +221,13 @@ CREATE TABLE `rol_user` (
 --
 
 INSERT INTO `rol_user` (`id_usuario`, `id_rol`) VALUES
-(1, 1);
+(1, 1),
+(4, 2),
+(5, 2),
+(8, 2),
+(11, 2),
+(12, 2),
+(13, 2);
 
 -- --------------------------------------------------------
 
@@ -190,16 +239,24 @@ CREATE TABLE `usuario` (
   `id_usuario` int(11) NOT NULL,
   `nombre` varchar(150) NOT NULL,
   `correo` varchar(100) NOT NULL,
-  `contraseña` varchar(255) NOT NULL
+  `contraseña` varchar(255) NOT NULL,
+  `telefono` varchar(15) DEFAULT NULL,
+  `tipo_documento` varchar(20) DEFAULT NULL,
+  `numero_documento` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`id_usuario`, `nombre`, `correo`, `contraseña`) VALUES
-(1, 'Admin', 'admid@gmail.com', '$2y$10$UN2yuKpUbkpWHOM.tRHqGu21oSiXJpBlvtTvvOWsCJ56TbrSL1WWW'),
-(2, 'Dana Kasandra Cifuentes Garcia', 'danacici04@gmail.com', '$2y$10$m0A15/MI5qnAnUuiS89baeAID/ZhJgRvYPxWLIZ3ZYChTjn5eQgn.');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `correo`, `contraseña`, `telefono`, `tipo_documento`, `numero_documento`) VALUES
+(1, 'Admin', 'admid@gmail.com', '$2y$10$UN2yuKpUbkpWHOM.tRHqGu21oSiXJpBlvtTvvOWsCJ56TbrSL1WWW', NULL, NULL, NULL),
+(4, 'Pauso Lino Meza', 'paulino@gmail.com', '$2y$10$1R9ZS0PUpKPi.f55lK4VbORJLGQmqd4Z9FuXpvGINSuJndgX3SzOS', NULL, NULL, NULL),
+(5, 'Marco Medina Molina1', 'marcos@gmail.com', '$2y$10$mJbttWTcdL0RvJuhooK43.cOtBz.UmypVK/q6IlK/U/TdqOX2Qafi', NULL, NULL, NULL),
+(8, 'Valeria pulido', 'valeria@gmail.com', '$2y$10$YEsOi07x68k0MT3h.QQ9x.jTzUuuOTNMAroC/BS2rlU8/x6A8mSsS', NULL, NULL, NULL),
+(11, 'Eulices Santamaria', 'eulises@gmail.com', '$2y$10$3vhHFdmOLLrKwrxQQCgYZe79DKn4zHCd8ANgfzQ.s56JlSe65hSw.', '3135224574', 'CC', '6708977'),
+(12, 'Daniel Suarez', 'daniel@gmail.com', '$2y$10$rw3k/leScaaVhwhZH0lnWucu3naPPF9OUWQ3F1UEqU12XTpEeNTL.', '3124225212', 'CC', '1111111111'),
+(13, 'Dana Cifuentes', 'Danacici04@gmail.com', '$2y$10$.qFF/QJwrhs8I./1Pu52f.JP6zvW.wTVTCxxbxCw8g0J5hfUOSjZK', '3124750781', 'CC', '1056768630');
 
 --
 -- Índices para tablas volcadas
@@ -301,7 +358,7 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `autor`
 --
 ALTER TABLE `autor`
-  MODIFY `id_autor` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_autor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `disponibilidad`
@@ -313,19 +370,19 @@ ALTER TABLE `disponibilidad`
 -- AUTO_INCREMENT de la tabla `editorial`
 --
 ALTER TABLE `editorial`
-  MODIFY `id_editorial` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_editorial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `genero`
 --
 ALTER TABLE `genero`
-  MODIFY `id_genero` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_genero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `libro`
 --
 ALTER TABLE `libro`
-  MODIFY `id_libro` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_libro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `permiso`
@@ -355,7 +412,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Restricciones para tablas volcadas

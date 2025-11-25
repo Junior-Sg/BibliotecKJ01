@@ -27,7 +27,7 @@
         <a class="nav-link text-white" href="../ADMIN/GestionUsuarios.php"><i class="bi bi-people-fill">  Gestión de usuarios</i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" href="/"><i class="bi bi-box-fill">  Gestionar Inventario</i> </a>
+        <a class="nav-link text-white" href="../ADMIN/GestionInventario.php"><i class="bi bi-box-fill">  Gestionar Inventario</i> </a>
       </li>
       <li class="nav-item">
         <a class="nav-link text-white" href="/"><i class="bi bi-clipboard2-data-fill">  Informes</i></a>

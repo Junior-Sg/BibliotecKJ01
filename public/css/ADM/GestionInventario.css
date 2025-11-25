@@ -1,0 +1,127 @@
+
+
+
+
+body .main-content {
+  position: relative;
+  min-height: 100vh;
+  margin-left: 240px;
+  padding: 24px;
+  background-image: url(../../img/Fondos/f5.jpg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.text-center.mb-4.fw-bold.display-4 {
+    color: #fff; 
+}
+
+
+body .main-content::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(68, 41, 14, 0.5); 
+  z-index: 0;
+}
+
+body .main-content > * {
+  position: relative;
+  z-index: 1; 
+}
+
+
+
+
+.titulo-banda {
+    background-color: rgba(68, 41, 14, 0.85); /* tono café con opacidad */
+    padding: 12px 24px;
+    border-radius: 20px;
+    width: 70%; 
+    display: flex;
+    justify-content: center; /* centra el contenido horizontalmente */
+    align-items: center;
+    margin-bottom: 24px; 
+}
+
+.titulo-banda h1 {
+    color: #fff;
+    margin: 0;
+}
+
+
+/* Caja principal */
+.table-responsive {
+  background: #ffffff;
+  border-radius: 8px;
+}
+
+.table thead th {
+  background: #111827; 
+  color: #fff;
+  border: none;
+}
+
+.table tbody tr:hover {
+  background: rgba(59,130,246,0.05);
+}
+
+/* Botones */
+.btn-primary {
+background-image: linear-gradient(90deg, #8B5E3C, #5C3A21);
+  border: none;
+}
+
+.btn-warning {
+  background-image: linear-gradient(90deg, #8B5E3C, #5C3A21);
+  border: none;
+  color: #f7f9fc;
+}
+
+.btn-danger {
+ background-image: linear-gradient(90deg, #8B5E3C, #5C3A21);
+  border: none;
+}
+
+/* Imagenes de libros */
+.img-book {
+  width: 60px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Modal large tweaks */
+.modal-lg .modal-content {
+  border-radius: 12px;
+}
+.modal-header { background-color: rgba(68, 41, 14, 0.85) !important; color: #fff !important; border-radius: 12px 12px 0 0; }
+
+/* Floating alerts position fallback */
+.floating-alerts {
+  position: fixed;
+  top: 16px;
+  left: 260px;
+  right: 16px;
+  z-index: 140000; 
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  pointer-events: none; 
+}
+.floating-alerts .alert { pointer-events: auto; max-width: 680px; width: 100%; box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+
+/* Forzar que los modales estén siempre por encima */
+.modal-backdrop {
+  z-index: 150000 !important;
+}
+.modal {
+  z-index: 160000 !important;
+}
+
+@media (max-width: 768px){
+  body .main-content { margin-left: 0; }
+  .floating-alerts { left: 16px; right: 16px; }
+}
