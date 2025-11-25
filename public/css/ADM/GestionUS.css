@@ -1,0 +1,153 @@
+
+   /* TABLA DE GESTIÓN DE USUARIOS */
+ 
+
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table thead th {
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table tbody tr:hover {
+    background-color: #f0f4ff !important;
+    transition: 0.2s ease-in-out;
+}
+
+.btn-warning,
+.btn-danger,
+.btn-primary,
+.btn-success {
+    border-radius: 8px !important;
+    padding: 6px 12px !important;
+    font-size: 14px;
+}
+
+
+
+   /* BOTÓN NUEVO USUARIO */
+   
+
+.btn-nuevo {
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+
+
+   /* MODALS PERSONALIZADOS */
+ 
+
+/* Fondo más oscuro y suave */
+.modal-backdrop.show {
+    opacity: 0.75;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Efecto de aparición */
+.modal.fade .modal-dialog {
+    transition: transform 0.25s ease-out, opacity 0.25s ease-out;
+    transform: translateY(-20px);
+    opacity: 0;
+}
+
+.modal.fade.show .modal-dialog {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Tamaño y bordes */
+.modal-content {
+    border-radius: 18px !important;
+    border: none !important;
+    padding: 5px 10px;
+}
+
+/* Encabezado del modal */
+.modal-header {
+    background-color: #0d6efd;
+    color: white;
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.modal-title {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+/* Inputs más estilizados */
+.form-control {
+    border-radius: 10px !important;
+    padding: 10px !important;
+}
+
+.form-control:focus {
+    border-color: #0d6efd !important;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25) !important;
+}
+
+/* Select */
+.form-select {
+    border-radius: 10px !important;
+    padding: 10px !important;
+}
+
+/* Botones del modal */
+.modal-footer .btn {
+    border-radius: 10px !important;
+    padding: 8px 18px !important;
+    font-size: 15px;
+}
+
+
+
+   /* ALERTAS / CONFIRMACIONES DE ELIMINAR */
+   
+
+.modal-eliminar .modal-header {
+    background-color: #dc3545 !important;
+}
+
+.modal-eliminar .modal-title {
+    color: white;
+}
+
+.modal-eliminar .btn-danger {
+    background-color: #dc3545 !important;
+    border: none !important;
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+
+.modal-eliminar .btn-secondary {
+    border-radius: 8px;
+}
+
+.btn:hover {
+    opacity: 0.9 !important;
+}
+
+input, select {
+    transition: 0.2s ease-in-out !important;
+}
+
+/* Espaciado general */
+.modal-body label {
+    font-weight: 500;
+}
+
+
+
+.contenedor-usuarios {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+}

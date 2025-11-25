@@ -1,38 +1,182 @@
 <?php
 
-class Usuario
-{
+class Usuario {
+
     private $conexion;
 
-    public function __construct($conexion)
-    {
+    public function __construct($conexion) {
         $this->conexion = $conexion;
     }
 
-    public function obtenerPorId($idUsuario)
-    {
-        $sql = "SELECT u.id_usuario, u.nombre, u.correo, u.telefono, 
-                       u.tipo_documento, u.numero_documento, r.nombre AS rol
+    // =========================
+    // REGISTRAR USUARIO
+    // =========================
+    public function registrar($nombre, $correo, $clave, $telefono = null, $tipo_documento = null, $numero_documento = null) {
+
+        $sql = "INSERT INTO usuario (nombre, correo, contraseña, telefono, tipo_documento, numero_documento) VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $this->conexion->prepare($sql);
+
+        if (!$stmt) {
+            error_log("Error preparar registrar: " . $this->conexion->error);
+            return false;
+        }
+
+        $claveHash = password_hash($clave, PASSWORD_BCRYPT);
+
+        // Asegurarse de enviar cadenas (null -> empty string)
+        $telefonoVal = $telefono ?? '';
+        $tipoDocVal = $tipo_documento ?? '';
+        $numDocVal = $numero_documento ?? '';
+
+        $stmt->bind_param("ssssss", $nombre, $correo, $claveHash, $telefonoVal, $tipoDocVal, $numDocVal);
+
+        if (!$stmt->execute()) {
+            error_log("Error ejecutar registrar: " . $stmt->error);
+            return false;
+        }
+
+        return $this->conexion->insert_id;
+    }
+
+    // =========================
+    // LOGIN
+    // =========================
+    public function login($correo, $clave) {
+
+        $sql = "SELECT id_usuario, nombre, correo, contraseña 
+                FROM usuario WHERE correo = ?";
+        $stmt = $this->conexion->prepare($sql);
+
+        if (!$stmt) return false;
+
+        $stmt->bind_param("s", $correo);
+        $stmt->execute();
+
+        $resultado = $stmt->get_result();
+
+        if ($resultado->num_rows === 0) return false;
+
+        $data = $resultado->fetch_assoc();
+
+        if (password_verify($clave, $data["contraseña"])) {
+            return $data;
+        }
+
+        return false;
+    }
+
+    // =========================
+    // OBTENER ROL
+    // =========================
+    public function obtenerRol($id_usuario) {
+
+        $sql = "SELECT id_rol FROM rol_user WHERE id_usuario = ?";
+        $stmt = $this->conexion->prepare($sql);
+
+        if (!$stmt) return 0;
+
+        $stmt->bind_param("i", $id_usuario);
+        $stmt->execute();
+
+        $res = $stmt->get_result();
+
+        if ($res->num_rows === 0) return 0;
+
+        $fila = $res->fetch_assoc();
+
+        return intval($fila["id_rol"]);
+    }
+
+    // =========================
+    // ASIGNAR ROL AUTOMÁTICO
+    // =========================
+    public function asignarRol($id_usuario, $rol = 2) {
+
+        $sql = "INSERT INTO rol_user (id_usuario, id_rol) VALUES (?, ?)";
+        $stmt = $this->conexion->prepare($sql);
+        if (!$stmt) return false;
+        $stmt->bind_param("ii", $id_usuario, $rol);
+        return $stmt->execute();
+    }
+
+    // Crear usuario desde el panel admin (inserta nombre, correo, contraseña, teléfono, tipo y número de documento)
+    public function crearDesdeAdmin($nombre, $correo, $clave, $telefono = null, $tipo_documento = null, $numero_documento = null) {
+        $sql = "INSERT INTO usuario (nombre, correo, contraseña, telefono, tipo_documento, numero_documento) VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $this->conexion->prepare($sql);
+        if (!$stmt) {
+            error_log("Error preparar crearDesdeAdmin: " . $this->conexion->error);
+            return false;
+        }
+
+        $claveHash = password_hash($clave, PASSWORD_BCRYPT);
+        $telefonoVal = $telefono ?? '';
+        $tipoVal = $tipo_documento ?? '';
+        $numVal = $numero_documento ?? '';
+
+        $stmt->bind_param("ssssss", $nombre, $correo, $claveHash, $telefonoVal, $tipoVal, $numVal);
+        if (!$stmt->execute()) {
+            error_log("Error ejecutar crearDesdeAdmin: " . $stmt->error);
+            return false;
+        }
+
+        return $this->conexion->insert_id;
+    }
+
+    // Obtener todos los usuarios con su rol (si existe)
+    public function getAllUsuarios() {
+        $sql = "SELECT u.id_usuario, u.nombre, u.correo, u.telefono, u.tipo_documento, u.numero_documento, IFNULL(r.id_rol, 0) as rol
                 FROM usuario u
-                INNER JOIN rol_user ru ON u.id_usuario = ru.id_usuario
-                INNER JOIN rol r ON ru.id_rol = r.id_rol
-                WHERE u.id_usuario = $idUsuario";
-
-        return $this->conexion->query($sql)->fetch_assoc();
+                LEFT JOIN rol_user r ON u.id_usuario = r.id_usuario
+                ORDER BY u.id_usuario DESC";
+        $res = $this->conexion->query($sql);
+        return $res;
     }
 
-    public function actualizarUsuario($idUsuario, $nombre, $correo, $telefono, $tipoDocumento, $numeroDocumento)
-    {
-        $sql = "UPDATE usuario 
-                SET nombre = '$nombre', 
-                    correo = '$correo',
-                    telefono = '$telefono',
-                    tipo_documento = '$tipoDocumento',
-                    numero_documento = '$numeroDocumento'
-                WHERE id_usuario = $idUsuario";
-
-        return $this->conexion->query($sql);
+    // Obtener usuario por id
+    public function getUsuarioById($id) {
+        $sql = "SELECT id_usuario, nombre, correo, telefono FROM usuario WHERE id_usuario = ?";
+        $stmt = $this->conexion->prepare($sql);
+        if (!$stmt) return null;
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        return $res->fetch_assoc();
     }
+
+    // Actualizar usuario (no actualiza contraseña)
+    public function actualizarUsuario($id, $nombre, $correo, $telefono, $tipo_documento = null, $numero_documento = null) {
+        $sql = "UPDATE usuario SET nombre = ?, correo = ?, telefono = ?, tipo_documento = ?, numero_documento = ? WHERE id_usuario = ?";
+        $stmt = $this->conexion->prepare($sql);
+        if (!$stmt) return false;
+        $tipoVal = $tipo_documento ?? '';
+        $numVal = $numero_documento ?? '';
+        $stmt->bind_param("sssssi", $nombre, $correo, $telefono, $tipoVal, $numVal, $id);
+        return $stmt->execute();
+    }
+
+    // Eliminar usuario y su rol
+    public function eliminarUsuario($id) {
+        // eliminar rol_user
+        $stmt = $this->conexion->prepare("DELETE FROM rol_user WHERE id_usuario = ?");
+        if ($stmt) { $stmt->bind_param("i", $id); $stmt->execute(); }
+        // eliminar usuario
+        $stmt2 = $this->conexion->prepare("DELETE FROM usuario WHERE id_usuario = ?");
+        if (!$stmt2) return false;
+        $stmt2->bind_param("i", $id);
+        return $stmt2->execute();
+    }
+
+    // Actualizar rol (insertar o actualizar simple: eliminar e insertar)
+    public function actualizarRol($id_usuario, $rol) {
+        // eliminar existentes
+        $stmt = $this->conexion->prepare("DELETE FROM rol_user WHERE id_usuario = ?");
+        if ($stmt) { $stmt->bind_param("i", $id_usuario); $stmt->execute(); }
+        $stmt2 = $this->conexion->prepare("INSERT INTO rol_user (id_usuario, id_rol) VALUES (?, ?)");
+        if (!$stmt2) return false;
+        $stmt2->bind_param("ii", $id_usuario, $rol);
+        return $stmt2->execute();
+    }
+
 }
 
 ?>

@@ -1,0 +1,2 @@
+Colocar filtros o barra de buscador en gestionar usuarios
+Colocar filtros o barra de buscador en Iventario 
