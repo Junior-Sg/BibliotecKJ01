@@ -10,8 +10,11 @@ $model = new Usuario($db);
 $nombre = trim($_POST["nombre"] ?? "");
 $correo = trim($_POST["correo"] ?? "");
 $clave  = trim($_POST["clave"] ?? "");
+$telefono = trim($_POST["telefono"] ?? "");
+$tipo_documento = trim($_POST["tipo_documento"] ?? "");
+$numero_documento = trim($_POST["numero_documento"] ?? "");
 
-if (empty($nombre) || empty($correo) || empty($clave)) {
+if (empty($nombre) || empty($correo) || empty($clave) || empty($tipo_documento) || empty($numero_documento)) {
     header("Location: ../views/auth/Login_usuario.php?error=Datos incompletos");
     exit;
 }
@@ -27,10 +30,33 @@ if (!preg_match('/^[\p{L}\s]+$/u', $nombre)) {
     exit;
 }
 
-$id_usuario = $model->registrar($nombre, $correo, $clave);
+// Validar tipo de documento
+$allowedTipos = ['CC','TI','CE'];
+if (!in_array($tipo_documento, $allowedTipos)) {
+    header("Location: ../views/auth/Login_usuario.php?error=Tipo de documento inválido");
+    exit;
+}
+
+// Validar numero_documento (solo dígitos)
+if (!ctype_digit($numero_documento)) {
+    header("Location: ../views/auth/Login_usuario.php?error=Número de documento inválido");
+    exit;
+}
+
+// Validar teléfono (opcional pero si viene, que tenga formato simple)
+if (!empty($telefono) && !preg_match('/^[0-9+\-\s]{7,20}$/', $telefono)) {
+    header("Location: ../views/auth/Login_usuario.php?error=Teléfono inválido");
+    exit;
+}
+
+$id_usuario = $model->registrar($nombre, $correo, $clave, $telefono, $tipo_documento, $numero_documento);
 
 if (!$id_usuario) {
-    header("Location: ../views/auth/Login_usuario.php?error=No se pudo registrar");
+    // Intenta obtener detalle del error de la conexión (solo para desarrollo)
+    $dbError = $db->error ?? '';
+    $msg = 'No se pudo registrar';
+    if (!empty($dbError)) $msg .= ': ' . $dbError;
+    header("Location: ../views/auth/Login_usuario.php?error=" . urlencode($msg));
     exit;
 }
 

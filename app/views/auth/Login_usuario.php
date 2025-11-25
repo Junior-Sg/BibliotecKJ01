@@ -7,6 +7,7 @@
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../../../public/css/Login_usuario.css">
+
 </head>
 <body>
 
@@ -64,7 +65,7 @@
 
       <!-- LOGIN -->
       <div class="page page-login" id="loginPage">
-        <form action="../../Controllers/LoginUsuarioController.php" method="POST">
+        <form action="../../controllers/LoginUsuarioController.php" method="POST">
           <h2>Inicio de Sesión</h2>
 
           <div class="input-group">
@@ -92,7 +93,7 @@
 
       <!-- REGISTRO -->
       <div class="page page-register" id="registerPage">
-        <form action="../../Controllers/RegistrarUsuarioController.php" method="POST">
+        <form action="../../controllers/RegistrarUsuarioController.php" method="POST">
           <h2>Registro de Usuario</h2>
 
           <div class="input-group">
@@ -114,6 +115,26 @@
             <label for="clave">Contraseña</label>
             <!-- CAMBIO: clave_reg → clave -->
             <input type="password" name="clave" id="clave_reg" required>
+          </div>
+
+          <div class="input-group">
+            <label for="telefono">Teléfono</label>
+            <input type="tel" name="telefono" id="telefono" pattern="[0-9+\-\s]{7,20}" title="Solo números, espacios, + y -" maxlength="20">
+          </div>
+
+          <div class="input-group">
+            <label for="tipo_documento">Tipo de documento</label>
+            <select name="tipo_documento" id="tipo_documento" required>
+              <option value="">-- Seleccione --</option>
+              <option value="CC">CC</option>
+              <option value="TI">TI</option>
+              <option value="CE">CE</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="numero_documento">Número de documento</label>
+            <input type="text" name="numero_documento" id="numero_documento" pattern="[0-9]+" title="Solo números" maxlength="30" required>
           </div>
 
           <button type="submit">Registrar</button>

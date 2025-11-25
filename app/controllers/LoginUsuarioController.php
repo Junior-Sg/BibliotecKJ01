@@ -31,7 +31,7 @@ $_SESSION["rol"] = $rol;
 
 switch ($rol) {
     case 1:
-        header("Location: ../views/ADMIN/InicioADM.php");
+        header("Location: ../views/ADMIN/Inicio.php");
         break;
     case 2:
         header("Location: ../views/CLIENTE/InicioCliente.php");
