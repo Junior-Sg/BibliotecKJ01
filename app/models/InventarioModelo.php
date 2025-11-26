@@ -8,6 +8,15 @@ class InventarioModelo {
     public function __construct() {
         // usar la clase Conexion desde config
         $this->db = (new Conexion())->conectar();
+        // Asegurar que la tabla de disponibilidad exista (creación idempotente)
+        $this->db->query("CREATE TABLE IF NOT EXISTS disponibilidad (
+            id_disponibilidad INT AUTO_INCREMENT PRIMARY KEY,
+            id_libro INT NOT NULL,
+            cantidad_actual INT NULL,
+            estado VARCHAR(20) NOT NULL DEFAULT 'disponible',
+            fecha_actualizacion DATETIME NULL,
+            INDEX (id_libro)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
     }
 
     /*============================
@@ -184,7 +193,12 @@ class InventarioModelo {
         $stmt->bind_param("sssiss", $titulo, $estante, $anio, $editorial, $cantidad, $imagen);
         $stmt->execute();
 
-        return $this->db->insert_id;
+        $id = $this->db->insert_id;
+
+        // Crear o inicializar registro de disponibilidad para este libro
+        $this->crearDisponibilidad($id, $cantidad);
+
+        return $id;
     }
 
     public function insertarLibroAutor($idLibro, $idAutor) {
@@ -274,7 +288,14 @@ class InventarioModelo {
             $stmt->bind_param('sssiii', $titulo, $estante, $anio, $idEditorial, $cantidad, $idLibro);
         }
 
-        return $stmt->execute();
+        $ok = $stmt->execute();
+
+        if ($ok) {
+            // sincronizar cantidad en tabla disponibilidad
+            $this->setDisponibilidadCantidad($idLibro, $cantidad);
+        }
+
+        return $ok;
     }
 
     // Reemplazar autores del libro: borrar existentes e insertar los nuevos (por id)
@@ -297,8 +318,105 @@ class InventarioModelo {
       ELIMINAR LIBRO
     ============================*/
     public function eliminarLibro($idLibro) {
-        $this->db->query("DELETE FROM libro_autor WHERE id_libro = $idLibro");
-        $this->db->query("DELETE FROM libro_genero WHERE id_libro = $idLibro");
-        return $this->db->query("DELETE FROM libro WHERE id_libro = $idLibro");
+        $this->db->query("DELETE FROM libro_autor WHERE id_libro = " . intval($idLibro));
+        $this->db->query("DELETE FROM libro_genero WHERE id_libro = " . intval($idLibro));
+        // eliminar disponibilidad asociada
+        $this->db->query("DELETE FROM disponibilidad WHERE id_libro = " . intval($idLibro));
+        return $this->db->query("DELETE FROM libro WHERE id_libro = " . intval($idLibro));
+    }
+
+    /*============================
+      DISPONIBILIDAD HELPERS
+      Tabla esperada: disponibilidad(id_disponibilidad, id_libro, cantidad_actual, estado, fecha_actualizacion)
+      estado: 'disponible', 'reservado', 'prestado'
+    ============================*/
+    public function crearDisponibilidad($idLibro, $cantidadInicial) {
+        // Insertar o actualizar registro de disponibilidad
+        $exists = $this->db->query("SELECT id_disponibilidad FROM disponibilidad WHERE id_libro = " . intval($idLibro));
+        if ($exists && $exists->num_rows > 0) {
+            // ya existe -> actualizar cantidad
+            return $this->setDisponibilidadCantidad($idLibro, $cantidadInicial);
+        }
+
+        $estado = ($cantidadInicial === null || intval($cantidadInicial) > 0) ? 'disponible' : 'prestado';
+        $sql = "INSERT INTO disponibilidad (id_libro, cantidad_actual, estado, fecha_actualizacion) VALUES (?, ?, ?, NOW())";
+        $stmt = $this->db->prepare($sql);
+        if (!$stmt) return false;
+        $cantidadVal = $cantidadInicial === null ? null : intval($cantidadInicial);
+        $stmt->bind_param('iss', $idLibro, $cantidadVal, $estado);
+        return $stmt->execute();
+    }
+
+    public function setDisponibilidadCantidad($idLibro, $cantidad) {
+        $cantidadVal = $cantidad === null ? null : intval($cantidad);
+        // determinar estado según cantidad
+        $estado = ($cantidadVal === null || $cantidadVal > 0) ? 'disponible' : 'prestado';
+        $sql = "UPDATE disponibilidad SET cantidad_actual = ?, estado = ?, fecha_actualizacion = NOW() WHERE id_libro = ?";
+        $stmt = $this->db->prepare($sql);
+        if (!$stmt) return false;
+        $stmt->bind_param('isi', $cantidadVal, $estado, $idLibro);
+        return $stmt->execute();
+    }
+
+    public function decrementarDisponibilidad($idLibro) {
+        // decrementar cantidad_actual si no es NULL
+        $this->db->begin_transaction();
+        try {
+            // obtener valor actual
+            $res = $this->db->query("SELECT cantidad_actual FROM disponibilidad WHERE id_libro = " . intval($idLibro) . " FOR UPDATE");
+            if (!$res || $res->num_rows === 0) {
+                $this->db->rollback();
+                return false;
+            }
+            $row = $res->fetch_assoc();
+            $cant = $row['cantidad_actual'] === null ? null : intval($row['cantidad_actual']);
+            if ($cant === null) {
+                // ilimitado, nothing to decrement
+                $this->db->commit();
+                return true;
+            }
+            $nueva = max(0, $cant - 1);
+            $estado = $nueva > 0 ? 'disponible' : 'prestado';
+            $stmt = $this->db->prepare("UPDATE disponibilidad SET cantidad_actual = ?, estado = ?, fecha_actualizacion = NOW() WHERE id_libro = ?");
+            if (!$stmt) throw new Exception($this->db->error);
+            $stmt->bind_param('isi', $nueva, $estado, $idLibro);
+            if (!$stmt->execute()) throw new Exception($stmt->error);
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollback();
+            error_log('decrementarDisponibilidad error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function incrementarDisponibilidad($idLibro) {
+        $this->db->begin_transaction();
+        try {
+            $res = $this->db->query("SELECT cantidad_actual FROM disponibilidad WHERE id_libro = " . intval($idLibro) . " FOR UPDATE");
+            if (!$res || $res->num_rows === 0) {
+                $this->db->rollback();
+                return false;
+            }
+            $row = $res->fetch_assoc();
+            $cant = $row['cantidad_actual'] === null ? null : intval($row['cantidad_actual']);
+            if ($cant === null) {
+                // ilimitado, nothing to increment
+                $this->db->commit();
+                return true;
+            }
+            $nueva = $cant + 1;
+            $estado = $nueva > 0 ? 'disponible' : 'prestado';
+            $stmt = $this->db->prepare("UPDATE disponibilidad SET cantidad_actual = ?, estado = ?, fecha_actualizacion = NOW() WHERE id_libro = ?");
+            if (!$stmt) throw new Exception($this->db->error);
+            $stmt->bind_param('isi', $nueva, $estado, $idLibro);
+            if (!$stmt->execute()) throw new Exception($stmt->error);
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollback();
+            error_log('incrementarDisponibilidad error: ' . $e->getMessage());
+            return false;
+        }
     }
 }

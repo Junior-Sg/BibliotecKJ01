@@ -54,4 +54,20 @@ class PrestamoControlador {
             header("Location: index.php?c=Prestamo&a=vistaCrearPrestamo&mensaje=error");
         }
     }
+
+    // Registrar devolución (por id de préstamo)
+    public function registrarDevolucion() {
+        $idPrestamo = isset($_POST['id_prestamo']) ? intval($_POST['id_prestamo']) : 0;
+        if ($idPrestamo <= 0) {
+            header("Location: index.php?c=Prestamo&a=vistaCrearPrestamo&mensaje=error");
+            return;
+        }
+
+        $ok = $this->prestamoModelo->registrarDevolucion($idPrestamo);
+        if ($ok) {
+            header("Location: index.php?c=Prestamo&a=vistaCrearPrestamo&mensaje=ok");
+        } else {
+            header("Location: index.php?c=Prestamo&a=vistaCrearPrestamo&mensaje=error");
+        }
+    }
 }
