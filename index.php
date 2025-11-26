@@ -4,7 +4,7 @@
 session_start();
 
 // Conexión a la base de datos
-require_once "./core/database/conexion.php";
+require_once "./config/conexion.php";
 
 // Obtener el controlador y la acción desde la URL
 $controlador = $_GET["controller"] ?? "Libro";

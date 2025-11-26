@@ -1,4 +1,6 @@
 <?php
+// config/conexion.php
+
 class Conexion {
     private $host = "localhost";
     private $usuario = "root";
