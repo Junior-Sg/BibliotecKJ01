@@ -143,6 +143,20 @@ class Usuario {
         return $res->fetch_assoc();
     }
 
+    // Obtener usuario por numero de documento
+    public function getUsuarioByNumeroDocumento($numero_documento) {
+        $sql = "SELECT id_usuario, nombre, correo, telefono, tipo_documento, numero_documento FROM usuario WHERE numero_documento = ? LIMIT 1";
+        $stmt = $this->conexion->prepare($sql);
+        if (!$stmt) return null;
+        $stmt->bind_param("s", $numero_documento);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        if ($res && $res->num_rows > 0) {
+            return $res->fetch_assoc();
+        }
+        return null;
+    }
+
     // Actualizar usuario (no actualiza contraseña)
     public function actualizarUsuario($id, $nombre, $correo, $telefono, $tipo_documento = null, $numero_documento = null) {
         $sql = "UPDATE usuario SET nombre = ?, correo = ?, telefono = ?, tipo_documento = ?, numero_documento = ? WHERE id_usuario = ?";

@@ -64,9 +64,10 @@ $error = $_GET['error'] ?? null;
 </div>
 <main class="main-content">
     <div class="container mt-4">
+
         <div class="titulo-banda">
-        <h1 class="text-center mb-4 fw-bold display-4"> <i class="bi bi-journal-bookmark-fill"></i> Gestión de Usuarios </h1>
-    </div>
+           <h1 class="text-center mb-4 fw-bold display-4"> <i class="bi bi-journal-bookmark-fill"></i> Gestión de Usuarios </h1>
+        </div>
 
     
 

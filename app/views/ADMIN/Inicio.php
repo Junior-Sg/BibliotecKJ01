@@ -60,9 +60,8 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
                 <div class="d-flex align-items-center">
                     <i class="bi bi-arrow-repeat fs-1 me-3"></i>
                     <div>
-                        <!-- datos quemados despues cambiar -->
-         <h3>24</h3>
-                        <!-- <h3 class="mb-0"><?= $prestamosActivos ?></h3> -->
+                    
+                        <h3 class="mb-0"><?= $prestamosActivos ?></h3>
                         <small class="opacity-75">Préstamos activos</small>
                     </div>
                 </div>

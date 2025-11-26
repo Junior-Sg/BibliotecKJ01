@@ -22,6 +22,16 @@ $libros      = $modelo->obtenerLibros();
 $autores     = $modelo->obtenerAutores();
 $generos     = $modelo->obtenerGeneros();
 $editoriales = $modelo->obtenerEditoriales();
+// Leer filtros desde GET
+$filters = [];
+$filters['estante'] = $_GET['estante'] ?? '';
+$filters['editorial'] = $_GET['editorial'] ?? '';
+$filters['autor'] = $_GET['autor'] ?? '';
+$filters['genero'] = $_GET['genero'] ?? '';
+$filters['anio_desde'] = $_GET['anio_desde'] ?? '';
+
+
+$libros = $modelo->obtenerLibrosFiltrados($filters);
 ?>
 <?php
 require_once __DIR__ . '/../layouts/NavADM.php';
@@ -64,6 +74,39 @@ $error = $_GET['error'] ?? null;
             ➕ Registrar Libro
         </button>
     </div>
+
+    <!-- FILTROS -->
+    <div class="filter-card mb-3">
+    <form id="formFiltros" class="row g-2 mb-0 align-items-end" method="GET" action="">
+        <div class="col-md-2">
+            <input type="text" name="estante" class="form-control form-control-sm" placeholder="Estante" value="<?= htmlspecialchars($filters['estante']) ?>">
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="autor" class="form-control form-control-sm" placeholder="Autor (nombre)" value="<?= htmlspecialchars($filters['autor']) ?>">
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="genero" class="form-control form-control-sm" placeholder="Género" value="<?= htmlspecialchars($filters['genero']) ?>">
+        </div>
+        <div class="col-md-2">
+            <select name="editorial" class="form-control form-control-sm">
+                <option value="">Todas editoriales</option>
+                <?php
+                $edRes2 = $modelo->obtenerEditoriales();
+                while ($er = $edRes2->fetch_assoc()) {
+                    $sel = ($filters['editorial'] == $er['id_editorial'] || $filters['editorial'] == $er['nombre']) ? 'selected' : '';
+                    echo "<option value=\"" . htmlspecialchars($er['id_editorial']) . "\" $sel>" . htmlspecialchars($er['nombre']) . "</option>";
+                }
+                ?>
+            </select>
+        </div>
+    
+        <div class="col-md-12 d-flex gap-2 justify-content-end mt-1">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <button type="button" id="btnLimpiar" class="btn btn-secondary">Limpiar</button>
+        </div>
+    </form>
+    </div>
+    </form>
 
     <!-- TABLA DE LIBROS -->
     <div class="table-responsive shadow p-3 bg-white rounded">
@@ -348,5 +391,20 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.appendChild(modal);
         });
     });
+});
+</script>
+
+<script>
+// Limpiar filtros: redirige a la misma ruta sin query string
+document.addEventListener('DOMContentLoaded', function(){
+    var btn = document.getElementById('btnLimpiar');
+    if (btn) {
+        btn.addEventListener('click', function(){
+            // redirigir al mismo path sin query
+            var path = window.location.pathname;
+            // si la app está en subdirectorio, mantenemos el pathname
+            window.location.href = path;
+        });
+    }
 });
 </script>
