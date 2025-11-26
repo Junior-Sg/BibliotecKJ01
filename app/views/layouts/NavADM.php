@@ -1,8 +1,8 @@
 <!-- Barra lateral del admin -->
   <nav class="sidebar bg-dark text-white p-3">
 
-    <div class="text-center mb-4">
-      <img src="../../../public/img/Logos/L1.jpg" class="logo-sidebar mb-2">
+    <div class="sidebar-brand text-center mb-4">
+      <img src="../../../public/img/Logos/L1.jpg" class="logo-sidebar mb-2" alt="Logo">
       <h4 class="fw-bold">Bibliotec_KJ</h4>
     </div>
 
@@ -19,15 +19,12 @@
       <li class="nav-item">
         <a class="nav-link text-white" href="/"><i class="bi bi-calendar3">  Reservas</i></a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link text-white" href="/"><i class="bi bi-journal-plus">   Registrar libros</i></a>
-      </li>
 
       <li class="nav-item">
         <a class="nav-link text-white" href="../ADMIN/GestionUsuarios.php"><i class="bi bi-people-fill">  Gestión de usuarios</i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" href="/"><i class="bi bi-box-fill">  Gestionar Inventario</i> </a>
+        <a class="nav-link text-white" href="../ADMIN/GestionInventario.php"><i class="bi bi-box-fill">  Gestionar Inventario</i> </a>
       </li>
       <li class="nav-item">
         <a class="nav-link text-white" href="/"><i class="bi bi-clipboard2-data-fill">  Informes</i></a>
@@ -62,10 +59,20 @@
     background: #495057;
   }
 
+  .sidebar-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 0 18px 0;
+  }
+
   .logo-sidebar {
     width: 80px;
     height: auto;
     border-radius: 10px;
+    display: block;
+    margin: 0 auto;
   }
 
   /* Margen para el contenido principal cuando el sidebar está fijo */
