@@ -1,44 +1,82 @@
 <?php
 
-// Iniciar sesión
-session_start();
+// ===============================
+// CONFIGURACIÓN GLOBAL
+// ===============================
+define('BASE_URL', '/BibliotecKJ01'); 
+define('APP_PATH', __DIR__ . '/app');
 
-// Conexión a la base de datos
-require_once "./config/conexion.php";
+// ===============================
+// AUTOLOAD BÁSICO
+// ===============================
+spl_autoload_register(function ($class) {
 
-// Obtener el controlador y la acción desde la URL
-$controlador = $_GET["controller"] ?? "Libro";
-$accion = $_GET["action"] ?? "index";
+    $paths = [
+        APP_PATH . "/controllers/$class.php",
+        APP_PATH . "/models/$class.php",
+        __DIR__ . "/config/$class.php",
+        APP_PATH . "/core/$class.php"
+    ];
 
-// Crear el nombre completo del controlador
-$nombreControlador = $controlador . "Controller";
+    foreach ($paths as $file) {
+        if (file_exists($file)) {
+            require_once $file;
+            return;
+        }
+    }
+});
 
-// Ruta del archivo del controlador
-$rutaControlador = "./app/controllers/" . $nombreControlador . ".php";
+// Helpers
+require_once APP_PATH . '/core/helpers.php';
 
-// Verificar si el archivo del controlador existe
-if (!file_exists($rutaControlador)) {
-    die("Controlador no encontrado: " . $nombreControlador);
+// ===============================
+// CAPTURA DE PARÁMETROS DE RUTA
+// ===============================
+$controllerName = $_GET['controller'] ?? 'Libro';
+$action = $_GET['action'] ?? 'index';
+
+// Normalizar nombre de clase
+$controllerClass = ucfirst($controllerName) . 'Controller';
+
+// Archivo del controlador
+$controllerFile = APP_PATH . "/controllers/{$controllerClass}.php";
+
+// ===============================
+// VALIDAR CONTROLADOR
+// ===============================
+if (!file_exists($controllerFile)) {
+    http_response_code(404);
+    echo "<h2>❌ Controlador no encontrado: $controllerClass</h2>";
+    exit;
 }
 
-// Cargar controlador
-require_once $rutaControlador;
+require_once $controllerFile;
+
+if (!class_exists($controllerClass)) {
+    http_response_code(500);
+    echo "<h2>❌ La clase del controlador no existe: $controllerClass</h2>";
+    exit;
+}
 
 // Crear instancia del controlador
-$instancia = new $nombreControlador();
+$controller = new $controllerClass();
 
-// Ejecutar acción
-if (method_exists($instancia, $accion)) {
-
-    // Si hay ID, lo pasamos
-    if (isset($_GET["id"])) {
-        $instancia->$accion($_GET["id"]);
-    } else {
-        $instancia->$accion();
-    }
-
-} else {
-    echo "Acción no encontrada: " . $accion;
+// ===============================
+// VALIDAR MÉTODO
+// ===============================
+if (!method_exists($controller, $action)) {
+    http_response_code(404);
+    echo "<h2>❌ Acción no encontrada: $action</h2>";
+    exit;
 }
 
-?>
+// ===============================
+// PREPARAR PARÁMETROS
+// ===============================
+$params = $_REQUEST;
+unset($params['controller'], $params['action']);
+
+// ===============================
+// EJECUTAR ACCIÓN
+// ===============================
+call_user_func_array([$controller, $action], $params);

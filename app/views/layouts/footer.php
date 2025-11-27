@@ -4,9 +4,10 @@
     <p class="copyRay" style="font-family:'Merriweather', serif">
       © 2025 BibliotecKJ | Desarrollado por Kasandra Cifuentes y Junior Santamaria
     </p>
-    <img src="../../../public/img/Logos/L1.jpg" alt="Logo BibliotecKJ" class="footerLogo">
+    <img src="/BibliotecKJ01/public/img/Logos/L1.jpg" alt="Logo BibliotecKJ" class="footerLogo">
     <style>
-/* --- Footer --- */
+    
+    /* --- Footer --- */
 .site-footer {
   background: linear-gradient(180deg,#8b6f57,#7d5a50);
   color: #fff;

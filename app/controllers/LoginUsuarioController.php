@@ -34,7 +34,7 @@ switch ($rol) {
         header("Location: ../views/ADMIN/Inicio.php");
         break;
     case 2:
-        header("Location: ../views/CLIENTE/InicioCliente.php");
+        header("Location: ../views/libros/index.php");
         break;
     default:
         header("Location: ../views/auth/Login_usuario.php?error=Rol no asignado");

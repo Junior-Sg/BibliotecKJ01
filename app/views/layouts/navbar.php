@@ -1,6 +1,6 @@
-<body>
+
   <div class="header">
-    <img src="../../../public/img/Logos/L1.jpg" alt="Logo_biblioteckj" class="logo">
+    <img src="/BibliotecKJ01/public/img/Logos/L1.jpg" alt="Logo_biblioteckj" class="logo">
     <h1 class="titulo">Bibliotec_KJ</h1>
   </div>
 
@@ -29,11 +29,7 @@
       </li>
 
       <li class="despliegue">
-        <a href="#" class="trigger">Iniciar Sesión</a>
-        <ul class="despliegue-menu">
-          <li><a href="#">Usuario</a></li>
-          <li><a href="#">Administrador</a></li>
-        </ul>
+        <a href="<?= BASE_URL ?>LoginUsuario" class="trigger">Iniciar Sesión</a>
       </li>
     </ul>
   </nav>
@@ -232,4 +228,3 @@
       transform: translateX(-50%) translateY(0);
     }
   </style>
-</body>
