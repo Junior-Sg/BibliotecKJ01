@@ -24,18 +24,9 @@
 <body>
 
 <?php
-require_once __DIR__ . '/../../models/Usuario.php';
 require_once __DIR__ . '/../layouts/NavADM.php';
 ?>
-<?php
-// Fallback: si el controlador no proveyó $libros, cargarlos aquí
-if (!isset($libros) || empty($libros)) {
-    require_once __DIR__ . '/../../models/LibroModelo.php';
-    $lm = new LibroModelo();
-    $libros = $lm->obtenerLibrosDisponibles();
-}
 
-?>
 
 <div class="floating-alerts" aria-live="polite" aria-atomic="true">
     <?php if(isset($_GET['mensaje']) && $_GET['mensaje'] == 'ok'): ?>
@@ -59,24 +50,24 @@ if (!isset($libros) || empty($libros)) {
 
           <!-- Buscar usuario por número de documento (AJAX) -->
           <form id="formBuscarUsuario" class="row g-2 mb-3" onsubmit="return false;">
-              <div class="col-md-8">
+              <div class="col-md-7">
                   <input type="text" id="numero_documento" class="form-control" placeholder="Buscar por número de documento">
               </div>
-              <div class="col-md-4">
-                  <button id="btnBuscarUsuario" type="button" class="btn btn-outline-primary w-100">Buscar Usuario</button>
+              <div class="col-md-3">
+                  <button id="btnBuscarUsuario" type="button" class="btn btn-outline-primary w-100">
+                      <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                      Buscar
+                  </button>
+              </div>
+              <div class="col-md-2">
+                  <button id="btnLimpiarBusqueda" type="button" class="btn btn-outline-secondary w-100 d-none">Limpiar</button>
               </div>
           </form>
 
           <div id="usuarioResultado"></div>
 
-          <form id="formRegistrarPrestamo" action="index.php?c=Prestamo&a=registrarPrestamo" method="POST">
-
-              <div id="usuarioInputContainer">
-                  <div class="mb-3">
-                      <label class="form-label">Usuario (ID) — si no usó búsqueda</label>
-                      <input type="number" id="id_usuario_manual" class="form-control" name="id_usuario" required>
-                  </div>
-              </div>
+          <form id="formRegistrarPrestamo" action="<?= BASE_URL ?>Prestamo/registrarPrestamo" method="POST">
+              <input type="hidden" name="id_usuario" id="id_usuario" required>
 
               <div class="mb-3">
                   <label class="form-label">Seleccionar Libro Disponible</label>
@@ -85,12 +76,12 @@ if (!isset($libros) || empty($libros)) {
                   $optionsHtml = '';
                   if (is_array($libros)) {
                       foreach ($libros as $libro) {
-                          $optionsHtml .= '<option value="' . intval($libro['id_libro']) . '">' . htmlspecialchars($libro['titulo']) . ' — ' . htmlspecialchars($libro['editorial'] ?? '') . '</option>';
+                          $optionsHtml .= '<option value="' . htmlspecialchars($libro['id_libro']) . '">' . htmlspecialchars($libro['titulo']) . ' — ' . htmlspecialchars($libro['editorial'] ?? 'N/A') . '</option>';
                       }
                   } elseif (is_object($libros) && method_exists($libros, 'fetch_assoc')) {
                       // mysqli_result
                       while ($row = $libros->fetch_assoc()) {
-                          $optionsHtml .= '<option value="' . intval($row['id_libro']) . '">' . htmlspecialchars($row['titulo']) . ' — ' . htmlspecialchars($row['editorial'] ?? '') . '</option>';
+                          $optionsHtml .= '<option value="' . htmlspecialchars($row['id_libro']) . '">' . htmlspecialchars($row['titulo']) . ' — ' . htmlspecialchars($row['editorial'] ?? 'N/A') . '</option>';
                       }
                   }
 
@@ -107,53 +98,73 @@ if (!isset($libros) || empty($libros)) {
                   <input type="date" class="form-control" name="fecha_devolucion" required>
               </div>
 
-              <button class="btn btn-primary w-100">Registrar Préstamo</button>
+              <button type="submit" id="btnRegistrarPrestamo" class="btn btn-primary w-100" disabled>Registrar Préstamo</button>
           </form>
 
 <script>
 document.addEventListener('DOMContentLoaded', function(){
-    const btn = document.getElementById('btnBuscarUsuario');
-    const input = document.getElementById('numero_documento');
+    const btnBuscar = document.getElementById('btnBuscarUsuario');
+    const btnLimpiar = document.getElementById('btnLimpiarBusqueda');
+    const btnRegistrar = document.getElementById('btnRegistrarPrestamo');
+    const spinner = btnBuscar.querySelector('.spinner-border');
+    
+    const inputDoc = document.getElementById('numero_documento');
     const resultDiv = document.getElementById('usuarioResultado');
-    const idManual = document.getElementById('id_usuario_manual');
-    const formReg = document.getElementById('formRegistrarPrestamo');
+    const hiddenUserId = document.getElementById('id_usuario');
 
-    btn.addEventListener('click', function(){
-        const num = input.value.trim();
+    const resetUI = () => {
+        resultDiv.innerHTML = '';
+        hiddenUserId.value = '';
+        inputDoc.value = '';
+        inputDoc.disabled = false;
+        btnRegistrar.disabled = true;
+        btnLimpiar.classList.add('d-none');
+        btnBuscar.disabled = false;
+        spinner.classList.add('d-none');
+    };
+
+    btnLimpiar.addEventListener('click', resetUI);
+
+    btnBuscar.addEventListener('click', function(){
+        const num = inputDoc.value.trim();
         if (!num) {
             resultDiv.innerHTML = '<div class="alert alert-warning">Ingrese número de documento.</div>';
             return;
         }
+
+        // Deshabilitar botón y mostrar spinner
+        btnBuscar.disabled = true;
+        spinner.classList.remove('d-none');
         resultDiv.innerHTML = '<div class="alert alert-secondary">Buscando...</div>';
 
         fetch('/BibliotecKJ01/public/api/buscar_usuario.php?numero_documento=' + encodeURIComponent(num))
-            .then(r => r.json())
-            .then(j => {
-                if (j.ok) {
-                    const u = j.usuario;
-                    resultDiv.innerHTML = '<div class="alert alert-info">Usuario encontrado: <strong>' + (u.nombre ? u.nombre : '') + '</strong><div>ID: ' + u.id_usuario + ' — Documento: ' + (u.numero_documento?u.numero_documento:'') + '</div></div>';
-                    // colocar hidden input con id_usuario; deshabilitar input manual
-                    let hid = document.getElementById('id_usuario_hidden');
-                    if (!hid) {
-                        hid = document.createElement('input');
-                        hid.type = 'hidden';
-                        hid.name = 'id_usuario';
-                        hid.id = 'id_usuario_hidden';
-                        formReg.prepend(hid);
-                    }
-                    hid.value = parseInt(u.id_usuario);
-                    // deshabilitar manual
-                    if (idManual) { idManual.value = ''; idManual.disabled = true; }
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.ok && data.usuario) {
+                    const u = data.usuario;
+                    resultDiv.innerHTML = `<div class="alert alert-success">Usuario encontrado: <strong>${u.nombre || ''}</strong><div>ID: ${u.id_usuario} — Documento: ${u.numero_documento || ''}</div></div>`;
+                    
+                    hiddenUserId.value = u.id_usuario;
+                    inputDoc.disabled = true; // Bloquear campo de búsqueda
+                    btnRegistrar.disabled = false; // Habilitar botón de registro
+                    btnLimpiar.classList.remove('d-none'); // Mostrar botón de limpiar
                 } else {
-                    resultDiv.innerHTML = '<div class="alert alert-warning">Usuario no encontrado.</div>';
-                    // eliminar hidden si existe
-                    const hid = document.getElementById('id_usuario_hidden');
-                    if (hid) hid.remove();
-                    if (idManual) idManual.disabled = false;
+                    resultDiv.innerHTML = `<div class="alert alert-warning">${data.mensaje || 'Usuario no encontrado.'}</div>`;
+                    hiddenUserId.value = '';
+                    btnRegistrar.disabled = true;
                 }
             }).catch(err => {
-                resultDiv.innerHTML = '<div class="alert alert-danger">Error al buscar usuario.</div>';
+                resultDiv.innerHTML = '<div class="alert alert-danger">Error de conexión al buscar el usuario. Revise la consola para más detalles.</div>';
                 console.error(err);
+            }).finally(() => {
+                // Habilitar botón y ocultar spinner
+                btnBuscar.disabled = false;
+                spinner.classList.add('d-none');
             });
     });
 });

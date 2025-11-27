@@ -6,9 +6,8 @@
     <title>Gestion de Usuario </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../../public/css/ADM/GestionUS.css">
+    <link rel="stylesheet" href="/BibliotecKJ01/public/css/ADM/GestionUS.css">
     <style>
-    /* Contenedor fijo para alertas, a la derecha del sidebar fijo */
     .floating-alerts{
       position: fixed;
       top: 16px;
@@ -35,17 +34,7 @@
 <body>
 <?php include __DIR__ . '/../layouts/NavADM.php'; ?>
 <?php
-
-if (!isset($usuarios)) {
-  require_once __DIR__ . '/../../../config/Conexion.php';
-  require_once __DIR__ . '/../../../app/models/Usuario.php';
-  $db = (new Conexion())->conectar();
-  $model = new Usuario($db);
-  $usuarios = $model->getAllUsuarios();
-}
-// Mostrar alertas si vienen en query string
-$msg = $_GET['msg'] ?? $_GET['message'] ?? null;
-$error = $_GET['error'] ?? null;
+// Las variables $msg y $error son pasadas por el controlador.
 ?>
 <!-- Contenedor fijo para alertas, evita quedar detrás de la sidebar -->
 <div class="floating-alerts" aria-live="polite" aria-atomic="true">
@@ -91,7 +80,7 @@ $error = $_GET['error'] ?? null;
         </thead>
 
         <tbody>
-            <?php while($row = $usuarios->fetch_assoc()) { ?>
+            <?php if (!empty($usuarios)): foreach($usuarios as $row): ?>
                 <tr>
                     <td><?= $row['id_usuario']; ?></td>
                     <td><?= $row['nombre']; ?></td>
@@ -109,11 +98,11 @@ $error = $_GET['error'] ?? null;
                             data-bs-target="#modalEditar"
                             onclick="cargarDatosEditar(
                               '<?= $row['id_usuario']; ?>',
-                              '<?= $row['nombre']; ?>',
-                              '<?= $row['correo']; ?>',
-                              '<?= $row['telefono']; ?>',
-                              '<?= $row['tipo_documento']; ?>',
-                              '<?= $row['numero_documento']; ?>',
+                              '<?= addslashes($row['nombre']); ?>',
+                              '<?= addslashes($row['correo']); ?>',
+                              '<?= addslashes($row['telefono']); ?>',
+                              '<?= addslashes($row['tipo_documento']); ?>',
+                              '<?= addslashes($row['numero_documento']); ?>',
                               '<?= $row['rol']; ?>'
                             )"
                         >Editar</button>
@@ -127,7 +116,11 @@ $error = $_GET['error'] ?? null;
                         >Eliminar</button>
                     </td>
                 </tr>
-            <?php } ?>
+            <?php endforeach; else: ?>
+                <tr>
+                    <td colspan="8" class="text-center">No se encontraron usuarios.</td>
+                </tr>
+            <?php endif; ?>
         </tbody>
     </table>
 </div>
@@ -146,7 +139,7 @@ $error = $_GET['error'] ?? null;
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-      <form action="/BibliotecKJ01/app/controllers/UsuariosController.php?action=guardar" method="POST">
+      <form action="<?= BASE_URL ?>Usuarios/guardar" method="POST">
         <div class="modal-body">
 
           <label>Nombre:</label>
@@ -201,7 +194,7 @@ $error = $_GET['error'] ?? null;
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-      <form action="/BibliotecKJ01/app/controllers/UsuariosController.php?action=actualizar" method="POST">
+      <form action="<?= BASE_URL ?>Usuarios/actualizar" method="POST">
         <div class="modal-body">
 
           <input type="hidden" name="id_usuario" id="edit_id">
@@ -258,7 +251,7 @@ $error = $_GET['error'] ?? null;
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-      <form action="/BibliotecKJ01/app/controllers/UsuariosController.php?action=eliminar" method="POST">
+      <form action="<?= BASE_URL ?>Usuarios/eliminar" method="POST">
         <div class="modal-body">
           <p>¿Está seguro de que desea eliminar este usuario?</p>
 
@@ -318,8 +311,6 @@ document.addEventListener('DOMContentLoaded', function () {
 <!-- Bootstrap JS (bundle incluye Popper) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-</main>
-
 <script>
 // Mover modales al body para evitar problemas de stacking context
 document.addEventListener('DOMContentLoaded', function() {
@@ -331,5 +322,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
-
-
+</main>
+</body>
+</html>

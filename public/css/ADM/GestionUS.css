@@ -5,7 +5,7 @@
   min-height: 100vh;
   margin-left: 240px;
   padding: 24px;
-  background-image: url(../../img/Fondos/f5.jpg);
+  background-image: url(/BibliotecKJ01/public/img/Fondos/f5.jpg);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -18,7 +18,7 @@ body .main-content {
     min-height: 100vh;
     margin-left: 240px;
     padding: 28px;
-    background-image: url(../../img/Fondos/f5.jpg);
+    background-image: url(/BibliotecKJ01/public/img/Fondos/f5.jpg);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

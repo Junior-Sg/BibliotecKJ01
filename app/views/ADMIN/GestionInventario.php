@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Tailwind CDN (solo para utilidades rápidas en entorno de desarrollo) -->
     <script src="https://cdn.tailwindcss.com"></script>
-  <!-- css -->
+    <!-- CSS Original -->
     <link rel="stylesheet" href="/BibliotecKJ01/public/css/ADM/GestionInventario.css">
     
     <title>Inventario</title>
@@ -15,30 +15,11 @@
 <body>
     
 <?php
-require_once __DIR__ . '/../../models/InventarioModelo.php';
-$modelo = new InventarioModelo();
-
-$libros      = $modelo->obtenerLibros();
-$autores     = $modelo->obtenerAutores();
-$generos     = $modelo->obtenerGeneros();
-$editoriales = $modelo->obtenerEditoriales();
-// Leer filtros desde GET
-$filters = [];
-$filters['estante'] = $_GET['estante'] ?? '';
-$filters['editorial'] = $_GET['editorial'] ?? '';
-$filters['autor'] = $_GET['autor'] ?? '';
-$filters['genero'] = $_GET['genero'] ?? '';
-$filters['anio_desde'] = $_GET['anio_desde'] ?? '';
-
-
-$libros = $modelo->obtenerLibrosFiltrados($filters);
-?>
-<?php
+// 1. Cargar el menú de navegación
 require_once __DIR__ . '/../layouts/NavADM.php';
 
-// Mensajes (alertas) si vienen en query string
-$msg = $_GET['msg'] ?? $_GET['message'] ?? null;
-$error = $_GET['error'] ?? null;
+// Las variables ($libros, $editoriales, $filters, $msg, $error) 
+// son preparadas y pasadas por el controlador (InventarioController.php).
 ?>
 
 <div class="floating-alerts" aria-live="polite" aria-atomic="true">
@@ -77,7 +58,7 @@ $error = $_GET['error'] ?? null;
 
     <!-- FILTROS -->
     <div class="filter-card mb-3">
-    <form id="formFiltros" class="row g-2 mb-0 align-items-end" method="GET" action="">
+    <form id="formFiltros" class="row g-2 mb-0 align-items-end" method="GET" action="<?= BASE_URL ?>Inventario/index">
         <div class="col-md-2">
             <input type="text" name="estante" class="form-control form-control-sm" placeholder="Estante" value="<?= htmlspecialchars($filters['estante']) ?>">
         </div>
@@ -90,13 +71,12 @@ $error = $_GET['error'] ?? null;
         <div class="col-md-2">
             <select name="editorial" class="form-control form-control-sm">
                 <option value="">Todas editoriales</option>
-                <?php
-                $edRes2 = $modelo->obtenerEditoriales();
-                while ($er = $edRes2->fetch_assoc()) {
-                    $sel = ($filters['editorial'] == $er['id_editorial'] || $filters['editorial'] == $er['nombre']) ? 'selected' : '';
-                    echo "<option value=\"" . htmlspecialchars($er['id_editorial']) . "\" $sel>" . htmlspecialchars($er['nombre']) . "</option>";
-                }
-                ?>
+                <?php if (!empty($editoriales)): ?>
+                    <?php foreach ($editoriales as $er): ?>
+                        <?php $sel = ($filters['editorial'] == $er['id_editorial']) ? 'selected' : ''; ?>
+                        <option value="<?= htmlspecialchars($er['id_editorial']) ?>" <?= $sel ?>><?= htmlspecialchars($er['nombre']) ?></option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </select>
         </div>
     
@@ -106,7 +86,6 @@ $error = $_GET['error'] ?? null;
         </div>
     </form>
     </div>
-    </form>
 
     <!-- TABLA DE LIBROS -->
     <div class="table-responsive shadow p-3 bg-white rounded">
@@ -125,15 +104,16 @@ $error = $_GET['error'] ?? null;
                 </tr>
             </thead>
             <tbody>
-                <?php while ($l = $libros->fetch_assoc()) { ?>
+                <?php if ($libros && $libros->num_rows > 0): ?>
+                    <?php while ($l = $libros->fetch_assoc()): ?>
                     <tr>
                         <td>
-                            <?php if (!empty($l['Imagen'])) { ?>
-                                <img src="../../../public/img/libros/<?= $l['Imagen'] ?>" 
+                            <?php if (!empty($l['Imagen'])): ?>
+                                <img src="/BibliotecKJ01/public/img/libros/<?= htmlspecialchars($l['Imagen']) ?>" 
                                      width="60" height="80" class="rounded shadow-sm">
-                            <?php } else { ?>
+                            <?php else: ?>
                                 <span class="text-muted">Sin imagen</span>
-                            <?php } ?>
+                            <?php endif; ?>
                         </td>
                         <td><?= $l['titulo'] ?></td>
                         <td><?= $l['autores'] ?></td>
@@ -163,7 +143,7 @@ $error = $_GET['error'] ?? null;
                     <div class="modal fade" id="modalEliminar<?= $l['id_libro'] ?>">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <form action="../../controllers/InventarioController.php" method="POST">
+                                <form action="<?= BASE_URL ?>Inventario/eliminarLibro" method="POST">
                                     <div class="modal-header bg-danger text-white">
                                         <h5 class="modal-title">¿Eliminar libro?</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -191,7 +171,7 @@ $error = $_GET['error'] ?? null;
                         <div class="modal fade" id="modalEditar<?= $l['id_libro'] ?>">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
-                                    <form action="../../controllers/InventarioController.php" method="POST" enctype="multipart/form-data">
+                                    <form action="<?= BASE_URL ?>Inventario/actualizarLibro" method="POST" enctype="multipart/form-data">
                                         <div class="modal-header bg-warning">
                                             <h5 class="modal-title">Editar Libro</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -256,7 +236,12 @@ $error = $_GET['error'] ?? null;
                             </div>
                         </div>
 
-                <?php } ?>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="9" class="text-center text-muted">No se encontraron libros.</td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
@@ -269,8 +254,7 @@ $error = $_GET['error'] ?? null;
 <div class="modal fade" id="modalRegistrar">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="../../controllers/InventarioController.php" 
-                  method="POST" enctype="multipart/form-data">
+            <form action="<?= BASE_URL ?>Inventario/registrarLibro" method="POST" enctype="multipart/form-data">
 
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">Registrar Libro</h5>
@@ -301,13 +285,11 @@ $error = $_GET['error'] ?? null;
                             <label>Editorial:</label>
                             <input list="editorialesList" class="form-control" name="editorial" placeholder="Escriba o seleccione una editorial" required>
                             <datalist id="editorialesList">
-                                <?php
-                                // volver a obtener editoriales si el cursor previo llegó al final
-                                $edRes = $modelo->obtenerEditoriales();
-                                while ($eRow = $edRes->fetch_assoc()) {
-                                    echo "<option value=\"" . htmlspecialchars($eRow['nombre']) . "\">";
-                                }
-                                ?>
+                                <?php if (!empty($editoriales)): ?>
+                                    <?php foreach ($editoriales as $eRow): ?>
+                                        <option value="<?= htmlspecialchars($eRow['nombre']) ?>">
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </datalist>
                         </div>
 
@@ -336,6 +318,13 @@ $error = $_GET['error'] ?? null;
                             <input type="text" class="form-control" name="generos" placeholder="Género1, Género2" required>
                         </div>
 
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label>Sinopsis:</label>
+                            <textarea class="form-control" name="sipnosis" rows="3"></textarea>
+                        </div>
                     </div>
 
                 </div>
@@ -399,12 +388,7 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function(){
     var btn = document.getElementById('btnLimpiar');
     if (btn) {
-        btn.addEventListener('click', function(){
-            // redirigir al mismo path sin query
-            var path = window.location.pathname;
-            // si la app está en subdirectorio, mantenemos el pathname
-            window.location.href = path;
-        });
+        btn.addEventListener('click', () => window.location.href = '<?= BASE_URL ?>Inventario/index');
     }
 });
 </script>

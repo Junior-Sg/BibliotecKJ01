@@ -184,13 +184,13 @@ class InventarioModelo {
     /*============================
       REGISTRAR LIBRO
     ============================*/
-    public function insertarLibro($titulo, $estante, $anio, $editorial, $cantidad, $imagen) {
+    public function insertarLibro($titulo, $estante, $anio, $editorial, $cantidad, $imagen, $sipnosis) {
 
-        $sql = "INSERT INTO libro (titulo, Estante, año_publicacion, id_editorial, cantidad_total, Imagen)
-                VALUES (?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO libro (titulo, Estante, año_publicacion, id_editorial, cantidad_total, Imagen, sipnosis)
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->bind_param("sssiss", $titulo, $estante, $anio, $editorial, $cantidad, $imagen);
+        $stmt->bind_param("ssiiiss", $titulo, $estante, $anio, $editorial, $cantidad, $imagen, $sipnosis);
         $stmt->execute();
 
         $id = $this->db->insert_id;
@@ -272,8 +272,8 @@ class InventarioModelo {
     }
 
     // Actualizar libro (sin tocar relaciones)
-    public function actualizarLibro($idLibro, $titulo, $estante, $anio, $idEditorial, $cantidad, $imagen = null) {
-        $sql = "UPDATE libro SET titulo = ?, Estante = ?, año_publicacion = ?, id_editorial = ?, cantidad_total = ?";
+    public function actualizarLibro($idLibro, $titulo, $estante, $anio, $idEditorial, $cantidad, $imagen = null, $sipnosis) {
+        $sql = "UPDATE libro SET titulo = ?, Estante = ?, año_publicacion = ?, id_editorial = ?, cantidad_total = ?, sipnosis = ?";
         if ($imagen !== null) {
             $sql .= ", Imagen = ?";
         }
@@ -283,9 +283,9 @@ class InventarioModelo {
         if (!$stmt) return false;
 
         if ($imagen !== null) {
-            $stmt->bind_param('sssiisi', $titulo, $estante, $anio, $idEditorial, $cantidad, $imagen, $idLibro);
+            $stmt->bind_param('ssiiissis', $titulo, $estante, $anio, $idEditorial, $cantidad, $sipnosis, $imagen, $idLibro);
         } else {
-            $stmt->bind_param('sssiii', $titulo, $estante, $anio, $idEditorial, $cantidad, $idLibro);
+            $stmt->bind_param('ssiiiss', $titulo, $estante, $anio, $idEditorial, $cantidad, $sipnosis, $idLibro);
         }
 
         $ok = $stmt->execute();

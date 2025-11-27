@@ -6,7 +6,7 @@
   <title>Bibliotec_KJ - Acceso</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../../../public/css/Login_usuario.css">
+  <link rel="stylesheet" href="/BibliotecKJ01/public/css/Login_usuario.css">
 
 </head>
 <body>
@@ -54,7 +54,7 @@
       <div class="cover" id="cover">
         <div class="cover-content">
           <div class="logo">
-            <img src="../../../public/img/Logos/L1.jpg" alt="Logo Bibliotec_KJ">
+            <img src="/BibliotecKJ01/public/img/Logos/L1.jpg" alt="Logo Bibliotec_KJ">
           </div>
           <h1>Bibliotec_KJ</h1>
           <p>Tu mundo de conocimiento</p>
@@ -65,7 +65,7 @@
 
       <!-- LOGIN -->
       <div class="page page-login" id="loginPage">
-        <form action="../../controllers/LoginUsuarioController.php" method="POST">
+        <form action="<?= BASE_URL ?>LoginUsuario/login" method="POST">
           <h2>Inicio de Sesión</h2>
 
           <div class="input-group">
@@ -93,7 +93,7 @@
 
       <!-- REGISTRO -->
       <div class="page page-register" id="registerPage">
-        <form action="../../controllers/RegistrarUsuarioController.php" method="POST">
+        <form action="<?= BASE_URL ?>RegistrarUsuario/registrar" method="POST">
           <h2>Registro de Usuario</h2>
 
           <div class="input-group">

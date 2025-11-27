@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/../models/InventarioModelo.php';
 
 class InventarioController {
@@ -9,206 +10,120 @@ class InventarioController {
         $this->modelo = new InventarioModelo();
     }
 
+    public function index() {
+        // 1. El controlador se encarga de recoger y preparar TODA la información de la petición.
+        $filters = [
+            'estante' => $_GET['estante'] ?? '',
+            'autor' => $_GET['autor'] ?? '',
+            'genero' => $_GET['genero'] ?? '',
+            'editorial' => $_GET['editorial'] ?? ''
+        ];
+        $msg = $_GET['msg'] ?? null;
+        $error = $_GET['error'] ?? null;
+
+        // 2. El controlador pide al modelo los datos necesarios.
+        $libros = $this->modelo->obtenerLibrosFiltrados($filters);
+        
+        $editorialesResult = $this->modelo->obtenerEditoriales();
+        $editoriales = []; // Un array simple, más fácil de usar en la vista.
+        if ($editorialesResult && $editorialesResult->num_rows > 0) {
+            $editoriales = $editorialesResult->fetch_all(MYSQLI_ASSOC);
+        }
+
+        // 3. El controlador carga la vista. 
+        // Las variables ($libros, $editoriales, $filters, $msg, $error) se pasan implícitamente.
+        require_once __DIR__ . '/../views/ADMIN/GestionInventario.php';
+    }
+
     public function registrarLibro() {
-
-        $titulo     = isset($_POST['titulo']) ? trim($_POST['titulo']) : '';
-        $estante    = isset($_POST['estante']) ? trim($_POST['estante']) : '';
-        $anio       = isset($_POST['anio_publicacion']) ? trim($_POST['anio_publicacion']) : null;
-        $editorialInput  = isset($_POST['editorial']) ? trim($_POST['editorial']) : '';
-        $cantidad   = isset($_POST['cantidad_total']) ? intval($_POST['cantidad_total']) : 0;
-
-        $autoresInput    = isset($_POST['autores']) ? $_POST['autores'] : '';
-        $generosInput    = isset($_POST['generos']) ? $_POST['generos'] : '';
-
-        /*======== SUBIR IMAGEN ========*/
-        $nombreImg = "";
-
-        if (!empty($_FILES["imagen"]["name"])) {
-
-            $nombreImg = time() . "_" . basename($_FILES["imagen"]["name"]);
-            $ruta = "../../public/img/libros/" . $nombreImg;
-            move_uploaded_file($_FILES["imagen"]["tmp_name"], $ruta);
-        }
-
-        // === Editorial: puede venir como id o como nombre => resolver id ===
-        $idEditorial = null;
-        if ($editorialInput !== '') {
-            if (ctype_digit($editorialInput)) {
-                $idEditorial = intval($editorialInput);
-            } else {
-                $norm = trim($editorialInput);
-                $found = $this->modelo->getEditorialByName($norm);
-                if ($found && isset($found['id_editorial'])) {
-                    $idEditorial = $found['id_editorial'];
-                } else {
-                    $idEditorial = $this->modelo->insertarEditorial($norm);
-                }
-            }
-        }
-
-        // === Autores: puede venir como array de ids o como cadena separada por comas ===
-        $autoresIds = [];
-        if (is_array($autoresInput)) {
-            foreach ($autoresInput as $a) {
-                if (ctype_digit(strval($a))) $autoresIds[] = intval($a);
-            }
-        } else {
-            // cadena: "Autor1, Autor2"
-            $parts = array_filter(array_map('trim', explode(',', $autoresInput)));
-            foreach ($parts as $p) {
-                if ($p === '') continue;
-                $found = $this->modelo->getAutorByName($p);
-                if ($found && isset($found['id_autor'])) {
-                    $autoresIds[] = $found['id_autor'];
-                } else {
-                    $autoresIds[] = $this->modelo->insertarAutor($p);
-                }
-            }
-        }
-
-        // === Géneros: similar a autores ===
-        $generosIds = [];
-        if (is_array($generosInput)) {
-            foreach ($generosInput as $g) {
-                if (ctype_digit(strval($g))) $generosIds[] = intval($g);
-            }
-        } else {
-            $parts = array_filter(array_map('trim', explode(',', $generosInput)));
-            foreach ($parts as $p) {
-                if ($p === '') continue;
-                $found = $this->modelo->getGeneroByName($p);
-                if ($found && isset($found['id_genero'])) {
-                    $generosIds[] = $found['id_genero'];
-                } else {
-                    $generosIds[] = $this->modelo->insertarGenero($p);
-                }
-            }
-        }
-
-        $idLibro = $this->modelo->insertarLibro($titulo, $estante, $anio, $idEditorial, $cantidad, $nombreImg);
-
-        // Insertar relaciones
-        foreach ($autoresIds as $aId) {
-            $this->modelo->insertarLibroAutor($idLibro, $aId);
-        }
-        foreach ($generosIds as $gId) {
-            $this->modelo->insertarLibroGenero($idLibro, $gId);
-        }
-
-        header("Location: ../views/ADMIN/GestionInventario.php?msg=registrado");
+        $this->procesarFormularioLibro();
     }
 
     public function actualizarLibro() {
-        $idLibro = isset($_POST['id_libro']) ? intval($_POST['id_libro']) : 0;
-        if ($idLibro <= 0) {
-            header("Location: ../../views/ADMIN/GestionInventario.php?msg=error");
-            return;
+        $idLibro = intval($_POST['id_libro'] ?? 0);
+        $this->procesarFormularioLibro($idLibro);
+    }
+
+    private function procesarFormularioLibro($idLibro = null) {
+        error_log("POST data: " . print_r($_POST, true));
+
+        $titulo = trim($_POST['titulo'] ?? '');
+        $estante = trim($_POST['estante'] ?? '');
+        $anio = intval($_POST['anio_publicacion'] ?? 0);
+        $editorialNombre = trim($_POST['editorial'] ?? '');
+        $cantidad = intval($_POST['cantidad_total'] ?? 0);
+        $autoresStr = trim($_POST['autores'] ?? '');
+        $generosStr = trim($_POST['generos'] ?? '');
+        $sipnosis = trim($_POST['sipnosis'] ?? '');
+
+        if (empty($titulo) || empty($editorialNombre) || empty($autoresStr) || empty($generosStr) || $anio <= 0) {
+            $this->redirigirConError('Todos los campos son obligatorios.');
         }
 
-        $titulo     = isset($_POST['titulo']) ? trim($_POST['titulo']) : '';
-        $estante    = isset($_POST['estante']) ? trim($_POST['estante']) : '';
-        $anio       = isset($_POST['anio_publicacion']) ? trim($_POST['anio_publicacion']) : null;
-        $editorialInput  = isset($_POST['editorial']) ? trim($_POST['editorial']) : '';
-        $cantidad   = isset($_POST['cantidad_total']) ? intval($_POST['cantidad_total']) : 0;
+        // Gestionar Editorial
+        $editorial = $this->modelo->getEditorialByName($editorialNombre);
+        $idEditorial = $editorial ? $editorial['id_editorial'] : $this->modelo->insertarEditorial($editorialNombre);
 
-        $autoresInput    = isset($_POST['autores']) ? $_POST['autores'] : '';
-        $generosInput    = isset($_POST['generos']) ? $_POST['generos'] : '';
+        // Gestionar Autores
+        $autoresIds = $this->procesarNombres($autoresStr, 'getAutorByName', 'insertarAutor');
 
-        // manejar imagen si se sube
-        $nombreImg = null;
-        if (!empty($_FILES["imagen"]["name"])) {
-            $nombreImg = time() . "_" . basename($_FILES["imagen"]["name"]);
-            $ruta = "../../public/img/libros/" . $nombreImg;
-            move_uploaded_file($_FILES["imagen"]["tmp_name"], $ruta);
+        // Gestionar Géneros
+        $generosIds = $this->procesarNombres($generosStr, 'getGeneroByName', 'insertarGenero');
+
+        // Gestionar Imagen
+        $nombreImagen = $idLibro ? $this->modelo->obtenerLibrosFiltrados(['id_libro' => $idLibro])->fetch_assoc()['Imagen'] : null;
+        if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+            $dirDestino = __DIR__ . '/../../public/img/libros/';
+            if (!is_dir($dirDestino)) mkdir($dirDestino, 0777, true);
+            $nombreImagen = uniqid() . '_' . basename($_FILES['imagen']['name']);
+            move_uploaded_file($_FILES['imagen']['tmp_name'], $dirDestino . $nombreImagen);
         }
 
-        // resolver editorial
-        $idEditorial = null;
-        if ($editorialInput !== '') {
-            if (ctype_digit($editorialInput)) {
-                $idEditorial = intval($editorialInput);
-            } else {
-                $norm = trim($editorialInput);
-                $found = $this->modelo->getEditorialByName($norm);
-                if ($found && isset($found['id_editorial'])) {
-                    $idEditorial = $found['id_editorial'];
-                } else {
-                    $idEditorial = $this->modelo->insertarEditorial($norm);
-                }
-            }
+        if ($idLibro) { // Actualizar
+            $this->modelo->actualizarLibro($idLibro, $titulo, $estante, $anio, $idEditorial, $cantidad, $nombreImagen, $sipnosis);
+            $this->modelo->reemplazarLibroAutores($idLibro, $autoresIds);
+            $this->modelo->reemplazarLibroGeneros($idLibro, $generosIds);
+            $this->redirigirConExito('Libro actualizado correctamente.');
+        } else { // Registrar
+            $nuevoIdLibro = $this->modelo->insertarLibro($titulo, $estante, $anio, $idEditorial, $cantidad, $nombreImagen, $sipnosis);
+            $this->modelo->reemplazarLibroAutores($nuevoIdLibro, $autoresIds);
+            $this->modelo->reemplazarLibroGeneros($nuevoIdLibro, $generosIds);
+            $this->redirigirConExito('Libro registrado correctamente.');
         }
-
-        // autores
-        $autoresIds = [];
-        if (is_array($autoresInput)) {
-            foreach ($autoresInput as $a) {
-                if (ctype_digit(strval($a))) $autoresIds[] = intval($a);
-            }
-        } else {
-            $parts = array_filter(array_map('trim', explode(',', $autoresInput)));
-            foreach ($parts as $p) {
-                if ($p === '') continue;
-                $found = $this->modelo->getAutorByName($p);
-                if ($found && isset($found['id_autor'])) {
-                    $autoresIds[] = $found['id_autor'];
-                } else {
-                    $autoresIds[] = $this->modelo->insertarAutor($p);
-                }
-            }
-        }
-
-        // generos
-        $generosIds = [];
-        if (is_array($generosInput)) {
-            foreach ($generosInput as $g) {
-                if (ctype_digit(strval($g))) $generosIds[] = intval($g);
-            }
-        } else {
-            $parts = array_filter(array_map('trim', explode(',', $generosInput)));
-            foreach ($parts as $p) {
-                if ($p === '') continue;
-                $found = $this->modelo->getGeneroByName($p);
-                if ($found && isset($found['id_genero'])) {
-                    $generosIds[] = $found['id_genero'];
-                } else {
-                    $generosIds[] = $this->modelo->insertarGenero($p);
-                }
-            }
-        }
-
-        // actualizar libro
-        $this->modelo->actualizarLibro($idLibro, $titulo, $estante, $anio, $idEditorial, $cantidad, $nombreImg);
-
-        // reemplazar relaciones
-        $this->modelo->reemplazarLibroAutores($idLibro, $autoresIds);
-        $this->modelo->reemplazarLibroGeneros($idLibro, $generosIds);
-
-        header("Location: ../views/ADMIN/GestionInventario.php?msg=actualizado");
     }
 
     public function eliminarLibro() {
-        $id = $_POST['id_libro'];
-        $this->modelo->eliminarLibro($id);
+        $idLibro = intval($_POST['id_libro'] ?? 0);
+        if ($idLibro <= 0) {
+            $this->redirigirConError('ID de libro inválido.');
+        }
 
-        header("Location: ../views/ADMIN/GestionInventario.php?msg=eliminado");
+        $ok = $this->modelo->eliminarLibro($idLibro);
+        if ($ok) {
+            $this->redirigirConExito('Libro eliminado correctamente.');
+        } else {
+            $this->redirigirConError('No se pudo eliminar el libro.');
+        }
     }
-}
 
-// Dispatcher procedural para llamadas desde formularios
-$action = $_POST['accion'] ?? $_GET['accion'] ?? '';
-$controller = new InventarioController();
+    private function procesarNombres($string, $getter, $setter) {
+        $nombres = array_map('trim', explode(',', $string));
+        $ids = [];
+        foreach ($nombres as $nombre) {
+            if (empty($nombre)) continue;
+            $item = $this->modelo->$getter($nombre);
+            $ids[] = $item ? $item[array_keys($item)[0]] : $this->modelo->$setter($nombre);
+        }
+        return $ids;
+    }
 
-if ($action === 'registrarLibro') {
-    $controller->registrarLibro();
-    exit;
-} elseif ($action === 'eliminarLibro') {
-    $controller->eliminarLibro();
-    exit;
-} elseif ($action === 'actualizarLibro') {
-    $controller->actualizarLibro();
-    exit;
-} else {
-    // si se accede directamente, redirigir al listado
-    header('Location: ../views/ADMIN/GestionInventario.php');
-    exit;
+    private function redirigirConExito($mensaje) {
+        header('Location: ' . BASE_URL . 'Inventario/index?msg=' . urlencode($mensaje));
+        exit;
+    }
+
+    private function redirigirConError($mensaje) {
+        header('Location: ' . BASE_URL . 'Inventario/index?error=' . urlencode($mensaje));
+        exit;
+    }
 }

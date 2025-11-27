@@ -1,67 +1,81 @@
 <?php
-session_start();
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 
 require_once __DIR__ . '/../../config/Conexion.php';
 require_once __DIR__ . '/../models/Usuario.php';
 
-$db = (new Conexion())->conectar();
-$model = new Usuario($db);
+class RegistrarUsuarioController {
 
-$nombre = trim($_POST["nombre"] ?? "");
-$correo = trim($_POST["correo"] ?? "");
-$clave  = trim($_POST["clave"] ?? "");
-$telefono = trim($_POST["telefono"] ?? "");
-$tipo_documento = trim($_POST["tipo_documento"] ?? "");
-$numero_documento = trim($_POST["numero_documento"] ?? "");
+    private $model;
+    private $db;
 
-if (empty($nombre) || empty($correo) || empty($clave) || empty($tipo_documento) || empty($numero_documento)) {
-    header("Location: ../views/auth/Login_usuario.php?error=Datos incompletos");
-    exit;
+    public function __construct() {
+        $this->db = (new Conexion())->conectar();
+        $this->model = new Usuario($this->db);
+    }
+
+    /**
+     * Procesa la petición de registro de un nuevo usuario.
+     */
+    public function registrar() {
+        $nombre = trim($_POST["nombre"] ?? "");
+        $correo = trim($_POST["correo"] ?? "");
+        $clave  = trim($_POST["clave"] ?? "");
+        $telefono = trim($_POST["telefono"] ?? "");
+        $tipo_documento = trim($_POST["tipo_documento"] ?? "");
+        $numero_documento = trim($_POST["numero_documento"] ?? "");
+
+        $redirect_url = "/BibliotecKJ01/index.php?c=LoginUsuario&a=index";
+
+        if (empty($nombre) || empty($correo) || empty($clave) || empty($tipo_documento) || empty($numero_documento)) {
+            header("Location: " . $redirect_url . "&error=Datos incompletos");
+            exit;
+        }
+
+        if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+            header("Location: " . $redirect_url . "&error=Correo inválido");
+            exit;
+        }
+        
+        if (!preg_match('/^[\p{L}\s]+$/u', $nombre)) {
+            header("Location: " . $redirect_url . "&error=El nombre solo puede contener letras y espacios");
+            exit;
+        }
+
+        $allowedTipos = ['CC','TI','CE'];
+        if (!in_array($tipo_documento, $allowedTipos)) {
+            header("Location: " . $redirect_url . "&error=Tipo de documento inválido");
+            exit;
+        }
+
+        if (!ctype_digit($numero_documento)) {
+            header("Location: " . $redirect_url . "&error=Número de documento inválido");
+            exit;
+        }
+
+        if (!empty($telefono) && !preg_match('/^[0-9+\-\s]{7,20}$/', $telefono)) {
+            header("Location: " . $redirect_url . "&error=Teléfono inválido");
+            exit;
+        }
+
+        $id_usuario = $this->model->registrar($nombre, $correo, $clave, $telefono, $tipo_documento, $numero_documento);
+
+        if (!$id_usuario) {
+            $dbError = $this->db->error ?? '';
+            $msg = 'No se pudo registrar';
+            if (!empty($dbError) && defined('IS_DEVELOPMENT') && IS_DEVELOPMENT) { // Ocultar errores detallados en producción
+                $msg .= ': ' . $dbError;
+            }
+            header("Location: " . $redirect_url . "&error=" . urlencode($msg));
+            exit;
+        }
+
+        // Asignar rol de "Cliente" por defecto
+        $this->model->asignarRol($id_usuario, 2); 
+
+        header("Location: " . $redirect_url . "&msg=Registro exitoso");
+        exit;
+    }
 }
-
-if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-    header("Location: ../views/auth/Login_usuario.php?error=Correo inválido");
-    exit;
-}
-
-// Validar que el nombre contenga solo letras y espacios (soporte Unicode)
-if (!preg_match('/^[\p{L}\s]+$/u', $nombre)) {
-    header("Location: ../views/auth/Login_usuario.php?error=El nombre solo puede contener letras y espacios");
-    exit;
-}
-
-// Validar tipo de documento
-$allowedTipos = ['CC','TI','CE'];
-if (!in_array($tipo_documento, $allowedTipos)) {
-    header("Location: ../views/auth/Login_usuario.php?error=Tipo de documento inválido");
-    exit;
-}
-
-// Validar numero_documento (solo dígitos)
-if (!ctype_digit($numero_documento)) {
-    header("Location: ../views/auth/Login_usuario.php?error=Número de documento inválido");
-    exit;
-}
-
-// Validar teléfono (opcional pero si viene, que tenga formato simple)
-if (!empty($telefono) && !preg_match('/^[0-9+\-\s]{7,20}$/', $telefono)) {
-    header("Location: ../views/auth/Login_usuario.php?error=Teléfono inválido");
-    exit;
-}
-
-$id_usuario = $model->registrar($nombre, $correo, $clave, $telefono, $tipo_documento, $numero_documento);
-
-if (!$id_usuario) {
-    // Intenta obtener detalle del error de la conexión (solo para desarrollo)
-    $dbError = $db->error ?? '';
-    $msg = 'No se pudo registrar';
-    if (!empty($dbError)) $msg .= ': ' . $dbError;
-    header("Location: ../views/auth/Login_usuario.php?error=" . urlencode($msg));
-    exit;
-}
-
-// ASIGNAR ROL 2 (cliente)
-$model->asignarRol($id_usuario, 2);
-
-header("Location: ../views/auth/Login_usuario.php?msg=Registro exitoso");
-exit;

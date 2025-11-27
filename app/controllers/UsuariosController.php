@@ -1,173 +1,143 @@
 <?php
-session_start();
-
 require_once __DIR__ . '/../../config/Conexion.php';
 require_once __DIR__ . '/../models/Usuario.php';
 
-$db = (new Conexion())->conectar();
-$model = new Usuario($db);
+class UsuariosController {
 
-$action = $_GET['action'] ?? $_POST['action'] ?? '';
+    private $model;
+    private $db;
 
-if ($action === 'guardar') {
-    // Guardar nuevo usuario desde administrador
-    $nombre = trim($_POST['nombre'] ?? '');
-    $correo = trim($_POST['correo'] ?? '');
-    $telefono = trim($_POST['telefono'] ?? '');
-    $tipo_documento = trim($_POST['tipo_documento'] ?? '');
-    $numero_documento = trim($_POST['numero_documento'] ?? '');
-    $rol = intval($_POST['rol'] ?? 2);
-
-    if (empty($nombre) || empty($correo)) {
-        header('Location: ../views/ADMIN/GestionUsuarios.php?error=' . urlencode('Datos incompletos'));
-        exit;
+    public function __construct() {
+        $this->db = (new Conexion())->conectar();
+        $this->model = new Usuario($this->db);
     }
 
-    if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        header('Location: ../views/ADMIN/GestionUsuarios.php?error=' . urlencode('Correo inválido'));
-        exit;
-    }
+    public function index() {
+        // 1. Controller gets all request data
+        $msg = $_GET['msg'] ?? null;
+        $error = $_GET['error'] ?? null;
 
-    // Validar teléfono: solo dígitos y máximo 10
-    if (!empty($telefono)) {
-        if (!ctype_digit($telefono) || strlen($telefono) > 10) {
-            header('Location: ../views/ADMIN/GestionUsuarios.php?error=' . urlencode('Teléfono inválido: solo números, máximo 10 dígitos'));
-            exit;
+        // 2. Controller gets data from model and prepares it for the view
+        $usuariosResult = $this->model->getAllUsuarios();
+        $usuarios = [];
+        if ($usuariosResult && $usuariosResult->num_rows > 0) {
+            $usuarios = $usuariosResult->fetch_all(MYSQLI_ASSOC);
         }
+
+        // 3. Controller loads the view, passing the data
+        require_once __DIR__ . '/../views/ADMIN/GestionUsuarios.php';
     }
 
-    // Validar número de documento: solo dígitos (longitud variable)
-    if (!empty($numero_documento)) {
-        if (!ctype_digit($numero_documento)) {
-            header('Location: ../views/ADMIN/GestionUsuarios.php?error=' . urlencode('Número de documento inválido: solo números'));
-            exit;
+    public function guardar() {
+        $nombre = trim($_POST['nombre'] ?? '');
+        $correo = trim($_POST['correo'] ?? '');
+        $telefono = trim($_POST['telefono'] ?? '');
+        $tipo_documento = trim($_POST['tipo_documento'] ?? '');
+        $numero_documento = trim($_POST['numero_documento'] ?? '');
+        $rol = intval($_POST['rol'] ?? 2);
+
+        if (empty($nombre) || empty($correo)) {
+            $this->redirigirConError('Datos incompletos');
         }
-    }
 
-    // Validar tipo de documento
-    $allowedTipos = ['CC','TI','CE'];
-    if (!in_array($tipo_documento, $allowedTipos)) {
-        header('Location: ../views/ADMIN/GestionUsuarios.php?error=' . urlencode('Tipo de documento inválido'));
-        exit;
-    }
-
-    // Contraseña por defecto mínima; se puede forzar cambio
-    $defaultPass = '123456';
-    $id = $model->crearDesdeAdmin($nombre, $correo, $defaultPass, $telefono, $tipo_documento, $numero_documento);
-
-    if (!$id) {
-        $dbError = $db->error ?? '';
-        $msg = 'No se pudo crear usuario';
-        if (!empty($dbError)) $msg .= ': ' . $dbError;
-        header('Location: ../views/ADMIN/GestionUsuarios.php?error=' . urlencode($msg));
-        exit;
-    }
-
-    // Asignar rol
-    $model->asignarRol($id, $rol);
-
-    header('Location: ../views/ADMIN/GestionUsuarios.php?msg=' . urlencode('Usuario creado'));
-    exit;
-
-} elseif ($action === 'actualizar') {
-    $id = intval($_POST['id_usuario'] ?? 0);
-    $nombre = trim($_POST['nombre'] ?? '');
-    $correo = trim($_POST['correo'] ?? '');
-    $telefono = trim($_POST['telefono'] ?? '');
-    $tipo_documento = trim($_POST['tipo_documento'] ?? '');
-    $numero_documento = trim($_POST['numero_documento'] ?? '');
-    $rol = intval($_POST['rol'] ?? 2);
-
-    if ($id <= 0) {
-        header('Location: ../views/ADMIN/GestionUsuarios.php?error=' . urlencode('ID inválido'));
-        exit;
-    }
-
-    // Validar teléfono y documento como en crear
-    if (!empty($telefono)) {
-        if (!ctype_digit($telefono) || strlen($telefono) > 10) {
-            header('Location: ../views/ADMIN/GestionUsuarios.php?error=' . urlencode('Teléfono inválido: solo números, máximo 10 dígitos'));
-            exit;
+        if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+            $this->redirigirConError('Correo inválido');
         }
-    }
-    if (!empty($numero_documento)) {
-        if (!ctype_digit($numero_documento)) {
-            header('Location: ../views/ADMIN/GestionUsuarios.php?error=' . urlencode('Número de documento inválido: solo números'));
-            exit;
+
+        // Contraseña por defecto mínima
+        $defaultPass = '123456';
+        $id = $this->model->crearDesdeAdmin($nombre, $correo, $defaultPass, $telefono, $tipo_documento, $numero_documento);
+
+        if (!$id) {
+            $this->redirigirConError('No se pudo crear el usuario: ' . ($this->db->error ?? 'Error desconocido'));
         }
-    }
-    $allowedTipos = ['CC','TI','CE'];
-    if (!in_array($tipo_documento, $allowedTipos)) {
-        header('Location: ../views/ADMIN/GestionUsuarios.php?error=' . urlencode('Tipo de documento inválido'));
-        exit;
+
+        $this->model->asignarRol($id, $rol);
+        $this->redirigirConExito('Usuario creado correctamente');
     }
 
-    $ok = $model->actualizarUsuario($id, $nombre, $correo, $telefono, $tipo_documento, $numero_documento);
-    if (!$ok) {
-        header('Location: ../views/ADMIN/GestionUsuarios.php?error=' . urlencode('No se pudo actualizar'));
-        exit;
-    }
+    public function actualizar() {
+        $id = intval($_POST['id_usuario'] ?? 0);
+        $nombre = trim($_POST['nombre'] ?? '');
+        $correo = trim($_POST['correo'] ?? '');
+        $telefono = trim($_POST['telefono'] ?? '');
+        $tipo_documento = trim($_POST['tipo_documento'] ?? '');
+        $numero_documento = trim($_POST['numero_documento'] ?? '');
+        $rol = intval($_POST['rol'] ?? 2);
 
-    // actualizar rol
-    $model->actualizarRol($id, $rol);
-
-    header('Location: ../views/ADMIN/GestionUsuarios.php?msg=' . urlencode('Usuario actualizado'));
-    exit;
-
-} elseif ($action === 'eliminar') {
-    // aceptar id por POST o GET
-    $id = 0;
-    if (!empty($_POST['id'])) $id = intval($_POST['id']);
-    elseif (!empty($_GET['id'])) $id = intval($_GET['id']);
-    if ($id <= 0) {
-        header('Location: ../views/ADMIN/GestionUsuarios.php?error=' . urlencode('ID inválido'));
-        exit;
-    }
-    // Verificar existencia antes
-    $existsRes = $db->prepare("SELECT id_usuario FROM usuario WHERE id_usuario = ?");
-    if ($existsRes) {
-        $existsRes->bind_param('i', $id);
-        $existsRes->execute();
-        $r = $existsRes->get_result();
-        if ($r->num_rows === 0) {
-            header('Location: ../views/ADMIN/GestionUsuarios.php?error=' . urlencode('Usuario no encontrado'));
-            exit;
+        if ($id <= 0) {
+            $this->redirigirConError('ID de usuario inválido');
         }
+
+        $ok = $this->model->actualizarUsuario($id, $nombre, $correo, $telefono, $tipo_documento, $numero_documento);
+        if (!$ok) {
+            $this->redirigirConError('No se pudo actualizar el usuario');
+        }
+
+        $this->model->actualizarRol($id, $rol);
+        $this->redirigirConExito('Usuario actualizado correctamente');
     }
 
-    // Intentar eliminar y comprobar filas afectadas
-    $ok = $model->eliminarUsuario($id);
-    if (!$ok) {
-        $dbError = $db->error ?? '';
-        error_log("Error eliminar usuario (id={$id}): " . $dbError);
-        $msg = 'No se pudo eliminar';
-        if (!empty($dbError)) $msg .= ': ' . $dbError;
-        header('Location: ../views/ADMIN/GestionUsuarios.php?error=' . urlencode($msg));
-        exit;
-    }
+    public function eliminar() {
+        $id = intval($_POST['id'] ?? 0);
+        if ($id <= 0) {
+            $this->redirigirConError('ID de usuario inválido');
+        }
 
-    // Comprobar que ya no existe
-    $check = $db->prepare("SELECT id_usuario FROM usuario WHERE id_usuario = ?");
-    if ($check) {
-        $check->bind_param('i', $id);
-        $check->execute();
-        $res = $check->get_result();
-        if ($res->num_rows === 0) {
-            header('Location: ../views/ADMIN/GestionUsuarios.php?msg=' . urlencode('Usuario eliminado'));
-            exit;
+        // Verificar si el usuario existe antes de intentar eliminar
+        $existsRes = $this->db->prepare("SELECT id_usuario FROM usuario WHERE id_usuario = ?");
+        if ($existsRes) {
+            $existsRes->bind_param('i', $id);
+            $existsRes->execute();
+            $r = $existsRes->get_result();
+            if ($r->num_rows === 0) {
+                $this->redirigirConError('El usuario no existe');
+            }
+        }
+
+        $ok = $this->model->eliminarUsuario($id);
+        if ($ok) {
+            $this->redirigirConExito('Usuario eliminado correctamente');
         } else {
-            header('Location: ../views/ADMIN/GestionUsuarios.php?error=' . urlencode('No se eliminó el usuario'));
-            exit;
+            $this->redirigirConError('No se pudo eliminar el usuario: ' . ($this->db->error ?? 'Error desconocido'));
         }
     }
 
-    header('Location: ../views/ADMIN/GestionUsuarios.php?msg=' . urlencode('Usuario eliminado'));
-    exit;
+    // Funciones de ayuda para no repetir código
+    private function redirigirConExito($mensaje) {
+        header('Location: ' . BASE_URL . 'Usuarios/index?msg=' . urlencode($mensaje));
+        exit;
+    }
 
-} else {
-    // Acción por defecto: mostrar vista (si se accede directamente)
-    $usuarios = $model->getAllUsuarios();
-    include __DIR__ . '/../views/ADMIN/GestionUsuarios.php';
+    private function redirigirConError($mensaje) {
+        header('Location: ' . BASE_URL . 'Usuarios/index?error=' . urlencode($mensaje));
+        exit;
+    }
 }
 
-?>
+// Esta parte es el "router" antiguo. Lo eliminamos para que solo el index.php principal controle todo.
+/*
+$action = $_GET['action'] ?? $_POST['action'] ?? '';
+$controller = new UsuariosController();
+
+switch ($action) {
+    case 'guardar':
+        $controller->guardar();
+        break;
+    case 'actualizar':
+        $controller->actualizar();
+        break;
+    case 'eliminar':
+        $controller->eliminar();
+        break;
+    default:
+        // Si no hay acción, muestra la lista de usuarios
+        if (empty($action)) {
+            $controller->index();
+        } else {
+            header('Location: /BibliotecKJ01/index.php?c=Usuarios&a=index&error=Accion_no_valida');
+            exit;
+        }
+        break;
+}
+*/

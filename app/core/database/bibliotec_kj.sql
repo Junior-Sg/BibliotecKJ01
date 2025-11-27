@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-11-2025 a las 19:46:01
+-- Tiempo de generación: 27-11-2025 a las 18:51:22
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -37,7 +37,12 @@ CREATE TABLE `autor` (
 --
 
 INSERT INTO `autor` (`id_autor`, `nombre`) VALUES
-(1, 'Antoine de Saint-Exupéry');
+(1, 'Antoine de Saint-Exupéry'),
+(2, 'Alice Kellen'),
+(3, 'Carlos Ruiz'),
+(4, 'Junior'),
+(5, 'Mark Manson'),
+(6, 'Inma Rubiales');
 
 -- --------------------------------------------------------
 
@@ -48,8 +53,20 @@ INSERT INTO `autor` (`id_autor`, `nombre`) VALUES
 CREATE TABLE `disponibilidad` (
   `id_disponibilidad` int(11) NOT NULL,
   `id_libro` int(11) DEFAULT NULL,
-  `cantidad_disponible` int(11) NOT NULL
+  `cantidad_disponible` int(11) NOT NULL,
+  `id_estado` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `disponibilidad`
+--
+
+INSERT INTO `disponibilidad` (`id_disponibilidad`, `id_libro`, `cantidad_disponible`, `id_estado`) VALUES
+(1, 1, 10, 1),
+(2, 2, 6, 1),
+(3, 4, 4, 1),
+(4, 5, 8, 1),
+(5, 6, 7, 1);
 
 -- --------------------------------------------------------
 
@@ -67,7 +84,29 @@ CREATE TABLE `editorial` (
 --
 
 INSERT INTO `editorial` (`id_editorial`, `nombre`) VALUES
-(1, 'Reynal & Hitchcock');
+(1, 'Reynal & Hitchcock'),
+(2, 'Planeta'),
+(3, 'Harper Collins');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `estado`
+--
+
+CREATE TABLE `estado` (
+  `id_estado` int(11) NOT NULL,
+  `nombre` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `estado`
+--
+
+INSERT INTO `estado` (`id_estado`, `nombre`) VALUES
+(1, 'disponible'),
+(2, 'prestado'),
+(3, 'reservado');
 
 -- --------------------------------------------------------
 
@@ -85,7 +124,14 @@ CREATE TABLE `genero` (
 --
 
 INSERT INTO `genero` (`id_genero`, `nombre`) VALUES
-(1, 'Novela corta');
+(1, 'Novela corta'),
+(2, 'Novela romántica contemporénea'),
+(3, 'Misterio'),
+(4, 'Intriga'),
+(5, 'romance gotico'),
+(6, 'Autoayuda contemporánea'),
+(7, 'psicología práctica'),
+(8, 'Novela juvenil romántica');
 
 -- --------------------------------------------------------
 
@@ -100,15 +146,29 @@ CREATE TABLE `libro` (
   `año_publicacion` year(4) DEFAULT NULL,
   `id_editorial` int(11) DEFAULT NULL,
   `cantidad_total` int(11) NOT NULL,
-  `Imagen` varchar(225) NOT NULL
+  `Imagen` varchar(225) NOT NULL,
+  `sipnosis` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `libro`
 --
 
-INSERT INTO `libro` (`id_libro`, `titulo`, `Estante`, `año_publicacion`, `id_editorial`, `cantidad_total`, `Imagen`) VALUES
-(1, 'El principito', 'A1', '1943', 1, 10, '');
+INSERT INTO `libro` (`id_libro`, `titulo`, `Estante`, `año_publicacion`, `id_editorial`, `cantidad_total`, `Imagen`, `sipnosis`) VALUES
+(1, 'El principito', 'A1', '1943', 1, 10, '1764103726_imagen_2025-11-25_154845600.png', ''),
+(2, 'Nosotros en la Luna', 'A1', '2020', 2, 6, '1764103541_imagen_2025-11-25_154539710.png', ''),
+(4, 'La sombra del viento', 'A2', '2001', 2, 4, '1764105729_imagen_2025-11-25_162207530.png', ''),
+(5, 'El sutil arte de que te importe un carajo', 'A2', '2016', 3, 10, '1764181496_imagen_2025-11-26_132454847.png', ''),
+(6, 'El arte de ser nosotros', 'A2', '2023', 2, 10, '1764186964_imagen_2025-11-26_145546863.png', '');
+
+--
+-- Disparadores `libro`
+--
+DELIMITER $$
+CREATE TRIGGER `crear_disponibilidad_despues_libro` AFTER INSERT ON `libro` FOR EACH ROW INSERT INTO disponibilidad (id_libro, cantidad_disponible, id_estado)
+VALUES (NEW.id_libro, NEW.cantidad_total, 1)
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -126,7 +186,12 @@ CREATE TABLE `libro_autor` (
 --
 
 INSERT INTO `libro_autor` (`id_libro`, `id_autor`) VALUES
-(1, 1);
+(1, 1),
+(2, 2),
+(4, 3),
+(4, 4),
+(5, 5),
+(6, 6);
 
 -- --------------------------------------------------------
 
@@ -144,7 +209,14 @@ CREATE TABLE `libro_genero` (
 --
 
 INSERT INTO `libro_genero` (`id_libro`, `id_genero`) VALUES
-(1, 1);
+(1, 1),
+(2, 2),
+(4, 3),
+(4, 4),
+(4, 5),
+(5, 6),
+(5, 7),
+(6, 8);
 
 -- --------------------------------------------------------
 
@@ -171,6 +243,18 @@ CREATE TABLE `prestamo` (
   `fecha_devolucion` date DEFAULT NULL,
   `estado` enum('activo','devuelto','retrasado') DEFAULT 'activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `prestamo`
+--
+
+INSERT INTO `prestamo` (`id_prestamo`, `id_usuario`, `id_libro`, `fecha_prestamo`, `fecha_devolucion`, `estado`) VALUES
+(2, 13, 6, '2025-11-26', '2025-11-29', ''),
+(3, 11, 6, '2025-11-26', '2025-12-05', ''),
+(4, 13, 1, '2025-11-26', '2025-11-29', ''),
+(5, 13, 5, '2025-11-26', '2025-11-28', ''),
+(6, 14, 6, '2025-11-27', '2025-11-29', ''),
+(7, 13, 5, '2025-11-27', '2025-11-29', '');
 
 -- --------------------------------------------------------
 
@@ -222,12 +306,12 @@ CREATE TABLE `rol_user` (
 
 INSERT INTO `rol_user` (`id_usuario`, `id_rol`) VALUES
 (1, 1),
-(4, 2),
 (5, 2),
 (8, 2),
 (11, 2),
 (12, 2),
-(13, 2);
+(13, 2),
+(14, 2);
 
 -- --------------------------------------------------------
 
@@ -251,12 +335,12 @@ CREATE TABLE `usuario` (
 
 INSERT INTO `usuario` (`id_usuario`, `nombre`, `correo`, `contraseña`, `telefono`, `tipo_documento`, `numero_documento`) VALUES
 (1, 'Admin', 'admid@gmail.com', '$2y$10$UN2yuKpUbkpWHOM.tRHqGu21oSiXJpBlvtTvvOWsCJ56TbrSL1WWW', NULL, NULL, NULL),
-(4, 'Pauso Lino Meza', 'paulino@gmail.com', '$2y$10$1R9ZS0PUpKPi.f55lK4VbORJLGQmqd4Z9FuXpvGINSuJndgX3SzOS', NULL, NULL, NULL),
 (5, 'Marco Medina Molina1', 'marcos@gmail.com', '$2y$10$mJbttWTcdL0RvJuhooK43.cOtBz.UmypVK/q6IlK/U/TdqOX2Qafi', NULL, NULL, NULL),
 (8, 'Valeria pulido', 'valeria@gmail.com', '$2y$10$YEsOi07x68k0MT3h.QQ9x.jTzUuuOTNMAroC/BS2rlU8/x6A8mSsS', NULL, NULL, NULL),
 (11, 'Eulices Santamaria', 'eulises@gmail.com', '$2y$10$3vhHFdmOLLrKwrxQQCgYZe79DKn4zHCd8ANgfzQ.s56JlSe65hSw.', '3135224574', 'CC', '6708977'),
-(12, 'Daniel Suarez', 'daniel@gmail.com', '$2y$10$rw3k/leScaaVhwhZH0lnWucu3naPPF9OUWQ3F1UEqU12XTpEeNTL.', '3124225212', 'CC', '1111111111'),
-(13, 'Dana Cifuentes', 'Danacici04@gmail.com', '$2y$10$.qFF/QJwrhs8I./1Pu52f.JP6zvW.wTVTCxxbxCw8g0J5hfUOSjZK', '3124750781', 'CC', '1056768630');
+(12, 'Daniel Suarez', 'daniel@gmail.com', '$2y$10$rw3k/leScaaVhwhZH0lnWucu3naPPF9OUWQ3F1UEqU12XTpEeNTL.', '3124225212', 'CC', '11111111'),
+(13, 'Dana Cifuentes', 'Danacici04@gmail.com', '$2y$10$.qFF/QJwrhs8I./1Pu52f.JP6zvW.wTVTCxxbxCw8g0J5hfUOSjZK', '3124750781', 'CC', '1056768630'),
+(14, 'junior', 'santamaria@gmail.com', '$2y$10$34mB90rdFzZujUrhdn73W..w9V2HR2JX9uSuMObaEMOaulIOu2UOq', '3152417443', 'CC', '1056769689');
 
 --
 -- Índices para tablas volcadas
@@ -273,13 +357,20 @@ ALTER TABLE `autor`
 --
 ALTER TABLE `disponibilidad`
   ADD PRIMARY KEY (`id_disponibilidad`),
-  ADD KEY `id_libro` (`id_libro`);
+  ADD KEY `id_libro` (`id_libro`),
+  ADD KEY `fk_estado_disponibilidad` (`id_estado`);
 
 --
 -- Indices de la tabla `editorial`
 --
 ALTER TABLE `editorial`
   ADD PRIMARY KEY (`id_editorial`);
+
+--
+-- Indices de la tabla `estado`
+--
+ALTER TABLE `estado`
+  ADD PRIMARY KEY (`id_estado`);
 
 --
 -- Indices de la tabla `genero`
@@ -358,31 +449,37 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `autor`
 --
 ALTER TABLE `autor`
-  MODIFY `id_autor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_autor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `disponibilidad`
 --
 ALTER TABLE `disponibilidad`
-  MODIFY `id_disponibilidad` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_disponibilidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `editorial`
 --
 ALTER TABLE `editorial`
-  MODIFY `id_editorial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_editorial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `estado`
+--
+ALTER TABLE `estado`
+  MODIFY `id_estado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `genero`
 --
 ALTER TABLE `genero`
-  MODIFY `id_genero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_genero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `libro`
 --
 ALTER TABLE `libro`
-  MODIFY `id_libro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_libro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `permiso`
@@ -394,7 +491,7 @@ ALTER TABLE `permiso`
 -- AUTO_INCREMENT de la tabla `prestamo`
 --
 ALTER TABLE `prestamo`
-  MODIFY `id_prestamo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_prestamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `reserva`
@@ -412,7 +509,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- Restricciones para tablas volcadas
@@ -422,7 +519,8 @@ ALTER TABLE `usuario`
 -- Filtros para la tabla `disponibilidad`
 --
 ALTER TABLE `disponibilidad`
-  ADD CONSTRAINT `disponibilidad_ibfk_1` FOREIGN KEY (`id_libro`) REFERENCES `libro` (`id_libro`);
+  ADD CONSTRAINT `disponibilidad_ibfk_1` FOREIGN KEY (`id_libro`) REFERENCES `libro` (`id_libro`),
+  ADD CONSTRAINT `fk_estado_disponibilidad` FOREIGN KEY (`id_estado`) REFERENCES `estado` (`id_estado`);
 
 --
 -- Filtros para la tabla `libro`

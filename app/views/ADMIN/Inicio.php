@@ -35,6 +35,14 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
         <?php include __DIR__ . '/../layouts/NavADM.php'; ?>
 
         <main class="main-content">
+            <div class="floating-alerts" aria-live="polite" aria-atomic="true">
+                <?php if(isset($_GET['error']) && !empty($_GET['error'])): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <?= htmlspecialchars($_GET['error']) ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+            </div>
             <div class="container mt-4">
                 <h1 class="fw-bold mb-2">Inicio</h1>
                 <?php if (!empty($_SESSION['nombre'])): ?>
@@ -86,25 +94,37 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
         <div class="card-body">
             <h4 class="fw-bold mb-3">Últimos préstamos</h4>
 
-            <table class="table tabla-prestamos">
-                <thead class="table-light">
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Libro</th>
-                        </div> <!-- /.container -->
-                    </main>
-
-                </body>
-                </html>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-hover tabla-prestamos">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Libro</th>
+                            <th>Fecha Préstamo</th>
+                            <th>Fecha Devolución</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($ultimosPrestamos)): ?>
+                            <?php foreach ($ultimosPrestamos as $prestamo): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($prestamo['nombre_usuario']) ?></td>
+                                    <td><?= htmlspecialchars($prestamo['titulo_libro']) ?></td>
+                                    <td><?= htmlspecialchars(date('d/m/Y', strtotime($prestamo['fecha_prestamo']))) ?></td>
+                                    <td><?= htmlspecialchars(date('d/m/Y', strtotime($prestamo['fecha_devolucion']))) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">No hay préstamos recientes.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
 
         </div>
     </div>
 
-</body>
             </div>
-        </main>
-
-</body>
 </html>

@@ -191,6 +191,13 @@ class Usuario {
         return $stmt2->execute();
     }
 
+    public function contarTotalUsuarios() {
+        $sql = "SELECT COUNT(id_usuario) as total FROM usuario";
+        $resultado = $this->conexion->query($sql);
+        $fila = $resultado->fetch_assoc();
+        return $fila['total'] ?? 0;
+    }
+
 }
 
 ?>

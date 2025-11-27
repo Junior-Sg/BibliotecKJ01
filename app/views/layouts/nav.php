@@ -1,6 +1,5 @@
-<body>
-  <div class="header">
-    <img src="../../../public/img/Logos/L1.jpg" alt="Logo_biblioteckj" class="logo">
+<div class="header">
+    <img src="/BibliotecKJ01/public/img/Logos/L1.jpg" alt="Logo_biblioteckj" class="logo">
     <h1 class="titulo">Bibliotec_KJ</h1>
   </div>
 
@@ -29,11 +28,8 @@
       </li>
 
       <li class="despliegue">
-        <a href="#" class="trigger">Iniciar Sesión</a>
-        <ul class="despliegue-menu">
-          <li><a href="#">Usuario</a></li>
-          <li><a href="#">Administrador</a></li>
-        </ul>
+        <a href="<?= BASE_URL ?>LoginUsuario" class="trigger">Iniciar Sesión</a>
+      
       </li>
     </ul>
   </nav>
@@ -122,7 +118,8 @@
       pointer-events: none;
 
       position: absolute;
-      top: calc(100% + 6px);  50%;
+      top: calc(100% + 6px) 50%;
+      left: 50%;
       transform-origin: top center;
       transform: translateX(-50%) translateY(6px);
 
@@ -149,7 +146,7 @@
     }
 
     .despliegue .despliegue-menu a:hover {
-      background: #3b2f2f;
+      background: #5f2905fd;
     }
 
     /* Mantener visible cuando el cursor esté sobre el li o sobre el propio submenu */
@@ -231,4 +228,3 @@
       transform: translateX(-50%) translateY(0);
     }
   </style>
-</body>

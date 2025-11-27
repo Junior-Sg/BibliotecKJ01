@@ -2,35 +2,35 @@
   <nav class="sidebar bg-dark text-white p-3">
 
     <div class="sidebar-brand text-center mb-4">
-      <img src="../../../public/img/Logos/L1.jpg" class="logo-sidebar mb-2" alt="Logo">
+      <img src="/BibliotecKJ01/public/img/Logos/L1.jpg" class="logo-sidebar mb-2" alt="Logo">
       <h4 class="fw-bold">Bibliotec_KJ</h4>
     </div>
 
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a class="nav-link text-white" href="../ADMIN/Inicio.php"> <i class="bi bi-house">  Inicio</i></a>
+        <a class="nav-link text-white" href="<?= BASE_URL ?>Inicio/index"> <i class="bi bi-house">  Inicio</i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" href="../ADMIN/CrearPrestamo.php"><i class="bi bi-journal-check">  Prestamos</i></a>
+        <a class="nav-link text-white" href="<?= BASE_URL ?>Prestamo/crear"><i class="bi bi-journal-check">  Prestamos</i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" href="/"><i class="bi bi-arrow-clockwise">  Devolución de libros</i></a>
+        <a class="nav-link text-white" href="#"><i class="bi bi-arrow-clockwise">  Devolución de libros</i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" href="/"><i class="bi bi-calendar3">  Reservas</i></a>
+        <a class="nav-link text-white" href="#"><i class="bi bi-calendar3">  Reservas</i></a>
       </li>
 
       <li class="nav-item">
-        <a class="nav-link text-white" href="../ADMIN/GestionUsuarios.php"><i class="bi bi-people-fill">  Gestión de usuarios</i></a>
+        <a class="nav-link text-white" href="<?= BASE_URL ?>Usuarios/index"><i class="bi bi-people-fill">  Gestión de usuarios</i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" href="../ADMIN/GestionInventario.php"><i class="bi bi-box-fill">  Gestionar Inventario</i> </a>
+        <a class="nav-link text-white" href="<?= BASE_URL ?>Inventario/index"><i class="bi bi-box-fill">  Gestionar Inventario</i> </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" href="/"><i class="bi bi-clipboard2-data-fill">  Informes</i></a>
+        <a class="nav-link text-white" href="#"><i class="bi bi-clipboard2-data-fill">  Informes</i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" href="../../controllers/LogoutController.php"><i class="bi bi-door-closed-fill">  Cerrar sesión</i></a>
+        <a class="nav-link text-white" href="<?= BASE_URL ?>Logout/index"><i class="bi bi-door-closed-fill">  Cerrar sesión</i></a>
     </ul>
 
   </nav>

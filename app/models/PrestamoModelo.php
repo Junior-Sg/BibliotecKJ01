@@ -9,101 +9,164 @@ class PrestamoModelo {
         $this->db = (new Conexion())->conectar();
     }
 
-    // Registrar préstamo: insertar en tabla prestamo y decrementar cantidad_total del libro
+    // Registrar préstamo con la nueva estructura
     public function registrarPrestamo($idUsuario, $idLibro, $fechaPrestamo, $fechaDevolucion) {
+
         $this->db->begin_transaction();
+
         try {
-            $sql = "INSERT INTO prestamo (id_usuario, id_libro, fecha_prestamo, fecha_devolucion, estado)
-                    VALUES (?, ?, ?, ?, 'Prestado')";
 
-            $stmt = $this->db->prepare($sql);
-            if (!$stmt) throw new Exception('Error preparar insert prestamo: ' . $this->db->error);
-            $stmt->bind_param('iiss', $idUsuario, $idLibro, $fechaPrestamo, $fechaDevolucion);
-            if (!$stmt->execute()) throw new Exception('Error ejecutar insert prestamo: ' . $stmt->error);
+            // 1. Verificar disponibilidad REAL
+            $sqlDisp = "SELECT id_disponibilidad, cantidad_disponible 
+                        FROM disponibilidad 
+                        WHERE id_libro = ? FOR UPDATE";
 
-            // Decrementar cantidad_total si es mayor a 0 (o NULL -> dejar NULL)
-            $sql2 = "UPDATE libro SET cantidad_total = CASE WHEN cantidad_total IS NULL THEN NULL WHEN cantidad_total > 0 THEN cantidad_total - 1 ELSE 0 END WHERE id_libro = ?";
-            $stmt2 = $this->db->prepare($sql2);
-            if (!$stmt2) throw new Exception('Error preparar update libro: ' . $this->db->error);
-            $stmt2->bind_param('i', $idLibro);
-            if (!$stmt2->execute()) throw new Exception('Error ejecutar update libro: ' . $stmt2->error);
+            $stmtDisp = $this->db->prepare($sqlDisp);
+            $stmtDisp->bind_param("i", $idLibro);
+            $stmtDisp->execute();
+            $res = $stmtDisp->get_result();
 
-            // Actualizar tabla disponibilidad dentro de la misma transacción
-            $res = $this->db->query("SELECT cantidad_actual FROM disponibilidad WHERE id_libro = " . intval($idLibro) . " FOR UPDATE");
-            if ($res && $res->num_rows > 0) {
-                $r = $res->fetch_assoc();
-                $cant = $r['cantidad_actual'] === null ? null : intval($r['cantidad_actual']);
-                if ($cant !== null) {
-                    $nueva = max(0, $cant - 1);
-                    $estado = $nueva > 0 ? 'disponible' : 'prestado';
-                    $stmt3 = $this->db->prepare("UPDATE disponibilidad SET cantidad_actual = ?, estado = ?, fecha_actualizacion = NOW() WHERE id_libro = ?");
-                    if (!$stmt3) throw new Exception('Error preparar update disponibilidad: ' . $this->db->error);
-                    $stmt3->bind_param('isi', $nueva, $estado, $idLibro);
-                    if (!$stmt3->execute()) throw new Exception('Error ejecutar update disponibilidad: ' . $stmt3->error);
-                }
+            if ($res->num_rows == 0) {
+                throw new Exception("No existe registro en disponibilidad para este libro");
+            }
+
+            $row = $res->fetch_assoc();
+            $cantidad = intval($row["cantidad_disponible"]);
+
+            if ($cantidad <= 0) {
+                throw new Exception("No hay unidades disponibles");
+            }
+
+            // 2. Insertar préstamo
+            $sqlPrestamo = "INSERT INTO prestamo 
+                           (id_usuario, id_libro, fecha_prestamo, fecha_devolucion, estado)
+                           VALUES (?, ?, ?, ?, 'Prestado')";
+
+            $stmtPre = $this->db->prepare($sqlPrestamo);
+            $stmtPre->bind_param("iiss", $idUsuario, $idLibro, $fechaPrestamo, $fechaDevolucion);
+
+            if (!$stmtPre->execute()) {
+                throw new Exception("Error al registrar el préstamo: " . $stmtPre->error);
+            }
+
+            // 3. Actualizar disponibilidad
+            $nuevoValor = $cantidad - 1;
+            $nuevoEstado = ($nuevoValor > 0) ? 1 : 2; // 1=disponible, 2=prestado 
+
+            $sqlUpdate = "UPDATE disponibilidad 
+                          SET cantidad_disponible = ?, id_estado = ?
+                          WHERE id_libro = ?";
+
+            $stmtUpd = $this->db->prepare($sqlUpdate);
+            if ($stmtUpd === false) { // Verificar si la preparación falló
+                throw new Exception("Error al preparar la actualización de disponibilidad: " . $this->db->error);
+            }
+            $stmtUpd->bind_param("iii", $nuevoValor, $nuevoEstado, $idLibro);
+            if (!$stmtUpd->execute()) { // Verificar si la ejecución falló
+                throw new Exception("Error al actualizar disponibilidad: " . $stmtUpd->error);
             }
 
             $this->db->commit();
             return true;
+
         } catch (Exception $e) {
             $this->db->rollback();
-            error_log($e->getMessage());
+            error_log("Error en prestar: " . $e->getMessage());
             return false;
         }
     }
 
-    // Registrar devolución: marcar préstamo como Devuelto, incrementar cantidad y disponibilidad
+
+    // Registrar devolución
     public function registrarDevolucion($idPrestamo) {
+
         $this->db->begin_transaction();
+
         try {
-            // obtener préstamo
-            $stmt = $this->db->prepare("SELECT id_libro, estado FROM prestamo WHERE id_prestamo = ? FOR UPDATE");
-            if (!$stmt) throw new Exception('Error preparar select prestamo: ' . $this->db->error);
-            $stmt->bind_param('i', $idPrestamo);
+
+            // 1. Buscar préstamo
+            $sqlSel = "SELECT id_libro, estado 
+                       FROM prestamo 
+                       WHERE id_prestamo = ? FOR UPDATE";
+
+            $stmt = $this->db->prepare($sqlSel);
+            $stmt->bind_param("i", $idPrestamo);
             $stmt->execute();
-            $res = $stmt->get_result();
-            if ($res->num_rows === 0) throw new Exception('Préstamo no encontrado');
-            $row = $res->fetch_assoc();
-            if (strtolower($row['estado']) === 'devuelto') {
-                // ya devuelto
+            $data = $stmt->get_result();
+
+            if ($data->num_rows == 0) {
+                throw new Exception("Préstamo no encontrado");
+            }
+
+            $prestamo = $data->fetch_assoc();
+
+            if ($prestamo["estado"] === "Devuelto") {
                 $this->db->commit();
                 return true;
             }
-            $idLibro = intval($row['id_libro']);
 
-            // actualizar prestamo
-            $upd = $this->db->prepare("UPDATE prestamo SET estado = 'Devuelto' WHERE id_prestamo = ?");
-            if (!$upd) throw new Exception('Error preparar update prestamo: ' . $this->db->error);
-            $upd->bind_param('i', $idPrestamo);
-            if (!$upd->execute()) throw new Exception('Error ejecutar update prestamo: ' . $upd->error);
+            $idLibro = intval($prestamo["id_libro"]);
 
-            // incrementar libro.cantidad_total
-            $stmt2 = $this->db->prepare("UPDATE libro SET cantidad_total = CASE WHEN cantidad_total IS NULL THEN NULL ELSE cantidad_total + 1 END WHERE id_libro = ?");
-            if (!$stmt2) throw new Exception('Error preparar update libro: ' . $this->db->error);
-            $stmt2->bind_param('i', $idLibro);
-            if (!$stmt2->execute()) throw new Exception('Error ejecutar update libro: ' . $stmt2->error);
+            // 2. Marcar préstamo como devuelto
+            $sqlUpdPrestamo = "UPDATE prestamo SET estado='Devuelto' WHERE id_prestamo=?";
+            $stmtUpd = $this->db->prepare($sqlUpdPrestamo);
+            $stmtUpd->bind_param("i", $idPrestamo);
+            $stmtUpd->execute();
 
-            // actualizar disponibilidad
-            $res2 = $this->db->query("SELECT cantidad_actual FROM disponibilidad WHERE id_libro = " . intval($idLibro) . " FOR UPDATE");
-            if ($res2 && $res2->num_rows > 0) {
-                $r2 = $res2->fetch_assoc();
-                $cant = $r2['cantidad_actual'] === null ? null : intval($r2['cantidad_actual']);
-                if ($cant !== null) {
-                    $nueva = $cant + 1;
-                    $estado = $nueva > 0 ? 'disponible' : 'prestado';
-                    $stmt3 = $this->db->prepare("UPDATE disponibilidad SET cantidad_actual = ?, estado = ?, fecha_actualizacion = NOW() WHERE id_libro = ?");
-                    if (!$stmt3) throw new Exception('Error preparar update disponibilidad: ' . $this->db->error);
-                    $stmt3->bind_param('isi', $nueva, $estado, $idLibro);
-                    if (!$stmt3->execute()) throw new Exception('Error ejecutar update disponibilidad: ' . $stmt3->error);
-                }
+            // 3. Actualizar disponibilidad
+            $sqlDisp = "SELECT cantidad_disponible FROM disponibilidad WHERE id_libro = ? FOR UPDATE";
+            $stmtDisp = $this->db->prepare($sqlDisp);
+            $stmtDisp->bind_param("i", $idLibro);
+            $stmtDisp->execute();
+            $res = $stmtDisp->get_result();
+            $row = $res->fetch_assoc();
+
+            $nueva = intval($row["cantidad_disponible"]) + 1;
+
+            $sqlUpdate = "UPDATE disponibilidad 
+                          SET cantidad_disponible=?, id_estado=1
+                          WHERE id_libro=?";
+
+            $stmtUpdDisp = $this->db->prepare($sqlUpdate);
+            if ($stmtUpdDisp === false) {
+                throw new Exception("Error al preparar la actualización de devolución: " . $this->db->error);
             }
+            $stmtUpdDisp->bind_param("ii", $nueva, $idLibro);
+            $stmtUpdDisp->execute();
 
             $this->db->commit();
             return true;
+
         } catch (Exception $e) {
             $this->db->rollback();
-            error_log('registrarDevolucion error: ' . $e->getMessage());
+            error_log("Error en devolucion: " . $e->getMessage());
             return false;
         }
     }
+
+    public function contarPrestamosActivos() {
+        $sql = "SELECT COUNT(id_prestamo) as total FROM prestamo WHERE estado = 'Prestado'";
+        $resultado = $this->db->query($sql);
+        $fila = $resultado->fetch_assoc();
+        return $fila['total'] ?? 0;
+    }
+
+    public function obtenerUltimosPrestamos($limite = 5) {
+        $sql = "SELECT 
+                    p.id_prestamo,
+                    u.nombre as nombre_usuario,
+                    l.titulo as titulo_libro,
+                    p.fecha_prestamo,
+                    p.fecha_devolucion
+                FROM prestamo p
+                JOIN usuario u ON p.id_usuario = u.id_usuario
+                JOIN libro l ON p.id_libro = l.id_libro
+                ORDER BY p.fecha_prestamo DESC
+                LIMIT ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $limite);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
 }
