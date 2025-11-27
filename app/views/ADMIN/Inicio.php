@@ -35,14 +35,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
         <?php include __DIR__ . '/../layouts/NavADM.php'; ?>
 
         <main class="main-content">
-            <div class="floating-alerts" aria-live="polite" aria-atomic="true">
-                <?php if(isset($_GET['error']) && !empty($_GET['error'])): ?>
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <?= htmlspecialchars($_GET['error']) ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                <?php endif; ?>
-            </div>
             <div class="container mt-4">
                 <h1 class="fw-bold mb-2">Inicio</h1>
                 <?php if (!empty($_SESSION['nombre'])): ?>
@@ -62,31 +54,43 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
                 </div>
             </div>
         </div>
+      <?php endwhile; ?>
+    </div>
+  <?php endif; ?>
+</div>
 
-        <div class="col-md-4">
-            <div class="tarjeta-dashboard" style="background:#1ebc73;">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-arrow-repeat fs-1 me-3"></i>
-                    <div>
-                    
-                        <h3 class="mb-0"><?= $prestamosActivos ?></h3>
-                        <small class="opacity-75">Préstamos activos</small>
-                    </div>
-                </div>
-            </div>
+<!-- Modal Detalle -->
+<div class="modal fade" id="modalDetalle" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detalle del libro</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <img id="det_imagen" src="" alt="Portada" class="img-fluid rounded" style="object-fit:cover;">
+          </div>
+          <div class="col-md-8">
+            <h4 id="det_titulo" class="mb-2"></h4>
+            <p id="det_sinopsis" class="text-muted"></p>
+            <p class="mb-1"><strong>Autores:</strong> <span id="det_autores"></span></p>
+            <p class="mb-1"><strong>Géneros:</strong> <span id="det_generos"></span></p>
+            <p class="mb-1"><strong>Editorial:</strong> <span id="det_editorial"></span></p>
+            <p class="mb-1"><strong>Año:</strong> <span id="det_anio"></span></p>
+            <p class="mb-1"><strong>Ubicación:</strong> <span id="det_estante"></span></p>
+            <p class="mb-1"><strong>Disponibles:</strong> <span id="det_disp"></span></p>
+          </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="tarjeta-dashboard" style="background:#f79c1d;">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-people fs-1 me-3"></i>
-                    <div>
-                        <h3 class="mb-0"><?= $totalUsuarios ?></h3>
-                        <small class="opacity-75">Usuarios registrados</small>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnReservar" type="button" class="btn btn-success">Reservar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
     </div>
 
@@ -94,37 +98,25 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
         <div class="card-body">
             <h4 class="fw-bold mb-3">Últimos préstamos</h4>
 
-            <div class="table-responsive">
-                <table class="table table-hover tabla-prestamos">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Usuario</th>
-                            <th>Libro</th>
-                            <th>Fecha Préstamo</th>
-                            <th>Fecha Devolución</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (!empty($ultimosPrestamos)): ?>
-                            <?php foreach ($ultimosPrestamos as $prestamo): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($prestamo['nombre_usuario']) ?></td>
-                                    <td><?= htmlspecialchars($prestamo['titulo_libro']) ?></td>
-                                    <td><?= htmlspecialchars(date('d/m/Y', strtotime($prestamo['fecha_prestamo']))) ?></td>
-                                    <td><?= htmlspecialchars(date('d/m/Y', strtotime($prestamo['fecha_devolucion']))) ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="4" class="text-center text-muted">No hay préstamos recientes.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+            <table class="table tabla-prestamos">
+                <thead class="table-light">
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Libro</th>
+                        </div> <!-- /.container -->
+                    </main>
+
+                </body>
+                </html>
+                </tbody>
+            </table>
 
         </div>
     </div>
 
+</body>
             </div>
+        </main>
+
+</body>
 </html>

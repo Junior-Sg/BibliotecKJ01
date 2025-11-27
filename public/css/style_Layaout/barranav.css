@@ -1,6 +1,8 @@
+/* body */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 body {
     margin: 0;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Merriweather', serif;
     background-color: #f5f3f0;
 }
 
@@ -9,7 +11,7 @@ body {
     position: relative;
     text-align: center;
     padding: 20px 0;
-    background: linear-gradient(180deg, #4a3f35, #7d5a50);
+    background: linear-gradient(180deg,#8b6f57,#7d5a50);
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
@@ -22,7 +24,6 @@ body {
     width: 90px;
     height: 90px;
     border-radius: 20%;
-    border: 2px solid #f5f3f0;
     object-fit: cover;
 }
 
@@ -39,8 +40,9 @@ body {
 
 /* Barra de navegación en horizontal */
 .navbar {
-    background: #3b2f2f;
+    background: #161212;
     padding: 10px 0;
+    justify-content: center;   /* centra el menú horizontalmente */
 }
 
 .menu {

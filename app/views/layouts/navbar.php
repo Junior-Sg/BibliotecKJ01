@@ -1,4 +1,6 @@
 <div class="header">
+
+  <div class="header">
     <img src="/BibliotecKJ01/public/img/Logos/L1.jpg" alt="Logo_biblioteckj" class="logo">
     <h1 class="titulo">Bibliotec_KJ</h1>
   </div>
@@ -227,4 +229,5 @@
       pointer-events: auto;
       transform: translateX(-50%) translateY(0);
     }
+  </style>
   </style>
