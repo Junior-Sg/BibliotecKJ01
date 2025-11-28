@@ -272,7 +272,7 @@ class InventarioModelo {
     }
 
     // Actualizar libro (sin tocar relaciones)
-    public function actualizarLibro($idLibro, $titulo, $estante, $anio, $idEditorial, $cantidad, $imagen = null, $sipnosis) {
+    public function actualizarLibro($idLibro, $titulo, $estante, $anio, $idEditorial, $cantidad, $sipnosis, $imagen = null) {
         $sql = "UPDATE libro SET titulo = ?, Estante = ?, año_publicacion = ?, id_editorial = ?, cantidad_total = ?, sipnosis = ?";
         if ($imagen !== null) {
             $sql .= ", Imagen = ?";

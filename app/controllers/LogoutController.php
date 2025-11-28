@@ -28,8 +28,8 @@ class LogoutController {
             $message = "Error: " . htmlspecialchars($_GET['error']);
         }
 
-        // 4. Redirigir al login
-        header("Location: /BibliotecKJ01/index.php?c=LoginUsuario&a=index&msg=" . urlencode($message));
+        // 4. Redirigir al catálogo de libros
+        header("Location: /BibliotecKJ01/index.php?controller=Libro&action=index");
         exit;
     }
 }

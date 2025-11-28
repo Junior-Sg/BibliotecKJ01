@@ -62,15 +62,13 @@ class LoginUsuarioController {
     private function redirigirPorRol($rol) {
         switch ($rol) {
             case 1: // Admin
-                header("Location: /BibliotecKJ01/index.php?c=Inicio&a=index");
+                header("Location: /BibliotecKJ01/index.php?controller=Inicio&action=index");
                 break;
-            case 2: // Cliente - Asumiendo que tendrá su propio controlador a futuro
-                // De momento, podría redirigir a una página genérica o de vuelta al login con un mensaje.
-                // Por ahora, para mantener consistencia, redirigimos a una acción de logout si el destino no está claro.
-                header("Location: /BibliotecKJ01/index.php?c=Logout&a=index&error=No_disponible_para_clientes");
+            case 2: // Cliente
+                header("Location: /BibliotecKJ01/index.php?controller=Libro&action=index");
                 break;
             default: // Rol no reconocido o sin rol
-                header("Location: /BibliotecKJ01/index.php?c=LoginUsuario&a=index&error=Rol no asignado");
+                header("Location: /BibliotecKJ01/index.php?controller=LoginUsuario&action=index&error=Rol no asignado");
         }
         exit;
     }

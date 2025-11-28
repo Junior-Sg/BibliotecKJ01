@@ -22,7 +22,6 @@ class LibroModelo {
             LEFT JOIN editorial e ON e.id_editorial = l.id_editorial
             ORDER BY l.titulo ASC
         ";
-
         $res = $this->db->query($sql);
 
         $libros = [];

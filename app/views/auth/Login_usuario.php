@@ -65,7 +65,7 @@
 
       <!-- LOGIN -->
       <div class="page page-login" id="loginPage">
-        <form action="<?= BASE_URL ?>LoginUsuario/login" method="POST">
+        <form action="<?= BASE_URL ?>index.php?controller=LoginUsuario&action=login" method="POST">
           <h2>Inicio de Sesión</h2>
 
           <div class="input-group">
@@ -93,7 +93,7 @@
 
       <!-- REGISTRO -->
       <div class="page page-register" id="registerPage">
-        <form action="<?= BASE_URL ?>RegistrarUsuario/registrar" method="POST">
+        <form action="<?= BASE_URL ?>index.php?controller=RegistrarUsuario&action=registrar" method="POST">
           <h2>Registro de Usuario</h2>
 
           <div class="input-group">

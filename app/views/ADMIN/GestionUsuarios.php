@@ -33,24 +33,7 @@
 </head>
 <body>
 <?php include __DIR__ . '/../layouts/NavADM.php'; ?>
-<?php
-// Las variables $msg y $error son pasadas por el controlador.
-?>
-<!-- Contenedor fijo para alertas, evita quedar detrás de la sidebar -->
-<div class="floating-alerts" aria-live="polite" aria-atomic="true">
-  <?php if ($msg): ?>
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-      <?= htmlspecialchars($msg) ?>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  <?php endif; ?>
-  <?php if ($error): ?>
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      <?= htmlspecialchars($error) ?>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  <?php endif; ?>
-</div>
+<?php include __DIR__ . '/../layouts/alerts.php'; ?>
 <main class="main-content">
     <div class="container mt-4">
 
@@ -139,7 +122,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-      <form action="<?= BASE_URL ?>Usuarios/guardar" method="POST">
+      <form action="index.php?controller=Usuarios&action=guardar" method="POST">
         <div class="modal-body">
 
           <label>Nombre:</label>
@@ -194,7 +177,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-      <form action="<?= BASE_URL ?>Usuarios/actualizar" method="POST">
+      <form action="index.php?controller=Usuarios&action=actualizar" method="POST">
         <div class="modal-body">
 
           <input type="hidden" name="id_usuario" id="edit_id">
@@ -251,7 +234,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-      <form action="<?= BASE_URL ?>Usuarios/eliminar" method="POST">
+      <form action="index.php?controller=Usuarios&action=eliminar" method="POST">
         <div class="modal-body">
           <p>¿Está seguro de que desea eliminar este usuario?</p>
 
@@ -282,31 +265,7 @@ function cargarDatosEditar(id, nombre, correo, telefono, tipo_documento, numero_
 }
 </script>
 
-<script>
-// Auto cerrar alertas y limpiar query string
-document.addEventListener('DOMContentLoaded', function () {
-  var alerts = document.querySelectorAll('.alert');
-  if (alerts.length) {
-    alerts.forEach(function(a){
-      setTimeout(function(){
-        try {
-          // usar API de bootstrap si está disponible
-          if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
-            bootstrap.Alert.getOrCreateInstance(a).close();
-          } else {
-            a.classList.remove('show');
-          }
-        } catch(e){ a.style.display = 'none'; }
-      }, 5000);
-    });
-    // eliminar query params para que no reaparezcan al recargar
-    if (history.replaceState) {
-      var clean = location.protocol + '//' + location.host + location.pathname;
-      history.replaceState({}, document.title, clean);
-    }
-  }
-});
-</script>
+
 
 <!-- Bootstrap JS (bundle incluye Popper) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

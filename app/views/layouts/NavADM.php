@@ -8,10 +8,10 @@
 
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a class="nav-link text-white" href="<?= BASE_URL ?>Inicio/index"> <i class="bi bi-house">  Inicio</i></a>
+        <a class="nav-link text-white" href="<?= BASE_URL ?>index.php?controller=Inicio&action=index"> <i class="bi bi-house">  Inicio</i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" href="<?= BASE_URL ?>Prestamo/crear"><i class="bi bi-journal-check">  Prestamos</i></a>
+        <a class="nav-link text-white" href="<?= BASE_URL ?>index.php?controller=Prestamo&action=crear"><i class="bi bi-journal-check">  Prestamos</i></a>
       </li>
       <li class="nav-item">
         <a class="nav-link text-white" href="#"><i class="bi bi-arrow-clockwise">  Devolución de libros</i></a>
@@ -21,16 +21,16 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link text-white" href="<?= BASE_URL ?>Usuarios/index"><i class="bi bi-people-fill">  Gestión de usuarios</i></a>
+        <a class="nav-link text-white" href="<?= BASE_URL ?>index.php?controller=Usuarios&action=index"><i class="bi bi-people-fill">  Gestión de usuarios</i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" href="<?= BASE_URL ?>Inventario/index"><i class="bi bi-box-fill">  Gestionar Inventario</i> </a>
+        <a class="nav-link text-white" href="<?= BASE_URL ?>index.php?controller=Inventario&action=index"><i class="bi bi-box-fill">  Gestionar Inventario</i> </a>
       </li>
       <li class="nav-item">
         <a class="nav-link text-white" href="#"><i class="bi bi-clipboard2-data-fill">  Informes</i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" href="<?= BASE_URL ?>Logout/index"><i class="bi bi-door-closed-fill">  Cerrar sesión</i></a>
+        <a class="nav-link text-white" href="<?= BASE_URL ?>index.php?controller=Logout&action=index"><i class="bi bi-door-closed-fill">  Cerrar sesión</i></a>
     </ul>
 
   </nav>

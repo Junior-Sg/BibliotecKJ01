@@ -40,16 +40,16 @@ class PrestamoController {
 
             // Validar que los datos esenciales no estén vacíos
             if (!$idUsuario || !$idLibro || empty($fechaDevolucion)) {
-                header('Location: ' . BASE_URL . 'Prestamo/crear?mensaje=error');
+                header('Location: index.php?controller=Prestamo&action=crear&msg_error=' . urlencode('Error al registrar el préstamo.'));
                 exit;
             }
 
             // Llamar al modelo para registrar el préstamo
             $resultado = $this->prestamoModelo->registrarPrestamo($idUsuario, $idLibro, $fechaPrestamo, $fechaDevolucion);
 
-            // Redirigir según el resultado
-            $mensaje = $resultado ? 'ok' : 'error';
-            header('Location: ' . BASE_URL . 'Prestamo/crear?mensaje=' . $mensaje);
+            $mensaje = $resultado ? 'Préstamo realizado correctamente.' : 'Error al registrar el préstamo.';
+            $param = $resultado ? 'msg_success' : 'msg_error';
+            header("Location: index.php?controller=Prestamo&action=crear&$param=" . urlencode($mensaje));
             exit;
         }
     }
@@ -58,15 +58,15 @@ class PrestamoController {
     public function registrarDevolucion() {
         $idPrestamo = isset($_POST['id_prestamo']) ? intval($_POST['id_prestamo']) : 0;
         if ($idPrestamo === 0) {
-            header('Location: ' . BASE_URL . 'Prestamo/crear?mensaje=error');
+            header('Location: index.php?controller=Prestamo&action=crear&msg_error=' . urlencode('ID de préstamo inválido.'));
             return;
         }
 
         $ok = $this->prestamoModelo->registrarDevolucion($idPrestamo);
         if ($ok) {
-            header("Location: " . BASE_URL . "Prestamo/crear?mensaje=ok");
+            header("Location: index.php?controller=Prestamo&action=crear&msg_success=" . urlencode('Devolución registrada correctamente.'));
         } else {
-            header("Location: /BibliotecKJ01/index.php?c=Prestamo&a=crear&mensaje=error");
+            header("Location: index.php?controller=Prestamo&action=crear&msg_error=" . urlencode('No se pudo registrar la devolución.'));
         }
     }
 }

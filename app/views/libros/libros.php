@@ -93,7 +93,7 @@
       <?php while ($book = $libros->fetch_assoc()): ?>
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
           <div class="card h-100 shadow-sm">
-            <?php $cover = !empty($book['Imagen']) ? 'public/img/Libros/' . $book['Imagen'] : 'public/img/ibros'; ?>
+            <?php $cover = !empty($book['Imagen']) ? BASE_URL . 'public/img/Libros/' . $book['Imagen'] : BASE_URL . 'public/img/ibros'; ?>
             <img src="<?= htmlspecialchars($cover) ?>" alt="<?= htmlspecialchars($book['titulo']) ?>" class="card-img-top" style="height:260px;object-fit:cover;">
             <div class="card-body d-flex flex-column">
               <h5 class="card-title text-center"><?= htmlspecialchars($book['titulo']) ?></h5>
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const d = json.data;
       libroActual = d;
 
-      const imgPath = d.Imagen ? `public/img/Libros/${d.Imagen}` : 'public/img/Libros';
+      const imgPath = d.Imagen ? `<?= BASE_URL ?>public/img/Libros/${d.Imagen}` : '<?= BASE_URL ?>public/img/Libros';
       document.getElementById('det_imagen').src = imgPath;
       document.getElementById('det_titulo').textContent = d.titulo;
       document.getElementById('det_sinopsis').textContent = d.sinopsis || 'Sin sinopsis disponible.';

@@ -29,13 +29,13 @@ require_once __DIR__ . '/../layouts/NavADM.php';
 
 
 <div class="floating-alerts" aria-live="polite" aria-atomic="true">
-    <?php if(isset($_GET['mensaje']) && $_GET['mensaje'] == 'ok'): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">Préstamo realizado correctamente.
+    <?php if(isset($_GET['msg_success'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert"><?= htmlspecialchars(urldecode($_GET['msg_success'])) ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
-    <?php if(isset($_GET['mensaje']) && $_GET['mensaje'] == 'error'): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">Error al registrar el préstamo.
+    <?php if(isset($_GET['msg_error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert"><?= htmlspecialchars(urldecode($_GET['msg_error'])) ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
@@ -66,7 +66,7 @@ require_once __DIR__ . '/../layouts/NavADM.php';
 
           <div id="usuarioResultado"></div>
 
-          <form id="formRegistrarPrestamo" action="<?= BASE_URL ?>Prestamo/registrarPrestamo" method="POST">
+          <form id="formRegistrarPrestamo" action="index.php?controller=Prestamo&action=registrarPrestamo" method="POST">
               <input type="hidden" name="id_usuario" id="id_usuario" required>
 
               <div class="mb-3">

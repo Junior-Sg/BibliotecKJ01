@@ -29,9 +29,8 @@
         </ul>
       </li>
 
-      <li class="despliegue">
-        <a href="<?= BASE_URL ?>LoginUsuario" class="trigger">Iniciar Sesión</a>
-      
+      <li>
+        <a href="<?= BASE_URL ?>index.php?controller=LoginUsuario">Iniciar Sesión</a>
       </li>
     </ul>
   </nav>

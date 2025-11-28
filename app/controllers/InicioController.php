@@ -38,7 +38,7 @@ class InicioController {
             $libros = $this->libroModelo->obtenerTodosLosLibrosParaCatalogo();
 
             // Cargar la vista del catálogo público
-            require_once __DIR__ . "/../views/libros/index.php";
+            require_once __DIR__ . "/../views/libros/libros.php";
         }
     }
 }

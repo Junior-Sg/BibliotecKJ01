@@ -118,12 +118,12 @@ class InventarioController {
     }
 
     private function redirigirConExito($mensaje) {
-        header('Location: ' . BASE_URL . 'Inventario/index?msg=' . urlencode($mensaje));
+        header('Location: index.php?controller=Inventario&action=index&msg_success=' . urlencode($mensaje));
         exit;
     }
 
     private function redirigirConError($mensaje) {
-        header('Location: ' . BASE_URL . 'Inventario/index?error=' . urlencode($mensaje));
+        header('Location: index.php?controller=Inventario&action=index&msg_error=' . urlencode($mensaje));
         exit;
     }
 }

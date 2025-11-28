@@ -42,22 +42,75 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
                 <?php endif; ?>
                 
     <div class="row g-4 mb-4">
-
-        <div class="col-md-4">
-            <div class="tarjeta-dashboard" style="background:#287bff;">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-book fs-1 me-3"></i>
-                    <div>
-                        <h3 class="mb-0"><?= $totalLibros ?></h3>
-                        <small class="opacity-75">Libros</small>
-                    </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="tarjeta-dashboard" style="background: linear-gradient(135deg, #287bff, #1a6ce8);">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-book fs-1 me-3"></i>
+                <div>
+                    <h3 class="mb-0"><?= $totalLibros ?? 0 ?></h3>
+                    <small class="opacity-75">Libros Totales</small>
                 </div>
             </div>
         </div>
-      <?php endwhile; ?>
     </div>
-  <?php endif; ?>
+    <div class="col-lg-4 col-md-6">
+        <div class="tarjeta-dashboard" style="background: linear-gradient(135deg, #20c997, #18a278);">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-journal-arrow-up fs-1 me-3"></i>
+                <div>
+                    <h3 class="mb-0"><?= $prestamosActivos ?? 0 ?></h3>
+                    <small class="opacity-75">Préstamos Activos</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="tarjeta-dashboard" style="background: linear-gradient(135deg, #fd7e14, #d96d11);">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-people fs-1 me-3"></i>
+                <div>
+                    <h3 class="mb-0"><?= $totalUsuarios ?? 0 ?></h3>
+                    <small class="opacity-75">Usuarios Registrados</small>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<div class="card shadow border-0">
+    <div class="card-body">
+        <h4 class="fw-bold mb-3">Últimos préstamos</h4>
+        <div class="table-responsive">
+            <table class="table tabla-prestamos align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Libro</th>
+                        <th>Fecha Préstamo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($ultimosPrestamos)): ?>
+                        <?php foreach ($ultimosPrestamos as $prestamo): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($prestamo['nombre_usuario']) ?></td>
+                                <td><?= htmlspecialchars($prestamo['titulo_libro']) ?></td>
+                                <td><?= htmlspecialchars(date('d/m/Y', strtotime($prestamo['fecha_prestamo']))) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">No hay préstamos recientes.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</div> <!-- /.container -->
+</main>
 
 <!-- Modal Detalle -->
 <div class="modal fade" id="modalDetalle" tabindex="-1" aria-hidden="true">
@@ -91,32 +144,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     </div>
   </div>
 </div>
-
-    </div>
-
-    <div class="card shadow border-0">
-        <div class="card-body">
-            <h4 class="fw-bold mb-3">Últimos préstamos</h4>
-
-            <table class="table tabla-prestamos">
-                <thead class="table-light">
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Libro</th>
-                        </div> <!-- /.container -->
-                    </main>
-
-                </body>
-                </html>
-                </tbody>
-            </table>
-
-        </div>
-    </div>
-
-</body>
-            </div>
-        </main>
 
 </body>
 </html>

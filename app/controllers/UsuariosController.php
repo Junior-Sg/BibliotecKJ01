@@ -105,12 +105,12 @@ class UsuariosController {
 
     // Funciones de ayuda para no repetir código
     private function redirigirConExito($mensaje) {
-        header('Location: ' . BASE_URL . 'Usuarios/index?msg=' . urlencode($mensaje));
+        header('Location: index.php?controller=Usuarios&action=index&msg_success=' . urlencode($mensaje));
         exit;
     }
 
     private function redirigirConError($mensaje) {
-        header('Location: ' . BASE_URL . 'Usuarios/index?error=' . urlencode($mensaje));
+        header('Location: index.php?controller=Usuarios&action=index&msg_error=' . urlencode($mensaje));
         exit;
     }
 }

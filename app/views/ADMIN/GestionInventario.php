@@ -18,24 +18,12 @@
 // 1. Cargar el menú de navegación
 require_once __DIR__ . '/../layouts/NavADM.php';
 
-// Las variables ($libros, $editoriales, $filters, $msg, $error) 
+// Cargar el nuevo sistema de alertas
+include __DIR__ . '/../layouts/alerts.php';
+
+// Las variables ($libros, $editoriales, $filters) 
 // son preparadas y pasadas por el controlador (InventarioController.php).
 ?>
-
-<div class="floating-alerts" aria-live="polite" aria-atomic="true">
-    <?php if ($msg): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($msg) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
-    <?php if ($error): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($error) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
-</div>
 
 <main class="main-content">
     <div class="container mt-5">
@@ -58,7 +46,9 @@ require_once __DIR__ . '/../layouts/NavADM.php';
 
     <!-- FILTROS -->
     <div class="filter-card mb-3">
-    <form id="formFiltros" class="row g-2 mb-0 align-items-end" method="GET" action="<?= BASE_URL ?>Inventario/index">
+    <form id="formFiltros" class="row g-2 mb-0 align-items-end" method="GET" action="index.php">
+        <input type="hidden" name="controller" value="Inventario">
+        <input type="hidden" name="action" value="index">
         <div class="col-md-2">
             <input type="text" name="estante" class="form-control form-control-sm" placeholder="Estante" value="<?= htmlspecialchars($filters['estante']) ?>">
         </div>
@@ -143,7 +133,7 @@ require_once __DIR__ . '/../layouts/NavADM.php';
                     <div class="modal fade" id="modalEliminar<?= $l['id_libro'] ?>">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <form action="<?= BASE_URL ?>Inventario/eliminarLibro" method="POST">
+                                <form action="index.php?controller=Inventario&action=eliminarLibro" method="POST">
                                     <div class="modal-header bg-danger text-white">
                                         <h5 class="modal-title">¿Eliminar libro?</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -171,7 +161,7 @@ require_once __DIR__ . '/../layouts/NavADM.php';
                         <div class="modal fade" id="modalEditar<?= $l['id_libro'] ?>">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
-                                    <form action="<?= BASE_URL ?>Inventario/actualizarLibro" method="POST" enctype="multipart/form-data">
+                                    <form action="index.php?controller=Inventario&action=actualizarLibro" method="POST" enctype="multipart/form-data">
                                         <div class="modal-header bg-warning">
                                             <h5 class="modal-title">Editar Libro</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -254,7 +244,7 @@ require_once __DIR__ . '/../layouts/NavADM.php';
 <div class="modal fade" id="modalRegistrar">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="<?= BASE_URL ?>Inventario/registrarLibro" method="POST" enctype="multipart/form-data">
+            <form action="index.php?controller=Inventario&action=registrarLibro" method="POST" enctype="multipart/form-data">
 
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">Registrar Libro</h5>
@@ -345,31 +335,7 @@ require_once __DIR__ . '/../layouts/NavADM.php';
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const alerts = document.querySelectorAll('.floating-alerts .alert');
-    if (!alerts || alerts.length === 0) return;
 
-    // Auto-close after 3 segundos
-    setTimeout(() => {
-        alerts.forEach(a => {
-            try {
-                const bsAlert = new bootstrap.Alert(a);
-                bsAlert.close();
-            } catch (e) {
-                // fallback: remove element
-                a.remove();
-            }
-        });
-
-        // Limpiar query string para que no reaparezcan al recargar
-        if (window.location.search && window.history && window.history.replaceState) {
-            const url = window.location.protocol + '//' + window.location.host + window.location.pathname;
-            window.history.replaceState({}, document.title, url);
-        }
-    }, 3000);
-});
-</script>
 
 <script>
 // Evitar problemas de stacking-context moviendo los modales al final del body
@@ -388,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function(){
     var btn = document.getElementById('btnLimpiar');
     if (btn) {
-        btn.addEventListener('click', () => window.location.href = '<?= BASE_URL ?>Inventario/index');
+        btn.addEventListener('click', () => window.location.href = 'index.php?controller=Inventario&action=index');
     }
 });
 </script>
