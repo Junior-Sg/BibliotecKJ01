@@ -19,6 +19,26 @@
         .main-content { padding-left: 260px; }
         .card .form-label { color: #3b2a20; font-weight: 600; }
         .floating-alerts .alert { box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+        /* Custom styles for compact cards */
+        .compact-card .card-img-top {
+            height: 120px;
+            object-fit: cover;
+        }
+        .compact-card .card-body {
+            padding: 0.5rem; /* Equivalent to p-2 */
+        }
+        .compact-card .card-title {
+            font-size: 0.875rem; /* text-sm */
+        }
+        .compact-card .card-text {
+            font-size: 0.75rem; /* text-xs */
+        }
+        .btn-xs {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            border-radius: 0.2rem;
+        }
     </style>
 </head>
 <body>
@@ -43,66 +63,112 @@ require_once __DIR__ . '/../layouts/NavADM.php';
 
 <main class="main-content">
     <div class="container mt-4">
+        <h2 class="text-center mb-4 display-4">Gestión de Préstamos</h2>
 
-      <h2 class="text-center mb-4">Registrar Préstamo</h2>
+        
+        
+        <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#prestamoModal">
+            <i class="bi bi-plus-circle me-2"></i>Registrar Nuevo Préstamo
+        </button>
 
-      <div class="card shadow p-4">
+        <!-- Aquí irá la tabla o tarjetas de libros disponibles -->
+        <div class="card shadow p-4 mb-4">
+            <h3>Libros Disponibles</h3>
+            <div class="mb-3">
+                <input type="text" id="filtroLibro" class="form-control" placeholder="Buscar libro por título...">
+            </div>
+            <p>Aquí se mostrará una tabla o tarjetas con la información de los libros y su disponibilidad.</p>
+            <!-- Ejemplo de una tarjeta de libro. Esto se generaría dinámicamente -->
+            <div id="listaLibros" class="row row-cols-1 row-cols-md-3 g-4">
+            <?php if (!empty($libros)): ?>
+                <?php foreach ($libros as $libro): ?>
+                    <div class="col-6 col-md-2 mb-3 libro-card">
+                        <div class="card h-100 compact-card">
+                            <img src="<?= BASE_URL ?>public/img/Libros/<?= htmlspecialchars($libro['Imagen'] ?? 'default.png') ?>" class="card-img-top" alt="Imagen del libro" style="height: 120px; object-fit: cover;">
+                            <div class="card-body p-2">
+                                <h6 class="card-title text-sm fw-bold mb-1"><?= htmlspecialchars($libro['titulo'] ?? 'Sin título') ?></h6>
+                                <p class="card-text text-xs mb-1">Editorial: <?= htmlspecialchars($libro['editorial'] ?? 'N/A') ?></p>
+                                <p class="card-text text-xs mb-2">Disp: <?= htmlspecialchars($libro['cantidad_disponible'] ?? 0) ?></p>
+                                <button type="button" class="btn btn-sm btn-outline-primary seleccionar-libro-btn w-100" 
+                                    data-id="<?= htmlspecialchars($libro['id_libro']) ?>" 
+                                    data-titulo="<?= htmlspecialchars($libro['titulo']) ?>"
+                                    data-editorial="<?= htmlspecialchars($libro['editorial'] ?? 'N/A') ?>"
+                                    data-imagen="<?= BASE_URL ?>public/img/Libros/<?= htmlspecialchars($libro['Imagen'] ?? 'default.png') ?>"
+                                    data-cantidad="<?= htmlspecialchars($libro['cantidad_disponible'] ?? 0) ?>"
+                                    data-bs-toggle="modal" data-bs-target="#prestamoModal">
+                                    Seleccionar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="col-12">
+                    <div class="alert alert-info">No hay libros disponibles en este momento para mostrar.</div>
+                </div>
+            <?php endif; ?>
+            </div>
+        </div>
 
-          <!-- Buscar usuario por número de documento (AJAX) -->
-          <form id="formBuscarUsuario" class="row g-2 mb-3" onsubmit="return false;">
-              <div class="col-md-7">
-                  <input type="text" id="numero_documento" class="form-control" placeholder="Buscar por número de documento">
-              </div>
-              <div class="col-md-3">
-                  <button id="btnBuscarUsuario" type="button" class="btn btn-outline-primary w-100">
-                      <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                      Buscar
-                  </button>
-              </div>
-              <div class="col-md-2">
-                  <button id="btnLimpiarBusqueda" type="button" class="btn btn-outline-secondary w-100 d-none">Limpiar</button>
-              </div>
-          </form>
+        <!-- Modal para Registrar Préstamo -->
+        <div class="modal fade" id="prestamoModal" tabindex="-1" aria-labelledby="prestamoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="prestamoModalLabel">Registrar Nuevo Préstamo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card shadow p-4">
 
-          <div id="usuarioResultado"></div>
+                            <!-- Buscar usuario por número de documento (AJAX) -->
+                            <form id="formBuscarUsuario" class="row g-2 mb-3" onsubmit="return false;">
+                                <div class="col-md-7">
+                                    <input type="text" id="numero_documento" class="form-control" placeholder="Buscar por número de documento">
+                                </div>
+                                <div class="col-md-3">
+                                    <button id="btnBuscarUsuario" type="button" class="btn btn-outline-primary w-100">
+                                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                        Buscar
+                                    </button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button id="btnLimpiarBusqueda" type="button" class="btn btn-outline-secondary w-100 d-none">Limpiar</button>
+                                </div>
+                            </form>
 
-          <form id="formRegistrarPrestamo" action="index.php?controller=Prestamo&action=registrarPrestamo" method="POST">
-              <input type="hidden" name="id_usuario" id="id_usuario" required>
+                            <div id="usuarioResultado"></div>
 
-              <div class="mb-3">
-                  <label class="form-label">Seleccionar Libro Disponible</label>
-                  <?php
-                  // Manejar distintos tipos de $libros (array o mysqli_result)
-                  $optionsHtml = '';
-                  if (is_array($libros)) {
-                      foreach ($libros as $libro) {
-                          $optionsHtml .= '<option value="' . htmlspecialchars($libro['id_libro']) . '">' . htmlspecialchars($libro['titulo']) . ' — ' . htmlspecialchars($libro['editorial'] ?? 'N/A') . '</option>';
-                      }
-                  } elseif (is_object($libros) && method_exists($libros, 'fetch_assoc')) {
-                      // mysqli_result
-                      while ($row = $libros->fetch_assoc()) {
-                          $optionsHtml .= '<option value="' . htmlspecialchars($row['id_libro']) . '">' . htmlspecialchars($row['titulo']) . ' — ' . htmlspecialchars($row['editorial'] ?? 'N/A') . '</option>';
-                      }
-                  }
+                            <form id="formRegistrarPrestamo" action="index.php?controller=Prestamo&action=registrarPrestamo" method="POST">
+                                <input type="hidden" name="id_usuario" id="id_usuario" required>
+                                <input type="hidden" name="id_libro" id="modal_id_libro" required>
 
-                  if ($optionsHtml === '') {
-                      echo '<div class="alert alert-warning">No hay libros disponibles en este momento.</div>';
-                  } else {
-                      echo '<select class="form-select" name="id_libro" required><option value="">Seleccione un libro</option>' . $optionsHtml . '</select>';
-                  }
-                  ?>
-              </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Libro Seleccionado</label>
+                                    <div id="libroSeleccionadoInfo" class="alert alert-info">
+                                        No hay libro seleccionado.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Fecha de Devolución</label>
+                                    <input type="date" class="form-control" name="fecha_devolucion" id="fecha_devolucion_modal" required>
+                                </div>
 
-              <div class="mb-3">
-                  <label class="form-label">Fecha de Devolución</label>
-                  <input type="date" class="form-control" name="fecha_devolucion" required>
-              </div>
-
-              <button type="submit" id="btnRegistrarPrestamo" class="btn btn-primary w-100" disabled>Registrar Préstamo</button>
-          </form>
+                                <button type="submit" id="btnRegistrarPrestamo" class="btn btn-primary w-100" disabled>Registrar Préstamo</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div> <!-- Closes .container mt-4 -->
+    </main>
 
 <script>
 document.addEventListener('DOMContentLoaded', function(){
+    const prestamoModal = new bootstrap.Modal(document.getElementById('prestamoModal'));
+
     const btnBuscar = document.getElementById('btnBuscarUsuario');
     const btnLimpiar = document.getElementById('btnLimpiarBusqueda');
     const btnRegistrar = document.getElementById('btnRegistrarPrestamo');
@@ -111,17 +177,32 @@ document.addEventListener('DOMContentLoaded', function(){
     const inputDoc = document.getElementById('numero_documento');
     const resultDiv = document.getElementById('usuarioResultado');
     const hiddenUserId = document.getElementById('id_usuario');
+    const modalIdLibro = document.getElementById('modal_id_libro');
+    const libroSeleccionadoInfo = document.getElementById('libroSeleccionadoInfo');
+
+    const checkFormValidity = () => {
+        btnRegistrar.disabled = !(hiddenUserId.value && modalIdLibro.value);
+    };
 
     const resetUI = () => {
         resultDiv.innerHTML = '';
         hiddenUserId.value = '';
         inputDoc.value = '';
         inputDoc.disabled = false;
-        btnRegistrar.disabled = true;
         btnLimpiar.classList.add('d-none');
         btnBuscar.disabled = false;
         spinner.classList.add('d-none');
+        
+        // Reset book selection in modal
+        modalIdLibro.value = '';
+        libroSeleccionadoInfo.innerHTML = 'No hay libro seleccionado.';
+        checkFormValidity();
     };
+
+    // Reset UI when modal is hidden
+    document.getElementById('prestamoModal').addEventListener('hidden.bs.modal', function () {
+        resetUI();
+    });
 
     btnLimpiar.addEventListener('click', resetUI);
 
@@ -132,7 +213,6 @@ document.addEventListener('DOMContentLoaded', function(){
             return;
         }
 
-        // Deshabilitar botón y mostrar spinner
         btnBuscar.disabled = true;
         spinner.classList.remove('d-none');
         resultDiv.innerHTML = '<div class="alert alert-secondary">Buscando...</div>';
@@ -150,29 +230,69 @@ document.addEventListener('DOMContentLoaded', function(){
                     resultDiv.innerHTML = `<div class="alert alert-success">Usuario encontrado: <strong>${u.nombre || ''}</strong><div>ID: ${u.id_usuario} — Documento: ${u.numero_documento || ''}</div></div>`;
                     
                     hiddenUserId.value = u.id_usuario;
-                    inputDoc.disabled = true; // Bloquear campo de búsqueda
-                    btnRegistrar.disabled = false; // Habilitar botón de registro
-                    btnLimpiar.classList.remove('d-none'); // Mostrar botón de limpiar
+                    inputDoc.disabled = true;
+                    btnLimpiar.classList.add('d-none');
                 } else {
                     resultDiv.innerHTML = `<div class="alert alert-warning">${data.mensaje || 'Usuario no encontrado.'}</div>`;
                     hiddenUserId.value = '';
-                    btnRegistrar.disabled = true;
                 }
             }).catch(err => {
                 resultDiv.innerHTML = '<div class="alert alert-danger">Error de conexión al buscar el usuario. Revise la consola para más detalles.</div>';
                 console.error(err);
             }).finally(() => {
-                // Habilitar botón y ocultar spinner
                 btnBuscar.disabled = false;
                 spinner.classList.add('d-none');
+                checkFormValidity();
             });
     });
+
+    // Handle book selection from cards
+    document.querySelectorAll('.seleccionar-libro-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const titulo = this.dataset.titulo;
+            const editorial = this.dataset.editorial;
+            const imagen = this.dataset.imagen;
+            const cantidad = this.dataset.cantidad;
+
+            modalIdLibro.value = id;
+            libroSeleccionadoInfo.innerHTML = `
+                <div><strong>${titulo}</strong></div>
+                <div>Editorial: ${editorial}</div>
+                <div>Disponible: ${cantidad}</div>
+                <img src="${imagen}" alt="${titulo}" style="max-height: 100px; margin-top: 10px;">
+            `;
+            checkFormValidity();
+            // Open the modal if it's not already open (e.g., if clicked directly from card)
+            prestamoModal.show();
+        });
+    });
+
+    // Clear book selection when the modal is opened via the main button
+    document.getElementById('prestamoModal').addEventListener('show.bs.modal', function (event) {
+        // Only clear book selection if the trigger is not a book selection button
+        if (!event.relatedTarget || !event.relatedTarget.classList.contains('seleccionar-libro-btn')) {
+            modalIdLibro.value = '';
+            libroSeleccionadoInfo.innerHTML = 'No hay libro seleccionado.';
+            checkFormValidity();
+        }
+    });
+
+    // Filtro de libros por título
+    document.getElementById('filtroLibro').addEventListener('keyup', function() {
+        let searchTerm = this.value.toLowerCase();
+        document.querySelectorAll('.libro-card').forEach(card => {
+            let title = card.querySelector('.card-title').textContent.toLowerCase();
+            if (title.includes(searchTerm)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+
 });
 </script>
-
-      </div>
-    </div>
-</main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>

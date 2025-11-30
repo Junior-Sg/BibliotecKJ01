@@ -39,6 +39,12 @@ class LoginUsuarioController {
             exit;
         }
 
+        // Validación de formato de correo electrónico
+        if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+            header("Location: " . BASE_URL . "LoginUsuario?error=Formato de correo electrónico inválido");
+            exit;
+        }
+
         $data = $this->model->login($correo, $clave);
 
         if (!$data) {

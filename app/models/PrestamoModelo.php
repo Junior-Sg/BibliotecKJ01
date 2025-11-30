@@ -169,4 +169,35 @@ class PrestamoModelo {
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+       public function obtenerLibroConDisponibilidad($id_libro)
+   {
+      $sql = "SELECT l.*, d.cantidad_disponible 
+            FROM libro l
+            INNER JOIN disponibilidad d ON d.id_libro = l.id_libro
+            WHERE l.id_libro = ?";
+      $stmt = $this->conn->prepare($sql);
+      $stmt->bind_param("i", $id_libro);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_assoc();
+    }
+
+       public function obtenerDisponibilidad($id_libro)
+ {
+    $sql = "SELECT cantidad_disponible FROM disponibilidad WHERE id_libro = ?";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("i", $id_libro);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc();
+ }
+   public function restarDisponibilidad($id_libro)
+{
+    $sql = "UPDATE disponibilidad 
+            SET cantidad_disponible = cantidad_disponible - 1
+            WHERE id_libro = ? AND cantidad_disponible > 0";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("i", $id_libro);
+    return $stmt->execute();
+}
+
+
 }

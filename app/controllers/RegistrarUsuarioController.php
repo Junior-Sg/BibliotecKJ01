@@ -55,8 +55,8 @@ class RegistrarUsuarioController {
             exit;
         }
 
-        if (!empty($telefono) && !preg_match('/^[0-9+\-\s]{7,20}$/', $telefono)) {
-            header("Location: " . $redirect_url . "&error=Teléfono inválido");
+        if (!preg_match('/^[0-9]{10}$/', $telefono)) {
+            header("Location: " . $redirect_url . "&error=El teléfono debe contener exactamente 10 dígitos numéricos.");
             exit;
         }
 

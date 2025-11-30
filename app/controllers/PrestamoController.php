@@ -20,7 +20,7 @@ class PrestamoController {
      * Muestra el formulario para crear un nuevo préstamo.
      * Carga los libros disponibles para pasarlos a la vista.
      */
-    public function crear() {
+    public function vistaCrearPrestamo() {
         // Cargar los libros disponibles desde el modelo
         $libros = $this->libroModelo->obtenerLibrosDisponibles();
         // Cargar la vista y pasarle los datos
@@ -40,7 +40,7 @@ class PrestamoController {
 
             // Validar que los datos esenciales no estén vacíos
             if (!$idUsuario || !$idLibro || empty($fechaDevolucion)) {
-                header('Location: index.php?controller=Prestamo&action=crear&msg_error=' . urlencode('Error al registrar el préstamo.'));
+                header('Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_error=' . urlencode('Error al registrar el préstamo.'));
                 exit;
             }
 
@@ -49,7 +49,7 @@ class PrestamoController {
 
             $mensaje = $resultado ? 'Préstamo realizado correctamente.' : 'Error al registrar el préstamo.';
             $param = $resultado ? 'msg_success' : 'msg_error';
-            header("Location: index.php?controller=Prestamo&action=crear&$param=" . urlencode($mensaje));
+            header("Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&$param=" . urlencode($mensaje));
             exit;
         }
     }
@@ -58,15 +58,17 @@ class PrestamoController {
     public function registrarDevolucion() {
         $idPrestamo = isset($_POST['id_prestamo']) ? intval($_POST['id_prestamo']) : 0;
         if ($idPrestamo === 0) {
-            header('Location: index.php?controller=Prestamo&action=crear&msg_error=' . urlencode('ID de préstamo inválido.'));
+            header('Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_error=' . urlencode('ID de préstamo inválido.'));
             return;
         }
 
         $ok = $this->prestamoModelo->registrarDevolucion($idPrestamo);
         if ($ok) {
-            header("Location: index.php?controller=Prestamo&action=crear&msg_success=" . urlencode('Devolución registrada correctamente.'));
+            header("Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_success=" . urlencode('Devolución registrada correctamente.'));
         } else {
-            header("Location: index.php?controller=Prestamo&action=crear&msg_error=" . urlencode('No se pudo registrar la devolución.'));
+            header("Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_error=" . urlencode('No se pudo registrar la devolución.'));
         }
     }
+
+
 }

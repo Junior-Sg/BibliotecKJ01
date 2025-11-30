@@ -119,7 +119,7 @@
 
           <div class="input-group">
             <label for="telefono">Teléfono</label>
-            <input type="tel" name="telefono" id="telefono" pattern="[0-9+\-\s]{7,20}" title="Solo números, espacios, + y -" maxlength="20">
+            <input type="tel" name="telefono" id="telefono" pattern="[0-9]{10}" title="Solo 10 dígitos numéricos" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
           </div>
 
           <div class="input-group">
