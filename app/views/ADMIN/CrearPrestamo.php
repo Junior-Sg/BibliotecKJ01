@@ -63,13 +63,9 @@ require_once __DIR__ . '/../layouts/NavADM.php';
 
 <main class="main-content">
     <div class="container mt-4">
-        <h2 class="text-center mb-4 display-4">Gestión de Préstamos</h2>
+        <h2 class="text-center mb-4 display-1">Gestión de Préstamos</h2>
 
-        
-        
-        <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#prestamoModal">
-            <i class="bi bi-plus-circle me-2"></i>Registrar Nuevo Préstamo
-        </button>
+         <h2 class="text-center mb-4 display-6">¡Busca el libro y realiza un prestamo!</h2>
 
         <!-- Aquí irá la tabla o tarjetas de libros disponibles -->
         <div class="card shadow p-4 mb-4">
@@ -77,7 +73,7 @@ require_once __DIR__ . '/../layouts/NavADM.php';
             <div class="mb-3">
                 <input type="text" id="filtroLibro" class="form-control" placeholder="Buscar libro por título...">
             </div>
-            <p>Aquí se mostrará una tabla o tarjetas con la información de los libros y su disponibilidad.</p>
+            <!-- Aquí se mostrará una tabla o tarjetas con la información de los libros y su disponibilidad. -->
             <!-- Ejemplo de una tarjeta de libro. Esto se generaría dinámicamente -->
             <div id="listaLibros" class="row row-cols-1 row-cols-md-3 g-4">
             <?php if (!empty($libros)): ?>
@@ -184,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function(){
         btnRegistrar.disabled = !(hiddenUserId.value && modalIdLibro.value);
     };
 
-    const resetUI = () => {
+    const resetUserSearch = () => {
         resultDiv.innerHTML = '';
         hiddenUserId.value = '';
         inputDoc.value = '';
@@ -192,7 +188,11 @@ document.addEventListener('DOMContentLoaded', function(){
         btnLimpiar.classList.add('d-none');
         btnBuscar.disabled = false;
         spinner.classList.add('d-none');
-        
+        checkFormValidity();
+    };
+
+    const resetUI = () => {
+        resetUserSearch();
         // Reset book selection in modal
         modalIdLibro.value = '';
         libroSeleccionadoInfo.innerHTML = 'No hay libro seleccionado.';
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function(){
         resetUI();
     });
 
-    btnLimpiar.addEventListener('click', resetUI);
+    btnLimpiar.addEventListener('click', resetUserSearch);
 
     btnBuscar.addEventListener('click', function(){
         const num = inputDoc.value.trim();
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     
                     hiddenUserId.value = u.id_usuario;
                     inputDoc.disabled = true;
-                    btnLimpiar.classList.add('d-none');
+                    btnLimpiar.classList.remove('d-none');
                 } else {
                     resultDiv.innerHTML = `<div class="alert alert-warning">${data.mensaje || 'Usuario no encontrado.'}</div>`;
                     hiddenUserId.value = '';
@@ -268,8 +268,18 @@ document.addEventListener('DOMContentLoaded', function(){
         });
     });
 
-    // Clear book selection when the modal is opened via the main button
+    // Set date and optionally clear book selection when modal is shown
     document.getElementById('prestamoModal').addEventListener('show.bs.modal', function (event) {
+        // Set return date to today
+        const fechaDevolucionInput = document.getElementById('fecha_devolucion_modal');
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        let mm = today.getMonth() + 1; // getMonth() is zero-based
+        let dd = today.getDate();
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+        fechaDevolucionInput.value = `${yyyy}-${mm}-${dd}`;
+
         // Only clear book selection if the trigger is not a book selection button
         if (!event.relatedTarget || !event.relatedTarget.classList.contains('seleccionar-libro-btn')) {
             modalIdLibro.value = '';
