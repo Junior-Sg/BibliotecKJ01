@@ -40,7 +40,7 @@ class PrestamoModelo {
             // 2. Insertar préstamo
             $sqlPrestamo = "INSERT INTO prestamo 
                            (id_usuario, id_libro, fecha_prestamo, fecha_devolucion, estado)
-                           VALUES (?, ?, ?, ?, 'Prestado')";
+                           VALUES (?, ?, ?, ?, 'activo')";
 
             $stmtPre = $this->db->prepare($sqlPrestamo);
             $stmtPre->bind_param("iiss", $idUsuario, $idLibro, $fechaPrestamo, $fechaDevolucion);
@@ -100,7 +100,7 @@ class PrestamoModelo {
 
             $prestamo = $data->fetch_assoc();
 
-            if ($prestamo["estado"] === "Devuelto") {
+            if ($prestamo["estado"] === "devuelto") {
                 $this->db->commit();
                 return true;
             }
@@ -108,7 +108,7 @@ class PrestamoModelo {
             $idLibro = intval($prestamo["id_libro"]);
 
             // 2. Marcar préstamo como devuelto
-            $sqlUpdPrestamo = "UPDATE prestamo SET estado='Devuelto' WHERE id_prestamo=?";
+            $sqlUpdPrestamo = "UPDATE prestamo SET estado='devuelto' WHERE id_prestamo=?";
             $stmtUpd = $this->db->prepare($sqlUpdPrestamo);
             $stmtUpd->bind_param("i", $idPrestamo);
             $stmtUpd->execute();
@@ -145,7 +145,7 @@ class PrestamoModelo {
     }
 
     public function contarPrestamosActivos() {
-        $sql = "SELECT COUNT(id_prestamo) as total FROM prestamo WHERE estado = 'Prestado'";
+        $sql = "SELECT COUNT(id_prestamo) as total FROM prestamo WHERE estado IN ('activo', 'retrasado')";
         $resultado = $this->db->query($sql);
         $fila = $resultado->fetch_assoc();
         return $fila['total'] ?? 0;
@@ -199,5 +199,82 @@ class PrestamoModelo {
     return $stmt->execute();
 }
 
+    public function obtenerPrestamosActivos() {
+        $sql = "SELECT 
+                    p.id_prestamo,
+                    l.titulo as libro_titulo,
+                    u.nombre as usuario_nombre,
+                    p.fecha_prestamo,
+                    p.fecha_devolucion,
+                    p.estado
+                FROM prestamo p
+                JOIN libro l ON p.id_libro = l.id_libro
+                JOIN usuario u ON p.id_usuario = u.id_usuario
+                WHERE p.estado IN ('activo', 'retrasado')
+                ORDER BY p.fecha_prestamo DESC";
+        
+        $resultado = $this->db->query($sql);
+        return $resultado->fetch_all(MYSQLI_ASSOC);
+    }
 
+    public function eliminarPrestamo($idPrestamo) {
+        $this->db->begin_transaction();
+
+        try {
+            // 1. Obtener el id_libro del préstamo antes de eliminarlo
+            $sqlSelect = "SELECT id_libro FROM prestamo WHERE id_prestamo = ?";
+            $stmtSelect = $this->db->prepare($sqlSelect);
+            $stmtSelect->bind_param("i", $idPrestamo);
+            $stmtSelect->execute();
+            $resultado = $stmtSelect->get_result();
+
+            if ($resultado->num_rows === 0) {
+                throw new Exception("El préstamo no existe.");
+            }
+
+            $idLibro = $resultado->fetch_assoc()['id_libro'];
+
+            // 2. Eliminar el préstamo
+            $sqlDelete = "DELETE FROM prestamo WHERE id_prestamo = ?";
+            $stmtDelete = $this->db->prepare($sqlDelete);
+            $stmtDelete->bind_param("i", $idPrestamo);
+            if (!$stmtDelete->execute()) {
+                throw new Exception("Error al eliminar el préstamo.");
+            }
+
+            // 3. Incrementar la cantidad disponible del libro
+            $sqlUpdate = "UPDATE disponibilidad SET cantidad_disponible = cantidad_disponible + 1, id_estado = 1 WHERE id_libro = ?";
+            $stmtUpdate = $this->db->prepare($sqlUpdate);
+            $stmtUpdate->bind_param("i", $idLibro);
+            if (!$stmtUpdate->execute()) {
+                throw new Exception("Error al actualizar la disponibilidad del libro.");
+            }
+
+            $this->db->commit();
+            return true;
+
+        } catch (Exception $e) {
+            $this->db->rollback();
+            error_log("Error en eliminarPrestamo: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getPrestamoById($idPrestamo) {
+        $sql = "SELECT id_prestamo, id_libro, id_usuario, fecha_prestamo, fecha_devolucion, estado 
+                FROM prestamo 
+                WHERE id_prestamo = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $idPrestamo);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        return $resultado->fetch_assoc();
+    }
+
+    public function actualizarPrestamo($idPrestamo, $fechaDevolucion, $estado) {
+        $sql = "UPDATE prestamo SET fecha_devolucion = ?, estado = ? WHERE id_prestamo = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("ssi", $fechaDevolucion, $estado, $idPrestamo);
+        return $stmt->execute();
+    }
 }

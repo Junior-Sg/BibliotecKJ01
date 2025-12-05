@@ -47,25 +47,33 @@
 require_once __DIR__ . '/../layouts/NavADM.php';
 ?>
 
-
-<div class="floating-alerts" aria-live="polite" aria-atomic="true">
-    <?php if(isset($_GET['msg_success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert"><?= htmlspecialchars(urldecode($_GET['msg_success'])) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
-    <?php if(isset($_GET['msg_error'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert"><?= htmlspecialchars(urldecode($_GET['msg_error'])) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
-</div>
-
 <main class="main-content">
     <div class="container mt-4">
-        <h2 class="text-center mb-4 display-1">Gestión de Préstamos</h2>
-
+        <div aria-live="polite" aria-atomic="true">
+            <?php if(isset($_GET['msg_success'])): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert"><?= htmlspecialchars(urldecode($_GET['msg_success'])) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+            <?php if(isset($_GET['msg_error'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert"><?= htmlspecialchars(urldecode($_GET['msg_error'])) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+        </div>
+        <div id="dynamic-alert-wrapper"></div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="display-1">Gestión de Préstamos</h2>
+           
+        </div>
+       
          <h2 class="text-center mb-4 display-6">¡Busca el libro y realiza un prestamo!</h2>
+         
+     <button type="button" class="btn btn-primary" 
+        style="background-color: #6d4c41; border-color: #6d4c41; margin-bottom: 15px;" 
+        data-bs-toggle="modal" data-bs-target="#verPrestamosModal">
+         Ver Préstamos
+     </button>
 
         <!-- Aquí irá la tabla o tarjetas de libros disponibles -->
         <div class="card shadow p-4 mb-4">
@@ -161,8 +169,77 @@ require_once __DIR__ . '/../layouts/NavADM.php';
         </div> <!-- Closes .container mt-4 -->
     </main>
 
+    <!-- Modal para Editar Préstamo -->
+    <div class="modal fade" id="editarPrestamoModal" tabindex="-1" aria-labelledby="editarPrestamoModalLabel" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarPrestamoModalLabel">Editar Préstamo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditarPrestamo">
+                        <input type="hidden" name="id_prestamo" id="edit_id_prestamo">
+                        <div class="mb-3">
+                            <label for="edit_fecha_devolucion" class="form-label">Fecha de Devolución</label>
+                            <input type="date" class="form-control" id="edit_fecha_devolucion" name="fecha_devolucion" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_estado" class="form-label">Estado</label>
+                            <select class="form-control" id="edit_estado" name="estado" required>
+                                <option value="activo">Activo</option>
+                                <option value="retrasado">Retrasado</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para Ver Préstamos Activos -->
+    <div class="modal fade" id="verPrestamosModal" tabindex="-1" aria-labelledby="verPrestamosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="verPrestamosModalLabel">Préstamos Activos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Libro</th>
+                                <th>Usuario</th>
+                                <th>Fecha de Préstamo</th>
+                                <th>Fecha de Devolución</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Aquí se cargarán los préstamos dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function(){
+    // Auto-dismiss static alerts from PHP
+    const staticAlerts = document.querySelectorAll('div[aria-live="polite"] .alert');
+    staticAlerts.forEach(alertEl => {
+        setTimeout(() => {
+            const alertInstance = bootstrap.Alert.getOrCreateInstance(alertEl);
+            if (alertInstance) {
+                alertInstance.close();
+            }
+        }, 4000);
+    });
+
     const prestamoModal = new bootstrap.Modal(document.getElementById('prestamoModal'));
 
     const btnBuscar = document.getElementById('btnBuscarUsuario');
@@ -305,20 +382,159 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const alerts = document.querySelectorAll('.floating-alerts .alert');
-    if (!alerts || alerts.length === 0) return;
-    setTimeout(() => {
-        alerts.forEach(a => {
-            try { const bsAlert = new bootstrap.Alert(a); bsAlert.close(); } catch (e) { a.remove(); }
-        });
-        if (window.location.search && window.history && window.history.replaceState) {
-            const url = window.location.protocol + '//' + window.location.host + window.location.pathname;
-            window.history.replaceState({}, document.title, url);
-        }
-    }, 3000);
+    const verPrestamosModal = document.getElementById('verPrestamosModal');
+    verPrestamosModal.addEventListener('show.bs.modal', function () {
+        const tbody = verPrestamosModal.querySelector('tbody');
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center">Cargando...</td></tr>';
+
+        fetch('index.php?controller=Prestamo&action=verPrestamos')
+            .then(response => response.json())
+            .then(data => {
+                tbody.innerHTML = '';
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay préstamos activos.</td></tr>';
+                    return;
+                }
+
+                data.forEach(prestamo => {
+                    const row = `
+                        <tr>
+                            <td>${prestamo.libro_titulo}</td>
+                            <td>${prestamo.usuario_nombre}</td>
+                            <td>${prestamo.fecha_prestamo}</td>
+                            <td>${prestamo.fecha_devolucion}</td>
+                            <td>${prestamo.estado}</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" onclick="editarPrestamo(${prestamo.id_prestamo})">Editar</button>
+                                <button class="btn btn-sm btn-danger" onclick="eliminarPrestamo(${prestamo.id_prestamo})">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML('beforeend', row);
+                });
+            })
+            .catch(error => {
+                console.error('Error al cargar los préstamos:', error);
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">Error al cargar los préstamos.</td></tr>';
+            });
+    });
 });
+
+function showAlert(message, type = 'success') {
+    const wrapper = document.getElementById('dynamic-alert-wrapper');
+    if (!wrapper) {
+        console.error('Dynamic alert wrapper not found.');
+        return;
+    }
+    const alertEl = document.createElement('div');
+    alertEl.className = `alert alert-${type} alert-dismissible fade show`;
+    alertEl.role = 'alert';
+    alertEl.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    wrapper.appendChild(alertEl);
+
+    setTimeout(() => {
+        const alertInstance = bootstrap.Alert.getOrCreateInstance(alertEl);
+        if (alertInstance) {
+            alertInstance.close();
+        }
+    }, 4000);
+}
+
+function editarPrestamo(id) {
+    fetch(`index.php?controller=Prestamo&action=getPrestamoById&id_prestamo=${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const prestamo = data.prestamo;
+                document.getElementById('edit_id_prestamo').value = prestamo.id_prestamo;
+                // Formatear la fecha para el input type="date"
+                const fechaDevolucion = new Date(prestamo.fecha_devolucion).toISOString().split('T')[0];
+                document.getElementById('edit_fecha_devolucion').value = fechaDevolucion;
+                document.getElementById('edit_estado').value = prestamo.estado;
+                
+                const modal = new bootstrap.Modal(document.getElementById('editarPrestamoModal'));
+                modal.show();
+            } else {
+                showAlert(data.message || 'Error al obtener los datos del préstamo.', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error al obtener datos del préstamo:', error);
+            showAlert('Ocurrió un error de red.', 'danger');
+        });
+}
+
+document.getElementById('formEditarPrestamo').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    fetch('index.php?controller=Prestamo&action=actualizarPrestamo', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editarPrestamoModal'));
+            if (modal) {
+                modal.hide();
+            }
+            
+            // Actualizar la tabla de préstamos sin recargar la página
+            const idPrestamo = formData.get('id_prestamo');
+            const row = document.querySelector(`button[onclick="editarPrestamo(${idPrestamo})"]`).closest('tr');
+            if (row) {
+                row.cells[3].textContent = formData.get('fecha_devolucion');
+                row.cells[4].textContent = formData.get('estado');
+            }
+            showAlert(data.message || 'Préstamo actualizado correctamente.');
+
+        } else {
+            showAlert(data.message || 'Error al actualizar el préstamo.', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error al actualizar el préstamo:', error);
+        showAlert('Ocurrió un error de red.', 'danger');
+    });
+});
+
+function eliminarPrestamo(id) {
+    if (!confirm('¿Está seguro de que desea eliminar este préstamo?')) {
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('id_prestamo', id);
+
+    fetch('index.php?controller=Prestamo&action=eliminarPrestamo', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Eliminar la fila de la tabla
+            const row = document.querySelector(`button[onclick="eliminarPrestamo(${id})"]`).closest('tr');
+            if (row) {
+                row.remove();
+            }
+            showAlert(data.message || 'Préstamo eliminado correctamente.');
+        } else {
+            showAlert(data.message || 'Error al eliminar el préstamo.', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud de eliminación:', error);
+        showAlert('Ocurrió un error de red. Por favor, inténtelo de nuevo.', 'danger');
+    });
+}
 </script>
 
 </body>

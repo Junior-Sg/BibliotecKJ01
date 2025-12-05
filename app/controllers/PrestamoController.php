@@ -70,5 +70,69 @@ class PrestamoController {
         }
     }
 
+    public function verPrestamos() {
+        header('Content-Type: application/json');
+        $prestamos = $this->prestamoModelo->obtenerPrestamosActivos();
+        echo json_encode($prestamos);
+        exit;
+    }
 
+    public function eliminarPrestamo() {
+        header('Content-Type: application/json');
+        $idPrestamo = $_POST['id_prestamo'] ?? null;
+
+        if (!$idPrestamo) {
+            echo json_encode(['success' => false, 'message' => 'ID de préstamo no proporcionado.']);
+            exit;
+        }
+
+        $resultado = $this->prestamoModelo->eliminarPrestamo((int)$idPrestamo);
+
+        if ($resultado) {
+            echo json_encode(['success' => true, 'message' => 'Préstamo eliminado correctamente.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error al eliminar el préstamo.']);
+        }
+        exit;
+    }
+
+    public function getPrestamoById() {
+        header('Content-Type: application/json');
+        $idPrestamo = $_GET['id_prestamo'] ?? null;
+
+        if (!$idPrestamo) {
+            echo json_encode(['success' => false, 'message' => 'ID de préstamo no proporcionado.']);
+            exit;
+        }
+
+        $prestamo = $this->prestamoModelo->getPrestamoById((int)$idPrestamo);
+
+        if ($prestamo) {
+            echo json_encode(['success' => true, 'prestamo' => $prestamo]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Préstamo no encontrado.']);
+        }
+        exit;
+    }
+
+    public function actualizarPrestamo() {
+        header('Content-Type: application/json');
+        $idPrestamo = $_POST['id_prestamo'] ?? null;
+        $fechaDevolucion = $_POST['fecha_devolucion'] ?? null;
+        $estado = $_POST['estado'] ?? null;
+
+        if (!$idPrestamo || !$fechaDevolucion || !$estado) {
+            echo json_encode(['success' => false, 'message' => 'Datos incompletos.']);
+            exit;
+        }
+
+        $resultado = $this->prestamoModelo->actualizarPrestamo((int)$idPrestamo, $fechaDevolucion, $estado);
+
+        if ($resultado) {
+            echo json_encode(['success' => true, 'message' => 'Préstamo actualizado correctamente.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error al actualizar el préstamo.']);
+        }
+        exit;
+    }
 }
