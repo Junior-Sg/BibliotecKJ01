@@ -27,6 +27,12 @@ class PrestamoController {
         require_once __DIR__ . '/../views/ADMIN/CrearPrestamo.php';
     }
 
+    public function vistaDevoluciones() {
+        $this->prestamoModelo->actualizarEstadosDePrestamosRetrasados();
+        $prestamos = $this->prestamoModelo->obtenerPrestamosActivos();
+        require_once __DIR__ . '/../views/ADMIN/GestionDevoluciones.php';
+    }
+
     /**
      * Procesa los datos del formulario para registrar un nuevo préstamo.
      */
@@ -41,6 +47,14 @@ class PrestamoController {
             // Validar que los datos esenciales no estén vacíos
             if (!$idUsuario || !$idLibro || empty($fechaDevolucion)) {
                 header('Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_error=' . urlencode('Error al registrar el préstamo.'));
+                exit;
+            }
+
+            // Verificar el límite de préstamos por usuario
+            $prestamosActivos = $this->prestamoModelo->contarPrestamosActivosPorUsuario($idUsuario);
+            if ($prestamosActivos >= 3) {
+                $mensaje = 'El usuario ya tiene 3 préstamos activos. No puede realizar más préstamos hasta que devuelva al menos un libro.';
+                header('Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_error=' . urlencode($mensaje));
                 exit;
             }
 
@@ -72,6 +86,7 @@ class PrestamoController {
 
     public function verPrestamos() {
         header('Content-Type: application/json');
+        $this->prestamoModelo->actualizarEstadosDePrestamosRetrasados();
         $prestamos = $this->prestamoModelo->obtenerPrestamosActivos();
         echo json_encode($prestamos);
         exit;

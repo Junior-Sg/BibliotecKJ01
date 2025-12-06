@@ -14,10 +14,10 @@
         <a class="nav-link text-white" href="<?= BASE_URL ?>index.php?controller=Prestamo&action=vistaCrearPrestamo"><i class="bi bi-journal-check">  Prestamos</i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" href="#"><i class="bi bi-arrow-clockwise">  Devolución de libros</i></a>
+        <a class="nav-link text-white" href="<?= BASE_URL ?>index.php?controller=Prestamo&action=vistaDevoluciones"><i class="bi bi-arrow-clockwise">  Devolución de libros</i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" href="#"><i class="bi bi-calendar3">  Reservas</i></a>
+        <a class="nav-link text-white" href="<?= BASE_URL ?>index.php?controller=Reserva&action=gestion"><i class="bi bi-calendar3">  Reservas</i></a>
       </li>
 
       <li class="nav-item">

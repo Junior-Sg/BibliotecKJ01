@@ -347,12 +347,14 @@ document.addEventListener('DOMContentLoaded', function(){
 
     // Set date and optionally clear book selection when modal is shown
     document.getElementById('prestamoModal').addEventListener('show.bs.modal', function (event) {
-        // Set return date to today
+        // Set return date to 7 days from now by default
         const fechaDevolucionInput = document.getElementById('fecha_devolucion_modal');
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        let mm = today.getMonth() + 1; // getMonth() is zero-based
-        let dd = today.getDate();
+        const futureDate = new Date();
+        futureDate.setDate(futureDate.getDate() + 7);
+
+        const yyyy = futureDate.getFullYear();
+        let mm = futureDate.getMonth() + 1; // getMonth() is zero-based
+        let dd = futureDate.getDate();
         if (dd < 10) dd = '0' + dd;
         if (mm < 10) mm = '0' + mm;
         fechaDevolucionInput.value = `${yyyy}-${mm}-${dd}`;

@@ -5,8 +5,12 @@ class PrestamoModelo {
 
     private $db;
 
-    public function __construct() {
-        $this->db = (new Conexion())->conectar();
+    public function __construct($db = null) {
+        if ($db instanceof mysqli) {
+            $this->db = $db;
+        } else {
+            $this->db = (new Conexion())->conectar();
+        }
     }
 
     // Registrar préstamo con la nueva estructura
@@ -151,6 +155,16 @@ class PrestamoModelo {
         return $fila['total'] ?? 0;
     }
 
+    public function contarPrestamosActivosPorUsuario($idUsuario) {
+        $sql = "SELECT COUNT(id_prestamo) as total FROM prestamo WHERE id_usuario = ? AND estado IN ('activo', 'retrasado')";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $idUsuario);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        $fila = $resultado->fetch_assoc();
+        return $fila['total'] ?? 0;
+    }
+
     public function obtenerUltimosPrestamos($limite = 5) {
         $sql = "SELECT 
                     p.id_prestamo,
@@ -203,7 +217,9 @@ class PrestamoModelo {
         $sql = "SELECT 
                     p.id_prestamo,
                     l.titulo as libro_titulo,
+                    l.Imagen as libro_imagen,
                     u.nombre as usuario_nombre,
+                    u.numero_documento,
                     p.fecha_prestamo,
                     p.fecha_devolucion,
                     p.estado
@@ -276,5 +292,10 @@ class PrestamoModelo {
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("ssi", $fechaDevolucion, $estado, $idPrestamo);
         return $stmt->execute();
+    }
+
+    public function actualizarEstadosDePrestamosRetrasados() {
+        $sql = "UPDATE prestamo SET estado = 'retrasado' WHERE fecha_devolucion < CURDATE() AND estado = 'activo'";
+        $this->db->query($sql);
     }
 }

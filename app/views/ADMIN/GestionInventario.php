@@ -90,6 +90,7 @@ include __DIR__ . '/../layouts/alerts.php';
                     <th>Estante</th>
                     <th>Año</th>
                     <th>Cantidad</th>
+                    <th>Disponibilidad</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -112,6 +113,7 @@ include __DIR__ . '/../layouts/alerts.php';
                         <td><?= $l['Estante'] ?></td>
                         <td><?= $l['año_publicacion'] ?></td>
                         <td><?= $l['cantidad_total'] ?></td>
+                        <td><?= $l['cantidad_disponible'] ?? 'N/A' ?></td>
                         <td>
                             <!-- EDITAR -->
                             <button class="btn btn-warning btn-sm"
@@ -229,7 +231,7 @@ include __DIR__ . '/../layouts/alerts.php';
                     <?php endwhile; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="9" class="text-center text-muted">No se encontraron libros.</td>
+                        <td colspan="10" class="text-center text-muted">No se encontraron libros.</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
