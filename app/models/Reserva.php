@@ -57,4 +57,14 @@ class Reserva
         $stmt->bind_param("i", $id_reserva);
         return $stmt->execute();
     }
+
+    public function contarReservasActivasPorUsuario($idUsuario) {
+        $sql = "SELECT COUNT(id_reserva) as total FROM reserva WHERE id_usuario = ? AND estado = 'pendiente'";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("i", $idUsuario);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        $fila = $resultado->fetch_assoc();
+        return $fila['total'] ?? 0;
+    }
 }
