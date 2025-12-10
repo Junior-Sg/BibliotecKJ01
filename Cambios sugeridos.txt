@@ -1,2 +1,7 @@
-Colocar filtros o barra de buscador en gestionar usuarios
-Colocar filtros o barra de buscador en Iventario 
+Colocar filtros o barra de buscador en gestionar usuarios----Hecho 
+Colocar filtros o barra de buscador en Iventario-----hecho 
+
+
+Nuevos. 
+actualizar el o colocar la funcion en reservas de que si el usuario tiene tres libros prestados no se pueda prestar mas.
+Actualizar diseño. 

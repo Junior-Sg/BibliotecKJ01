@@ -54,6 +54,7 @@ class LibroModelo {
                 l.titulo,
                 l.año_publicacion,
                 e.nombre AS editorial,
+                l.Imagen,
                 d.cantidad_disponible
             FROM libro l
             INNER JOIN disponibilidad d ON d.id_libro = l.id_libro

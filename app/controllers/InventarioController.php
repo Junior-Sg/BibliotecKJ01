@@ -71,16 +71,28 @@ class InventarioController {
         $generosIds = $this->procesarNombres($generosStr, 'getGeneroByName', 'insertarGenero');
 
         // Gestionar Imagen
-        $nombreImagen = $idLibro ? $this->modelo->obtenerLibrosFiltrados(['id_libro' => $idLibro])->fetch_assoc()['Imagen'] : null;
+        $nombreImagen = null; // Por defecto, no se cambia la imagen
         if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
             $dirDestino = __DIR__ . '/../../public/img/libros/';
-            if (!is_dir($dirDestino)) mkdir($dirDestino, 0777, true);
-            $nombreImagen = uniqid() . '_' . basename($_FILES['imagen']['name']);
+            if (!is_dir($dirDestino)) {
+                mkdir($dirDestino, 0777, true);
+            }
+
+            // Si es una actualización, intentar borrar la imagen anterior
+            if ($idLibro) {
+                $imagenAntigua = $this->modelo->obtenerImagenLibro($idLibro);
+                if ($imagenAntigua && file_exists($dirDestino . $imagenAntigua)) {
+                    @unlink($dirDestino . $imagenAntigua); // Usar @ para suprimir errores si el archivo no existe
+                }
+            }
+            
+            // Generar un nombre único para la nueva imagen
+            $nombreImagen = time() . '_' . basename($_FILES['imagen']['name']);
             move_uploaded_file($_FILES['imagen']['tmp_name'], $dirDestino . $nombreImagen);
         }
 
         if ($idLibro) { // Actualizar
-            $this->modelo->actualizarLibro($idLibro, $titulo, $estante, $anio, $idEditorial, $cantidad, $nombreImagen, $sipnosis);
+            $this->modelo->actualizarLibro($idLibro, $titulo, $estante, $anio, $idEditorial, $cantidad, $sipnosis, $nombreImagen);
             $this->modelo->reemplazarLibroAutores($idLibro, $autoresIds);
             $this->modelo->reemplazarLibroGeneros($idLibro, $generosIds);
             $this->redirigirConExito('Libro actualizado correctamente.');

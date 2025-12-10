@@ -39,10 +39,12 @@ class InventarioModelo {
     public function obtenerLibrosFiltrados($filters = []) {
         $sql = "SELECT l.*, 
                        e.nombre AS editorial,
+                       d.cantidad_disponible,
                        GROUP_CONCAT(DISTINCT a.nombre) AS autores,
                        GROUP_CONCAT(DISTINCT g.nombre) AS generos
                 FROM libro l
                 LEFT JOIN editorial e ON l.id_editorial = e.id_editorial
+                LEFT JOIN disponibilidad d ON l.id_libro = d.id_libro
                 LEFT JOIN libro_autor la ON la.id_libro = l.id_libro
                 LEFT JOIN autor a ON a.id_autor = la.id_autor
                 LEFT JOIN libro_genero lg ON lg.id_libro = l.id_libro
@@ -271,31 +273,67 @@ class InventarioModelo {
         return $this->db->insert_id;
     }
 
+    public function obtenerImagenLibro($idLibro) {
+        $stmt = $this->db->prepare("SELECT Imagen FROM libro WHERE id_libro = ?");
+        if (!$stmt) {
+            return null;
+        }
+        $stmt->bind_param('i', $idLibro);
+        if ($stmt->execute()) {
+            $resultado = $stmt->get_result()->fetch_assoc();
+            return $resultado ? $resultado['Imagen'] : null;
+        }
+        return null;
+    }
+
     // Actualizar libro (sin tocar relaciones)
     public function actualizarLibro($idLibro, $titulo, $estante, $anio, $idEditorial, $cantidad, $sipnosis, $imagen = null) {
-        $sql = "UPDATE libro SET titulo = ?, Estante = ?, año_publicacion = ?, id_editorial = ?, cantidad_total = ?, sipnosis = ?";
-        if ($imagen !== null) {
-            $sql .= ", Imagen = ?";
+        $this->db->begin_transaction();
+
+        try {
+            // 1. Obtener la cantidad total antigua
+            $stmtOld = $this->db->prepare("SELECT cantidad_total FROM libro WHERE id_libro = ?");
+            if (!$stmtOld) throw new Exception("Prepare to get old quantity failed");
+            $stmtOld->bind_param('i', $idLibro);
+            $stmtOld->execute();
+            $result = $stmtOld->get_result();
+            $oldLibro = $result->fetch_assoc();
+            $oldCantidadTotal = $oldLibro ? (int)$oldLibro['cantidad_total'] : (int)$cantidad;
+
+            // 2. Actualizar la tabla libro
+            $sql = "UPDATE libro SET titulo = ?, Estante = ?, año_publicacion = ?, id_editorial = ?, cantidad_total = ?, sipnosis = ?";
+            if ($imagen !== null) {
+                $sql .= ", Imagen = ?";
+            }
+            $sql .= " WHERE id_libro = ?";
+
+            $stmt = $this->db->prepare($sql);
+            if (!$stmt) throw new Exception("Prepare to update book failed");
+
+            if ($imagen !== null) {
+                $stmt->bind_param('ssiiissi', $titulo, $estante, $anio, $idEditorial, $cantidad, $sipnosis, $imagen, $idLibro);
+            } else {
+                $stmt->bind_param('ssiiisi', $titulo, $estante, $anio, $idEditorial, $cantidad, $sipnosis, $idLibro);
+            }
+            if (!$stmt->execute()) throw new Exception("Execute to update book failed: " . $stmt->error);
+
+            // 3. Actualizar la disponibilidad
+            $diferencia = intval($cantidad) - $oldCantidadTotal;
+            
+            $stmtDisp = $this->db->prepare("UPDATE disponibilidad SET cantidad_disponible = cantidad_disponible + ? WHERE id_libro = ?");
+            if (!$stmtDisp) throw new Exception("Prepare for disponibilidad failed");
+            
+            $stmtDisp->bind_param('ii', $diferencia, $idLibro);
+            if (!$stmtDisp->execute()) throw new Exception("Execute for disponibilidad failed: " . $stmtDisp->error);
+
+            $this->db->commit();
+            return true;
+
+        } catch (Exception $e) {
+            $this->db->rollback();
+            error_log("Error en actualizarLibro: " . $e->getMessage());
+            return false;
         }
-        $sql .= " WHERE id_libro = ?";
-
-        $stmt = $this->db->prepare($sql);
-        if (!$stmt) return false;
-
-        if ($imagen !== null) {
-            $stmt->bind_param('ssiiissis', $titulo, $estante, $anio, $idEditorial, $cantidad, $sipnosis, $imagen, $idLibro);
-        } else {
-            $stmt->bind_param('ssiiiss', $titulo, $estante, $anio, $idEditorial, $cantidad, $sipnosis, $idLibro);
-        }
-
-        $ok = $stmt->execute();
-
-        if ($ok) {
-            // sincronizar cantidad en tabla disponibilidad
-            $this->setDisponibilidadCantidad($idLibro, $cantidad);
-        }
-
-        return $ok;
     }
 
     // Reemplazar autores del libro: borrar existentes e insertar los nuevos (por id)
