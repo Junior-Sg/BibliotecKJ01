@@ -12,24 +12,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
-    <style>
-    .tarjeta-dashboard {
-        border-radius: 15px;
-        color: white;
-        padding: 20px;
-        transition: transform .2s ease, box-shadow .2s ease;
-    }
-
-    .tarjeta-dashboard:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(0,0,0,.15);
-    }
-
-    .tabla-prestamos tbody tr:hover {
-        background: #f7f7f7 !important;
-        cursor: pointer;
-    }
-</style>
+    <link rel="stylesheet" href="<?= BASE_URL ?>public/css/ADM/GestionGlobal.css">
 </head>
 <body>
         <?php include __DIR__ . '/../layouts/NavADM.php'; ?>

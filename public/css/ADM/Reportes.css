@@ -1,0 +1,81 @@
+/* public/css/ADM/Reportes.css */
+
+/* Contenedor principal */
+.container-fluid {
+    padding: 2rem;
+    background-color: #f8f9fa; /* Un fondo gris claro para la página */
+}
+
+/* Título de la sección */
+h1.text-center {
+    color: #333;
+    font-weight: 300;
+    margin-bottom: 2.5rem !important;
+}
+
+/* Estilo para las tarjetas (cards) */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease-in-out;
+    height: 100%; /* Asegura que todas las tarjetas tengan la misma altura en una fila */
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #7d5a50; /* Color principal del tema */
+    margin-bottom: 1rem;
+}
+
+/* Tarjeta de KPI principal */
+.card-text.display-4 {
+    font-weight: 700;
+    color: #8b6f57; /* Un color destacado */
+    margin-bottom: 1.5rem;
+}
+
+/* Botones de exportación */
+.btn-success, .btn-primary {
+    border-radius: 20px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-success {
+    background-color: #8b6f57;
+}
+
+.btn-success:hover {
+    background-color: #7d5a50;
+}
+
+.btn-primary {
+    background-color: #5c8b8e;
+}
+
+.btn-primary:hover {
+    background-color: #4a7072;
+}
+
+
+/* Estilos para los gráficos */
+canvas {
+    max-height: 300px; /* Altura máxima para los gráficos */
+    width: 100% !important;
+}

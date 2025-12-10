@@ -90,6 +90,25 @@ class ReservaController
         exit;
     }
 
+    public function eliminarReserva() {
+        header('Content-Type: application/json');
+        $idReserva = $_POST['id_reserva'] ?? null;
+
+        if (!$idReserva) {
+            echo json_encode(['success' => false, 'message' => 'ID de reserva no proporcionado.']);
+            exit;
+        }
+
+        $resultado = $this->reservaModel->eliminarReserva((int)$idReserva);
+
+        if ($resultado) {
+            echo json_encode(['success' => true, 'message' => 'Reserva eliminada correctamente.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error al eliminar la reserva.']);
+        }
+        exit;
+    }
+
     // --- Métodos públicos existentes ---
 
     public function nueva()

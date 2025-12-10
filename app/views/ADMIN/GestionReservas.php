@@ -6,19 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <title>Gestión de Reservas</title>
-    <style>
-        body { background: #f7f5f2; }
-        .main-content { padding-left: 260px; }
-        .card { border-left: 6px solid #44290e; background: #ffffff; }
-        .card-img-top {
-            width: 100%;
-            height: 12vw;
-            object-fit: cover;
-        }
-        .btn-primary { background-color: #5a3417; border-color: #5a3417; }
-        .btn-primary:hover { background-color: #7a4a24; border-color: #7a4a24; }
-        .modal-header { background: rgba(68,41,14,0.85); color: #fff; }
-    </style>
+    <link rel="stylesheet" href="<?= BASE_URL ?>public/css/ADM/GestionGlobal.css">
 </head>
 <body>
 
@@ -27,17 +15,18 @@ require_once __DIR__ . '/../layouts/NavADM.php';
 ?>
 
 <main class="main-content">
-    <div class="container mt-4">
+    <div class="container mt-5">
         <div id="dynamic-alert-wrapper"></div>
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="display-1">Gestión de Reservas</h2>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reservaModal">
+        
+        <div class="titulo-banda d-flex justify-content-between align-items-center">
+            <h2><i class="bi bi-calendar-check"></i> Gestión de Reservas</h2>
+            <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#reservaModal">
                 <i class="bi bi-plus-circle"></i> Registrar Nueva Reserva
             </button>
         </div>
 
-        <div class="mb-4">
-            <input type="text" id="filtroCedula" class="form-control" placeholder="Filtrar por número de cédula...">
+        <div class="filter-card">
+            <input type="text" id="filtroCedula" class="form-control" placeholder="Filtrar por número de cédula del usuario...">
         </div>
 
         <div class="row" id="lista-reservas">
@@ -124,9 +113,12 @@ require_once __DIR__ . '/../layouts/NavADM.php';
                                     <strong>C.C:</strong> ${reserva.numero_documento}<br>
                                     <strong>Fecha Reserva:</strong> ${reserva.fecha_reserva}<br>
                                 </p>
-                                <div class="mt-auto">
-                                    <button class="btn btn-sm btn-success w-100" onclick='generarPrestamo(${reservaData})'>
+                                <div class="mt-auto d-grid gap-2">
+                                    <button class="btn btn-sm btn-success" onclick='generarPrestamo(${reservaData})'>
                                         <i class="bi bi-journal-arrow-up"></i> Generar Préstamo
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick='eliminarReserva(${reserva.id_reserva})'>
+                                        <i class="bi bi-trash"></i> Eliminar
                                     </button>
                                 </div>
                             </div>
@@ -182,6 +174,37 @@ require_once __DIR__ . '/../layouts/NavADM.php';
             } catch (error) {
                 console.error('Error en generarPrestamo:', error);
                 showAlert('Error de red al generar el préstamo.', 'danger');
+            }
+        }
+
+        window.eliminarReserva = async function(idReserva) {
+            if (!confirm(`¿Está seguro de que desea eliminar la reserva? Esta acción no se puede deshacer.`)) {
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('id_reserva', idReserva);
+
+            try {
+                const response = await fetch('index.php?controller=Reserva&action=eliminarReserva', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert(result.message || 'Reserva eliminada con éxito.');
+                    // Eliminar la tarjeta de la vista
+                    const card = document.getElementById(`reserva-card-${idReserva}`);
+                    if (card) {
+                        card.remove();
+                    }
+                } else {
+                    showAlert(result.message || 'Error al eliminar la reserva.', 'danger');
+                }
+            } catch (error) {
+                console.error('Error en eliminarReserva:', error);
+                showAlert('Error de red al eliminar la reserva.', 'danger');
             }
         }
 

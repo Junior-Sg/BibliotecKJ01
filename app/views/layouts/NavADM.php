@@ -27,7 +27,7 @@
         <a class="nav-link text-white" href="<?= BASE_URL ?>index.php?controller=Inventario&action=index"><i class="bi bi-box-fill">  Gestionar Inventario</i> </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" href="#"><i class="bi bi-clipboard2-data-fill">  Informes</i></a>
+        <a class="nav-link text-white" href="<?= BASE_URL ?>index.php?controller=Reportes&action=index"><i class="bi bi-clipboard2-data-fill">  Informes</i></a>
       </li>
       <li class="nav-item">
         <a class="nav-link text-white" href="<?= BASE_URL ?>index.php?controller=Logout&action=index"><i class="bi bi-door-closed-fill">  Cerrar sesión</i></a>
@@ -57,6 +57,10 @@
 
   .sidebar .nav-link:hover {
     background: #495057;
+  }
+
+  .sidebar-brand h4 {
+    color: #fff; /* Asegura que el título sea blanco */
   }
 
   .sidebar-brand {

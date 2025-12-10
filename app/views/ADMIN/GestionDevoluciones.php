@@ -6,16 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <title>Gestión de Devoluciones</title>
-    <style>
-        body { background: #f7f5f2; }
-        .main-content { padding-left: 260px; }
-        .card { border-left: 6px solid #44290e; background: #ffffff; }
-        .card-img-top {
-            width: 100%;
-            height: 12vw;
-            object-fit: cover;
-        }
-    </style>
+    <link rel="stylesheet" href="<?= BASE_URL ?>public/css/ADM/GestionGlobal.css">
 </head>
 <body>
 
@@ -26,7 +17,7 @@ require_once __DIR__ . '/../layouts/NavADM.php';
 <main class="main-content">
     <div class="container mt-4">
         <div id="dynamic-alert-wrapper"></div>
-        <h2 class="display-1 mb-4">Gestión de Devoluciones</h2>
+        <h2 class="display-1 mb-4" style="color: #44290e;">Gestión de Devoluciones</h2>
 
         <div class="mb-4">
             <input type="text" id="filtroCedula" class="form-control" placeholder="Filtrar por número de cédula...">
@@ -46,7 +37,7 @@ require_once __DIR__ . '/../layouts/NavADM.php';
                                     <strong>Fecha Devolución:</strong> <?= htmlspecialchars($prestamo['fecha_devolucion']) ?><br>
                                     <strong>Estado:</strong> <span class="badge bg-<?= $prestamo['estado'] == 'retrasado' ? 'danger' : 'success' ?>"><?= htmlspecialchars($prestamo['estado']) ?></span>
                                 </p>
-                                <button type="button" class="btn btn-primary" style="background-color: #5a3417; border-color: #5a3417;" onclick="prepararDevolucion(<?= htmlspecialchars(json_encode($prestamo)) ?>)">
+                                <button type="button" class="btn btn-primary" style="background-color: #44290e; border-color: #44290e;" onclick="prepararDevolucion(<?= htmlspecialchars(json_encode($prestamo)) ?>)">
                                     Registrar Devolución
                                 </button>
                             </div>
@@ -80,7 +71,7 @@ require_once __DIR__ . '/../layouts/NavADM.php';
                 <form id="formDevolverPrestamo" onsubmit="realizarDevolucion(event)">
                     <input type="hidden" name="id_prestamo" id="id_prestamo_devolver">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" style="background-color: #5a3417; border-color: #5a3417;">Confirmar Devolución</button>
+                    <button type="submit" class="btn btn-primary" style="background-color: #44290e; border-color: #44290e;">Confirmar Devolución</button>
                 </form>
             </div>
         </div>

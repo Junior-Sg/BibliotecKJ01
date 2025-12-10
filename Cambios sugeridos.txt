@@ -4,4 +4,10 @@ Colocar filtros o barra de buscador en Iventario-----hecho
 
 Nuevos. 
 actualizar el o colocar la funcion en reservas de que si el usuario tiene tres libros prestados no se pueda prestar mas.
-Actualizar diseño. 
+Actualizar diseño.-------hecho
+
+
+realizar vista editar contenidos: 
+vamos a realizar el apartado de informes, en este de ser posibles quiero graficas, no se algo empresarial bonito,
+
+dentro de este vamos a poder exportar cuandos libros se prestaron actualmente y en el mes, cuantas personas nuevas se registraron tambien por mes, los reportes mensuales, cuantos libros se prestaron, cuantas reservas se realizaron, y que se pueda exportar cada uno mediante un excel

@@ -67,4 +67,14 @@ class Reserva
         $fila = $resultado->fetch_assoc();
         return $fila['total'] ?? 0;
     }
+
+    public function eliminarReserva($idReserva) {
+        $sql = "DELETE FROM reserva WHERE id_reserva = ?";
+        $stmt = $this->conexion->prepare($sql);
+        if ($stmt === false) {
+            return false;
+        }
+        $stmt->bind_param("i", $idReserva);
+        return $stmt->execute();
+    }
 }
