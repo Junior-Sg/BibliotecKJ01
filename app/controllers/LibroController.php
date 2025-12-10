@@ -35,13 +35,17 @@ class LibroController
         if (is_object($libros) && method_exists($libros, 'num_rows')) {
             echo "<!-- Libros num_rows: " . $libros->num_rows . " -->";
         } elseif ($libros === false) {
-            echo "<!-- Libros query failed: " . $this->Libro->conexion->error . " -->";
+            // Avoid accessing an undefined property on the Libro model; provide a safe fallback message.
+            $librosErr = error_get_last()['message'] ?? 'query failed';
+            echo "<!-- Libros query failed: " . htmlspecialchars($librosErr) . " -->";
         }
         echo "<!-- Generos type: " . gettype($generos) . " -->";
         if (is_object($generos) && method_exists($generos, 'num_rows')) {
             echo "<!-- Generos num_rows: " . $generos->num_rows . " -->";
         } elseif ($generos === false) {
-            echo "<!-- Generos query failed: " . $this->Libro->conexion->error . " -->";
+            // Avoid accessing an undefined property on the Libro model; provide a safe fallback message.
+            $generosErr = error_get_last()['message'] ?? 'query failed';
+            echo "<!-- Generos query failed: " . htmlspecialchars($generosErr) . " -->";
         }
         echo "<!-- End Debugging Info -->";
 
@@ -139,7 +143,7 @@ class LibroController
                 "autores" => $autores,
                 "generos" => $generos,
                 "disponibilidad" => (int)$cantidad,
-                "sinopsis" => $libro['sinopsis'] ?? "Sin sinopsis disponible."
+                "sipnosis" => $libro['sipnosis'] ?? "Sin sipnosis disponible."
             ]
         ]);
     }

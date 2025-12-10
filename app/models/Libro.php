@@ -15,8 +15,8 @@ class Libro
     public function obtenerTodos()
     {
         $sql = "SELECT l.id_libro, l.titulo, l.Estante, l.año_publicacion,
-                       l.Imagen, l.cantidad_total,
-                       e.nombre AS editorial
+        l.Imagen, l.cantidad_total,
+        e.nombre AS editorial
                 FROM libro l
                 LEFT JOIN editorial e ON l.id_editorial = e.id_editorial";
 
@@ -61,7 +61,7 @@ class Libro
     public function obtenerGenerosTodos()
     {
          $sql = "SELECT * FROM genero ORDER BY nombre ASC";
-         return $this->conexion->query($sql);
+        return $this->conexion->query($sql);
         
     }
 
@@ -78,13 +78,14 @@ class Libro
     // Búsqueda general: por título o autor
     public function buscarGeneral($texto)
     {
+        $texto = $this->conexion->real_escape_string($texto);
         $sql = "SELECT DISTINCT l.*, e.nombre AS editorial
                 FROM libro l
                 LEFT JOIN editorial e ON l.id_editorial = e.id_editorial
                 LEFT JOIN libro_autor la ON la.id_libro = l.id_libro
                 LEFT JOIN autor a ON a.id_autor = la.id_autor
-                WHERE l.titulo LIKE '%$texto%'
-                   OR a.nombre LIKE '%$texto%'";
+                WHERE l.titulo LIKE '$texto'
+                OR a.nombre LIKE '$texto'";
 
         return $this->conexion->query($sql);
     }
@@ -92,8 +93,8 @@ class Libro
     public function obtenerPorGenero($nombreGenero)
 {
     $sql = "SELECT l.id_libro, l.titulo, l.Estante, l.año_publicacion,
-                   l.Imagen, l.cantidad_total,
-                   e.nombre AS editorial
+    l.Imagen, l.cantidad_total,
+    e.nombre AS editorial
             FROM libro l
             LEFT JOIN editorial e ON l.id_editorial = e.id_editorial
             INNER JOIN libro_genero lg ON l.id_libro = lg.id_libro

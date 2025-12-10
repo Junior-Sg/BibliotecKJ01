@@ -9,11 +9,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 define('BASE_URL', '/BibliotecKJ01/');
 define('APP_PATH', __DIR__ . '/app');
 
-
-
-
-
-
 // ===============================
 // AUTOLOAD BÁSICO
 // ===============================
@@ -40,8 +35,8 @@ require_once APP_PATH . '/core/helpers.php';
 // ===============================
 // CAPTURA DE PARÁMETROS DE RUTA
 // ===============================
-$controllerName = $_GET['controller'] ?? $_GET['c'] ?? 'LoginUsuario';
-$action = $_GET['action'] ?? $_GET['a'] ?? 'index';
+$controllerName = $_GET['controller'] ?? $_GET['Controller'] ?? $_GET['c'] ?? 'InicioPagina';
+$action = $_GET['action'] ?? $_GET['Action'] ?? $_GET['a'] ?? 'index';
 
 // Normalizar nombre de clase
 $controllerClass = ucfirst($controllerName) . 'Controller';
