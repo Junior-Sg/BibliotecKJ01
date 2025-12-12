@@ -124,7 +124,7 @@ require_once __DIR__ . '/../layouts/NavADM.php';
                                     <input type="date" class="form-control" name="fecha_devolucion" id="fecha_devolucion_modal" required>
                                 </div>
 
-                                <button type="submit" id="btnRegistrarPrestamo" class="btn btn-primary w-100" disabled>Registrar Préstamo</button>
+                                <button type="submit" id="btnRegistrarPrestamo" class="btn btn-primary w-100" style="background-color: #44290e; border-color: #44290e;" disabled>Registrar Préstamo</button>
                             </form>
                         </div>
                     </div>

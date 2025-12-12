@@ -298,4 +298,49 @@ class PrestamoModelo {
         $sql = "UPDATE prestamo SET estado = 'retrasado' WHERE fecha_devolucion < CURDATE() AND estado = 'activo'";
         $this->db->query($sql);
     }
+
+    /**
+     * Cuenta los préstamos que están retrasados.
+     * Considera tanto los ya marcados como los que ya vencieron y siguen 'activo'.
+     */
+    public function contarPrestamosRetrasados() {
+        $sql = "SELECT COUNT(id_prestamo) as total FROM prestamo WHERE estado = 'retrasado' OR (estado = 'activo' AND fecha_devolucion < CURDATE())";
+        $resultado = $this->db->query($sql);
+        $fila = $resultado->fetch_assoc();
+        return $fila['total'] ?? 0;
+    }
+
+    /**
+     * Obtiene una lista breve de préstamos retrasados con datos del libro y usuario.
+     */
+    public function obtenerPrestamosRetrasados($limite = 5) {
+        $sql = "SELECT p.id_prestamo, l.titulo as titulo_libro, u.nombre as nombre_usuario, p.fecha_prestamo, p.fecha_devolucion, p.estado
+                FROM prestamo p
+                JOIN libro l ON p.id_libro = l.id_libro
+                JOIN usuario u ON p.id_usuario = u.id_usuario
+                WHERE p.estado = 'retrasado' OR (p.estado = 'activo' AND p.fecha_devolucion < CURDATE())
+                ORDER BY p.fecha_devolucion ASC
+                LIMIT ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param('i', $limite);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Obtiene préstamos que vencen en exactamente 3 días.
+     * Útil para enviar recordatorio antes de que expire el plazo.
+     */
+    public function obtenerPrestamosVencenEn3Dias() {
+        $sql = "SELECT p.id_prestamo, p.id_usuario, p.id_libro, l.titulo as titulo_libro, u.nombre as nombre_usuario, u.correo, p.fecha_devolucion
+                FROM prestamo p
+                JOIN libro l ON p.id_libro = l.id_libro
+                JOIN usuario u ON p.id_usuario = u.id_usuario
+                WHERE p.estado = 'activo' 
+                AND DATE(p.fecha_devolucion) = DATE_ADD(CURDATE(), INTERVAL 3 DAY)
+                ORDER BY p.fecha_devolucion ASC";
+        $resultado = $this->db->query($sql);
+        return $resultado->fetch_all(MYSQLI_ASSOC);
+    }
 }
+

@@ -198,6 +198,11 @@ class Usuario {
         return $fila['total'] ?? 0;
     }
 
+    // Alias para mantener consistencia con otros modelos
+    public function obtenerPorId($id) {
+        return $this->getUsuarioById($id);
+    }
+
 }
 
 ?>

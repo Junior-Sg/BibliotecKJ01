@@ -140,7 +140,7 @@
           <button type="submit">Registrar</button>
 
           <div class="extra">
-            <a href="#" id="backToLogin">← Volver al inicio</a>
+            <a href="<?= BASE_URL ?>index.php?controller=LoginUsuario&action=login" id="backToLogin">← Volver al inicio</a>
           </div>
         </form>
       </div>

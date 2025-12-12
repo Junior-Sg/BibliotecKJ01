@@ -1,0 +1,105 @@
+📋 RESUMEN DE CAMBIOS - SISTEMA DE CORREOS
+
+================================================================================
+PROBLEMA IDENTIFICADO:
+================================================================================
+Los correos no se estaban enviando porque:
+1. El método setFrom() en Mailer.php estaba usando el username de Mailtrap (1e13c866082a8c)
+   en lugar de un correo válido
+2. Faltaba mejor logging para diagnosticar problemas
+
+================================================================================
+SOLUCIONES IMPLEMENTADAS:
+================================================================================
+
+1. ✅ CORREGIDO: app/helpers/Mailer.php
+   - Añadido nueva propiedad: $fromEmail = 'noreply@biblioteckj.local'
+   - Actualizado setFrom() para usar $this->fromEmail en lugar del username
+   - Mejorado logging con mensajes descriptivos:
+     * ✓ Email enviado exitosamente a: X
+     * ✗ Error en send() para: X
+     * ✗ EXCEPCIÓN al enviar correo a X: [detalles]
+
+2. ✅ CREADO: Carpeta app/logs/
+   - Ubicación para guardar logs de notificaciones
+
+3. ✅ CREADO: diagnostico_mailer.php
+   - Script de diagnóstico completo con interfaz web
+   - Verifica: OpenSSL, funciones de socket, configuración
+   - Permite enviar correos de prueba
+   - Muestra últimos 10 logs
+   - Acceso: http://localhost/BibliotecKJ01/diagnostico_mailer.php
+
+================================================================================
+PRÓXIMOS PASOS:
+================================================================================
+
+1. ACCEDE al diagnóstico:
+   http://localhost/BibliotecKJ01/diagnostico_mailer.php
+
+2. VERIFICA la información del sistema (debe haber ✓ en):
+   - ✓ Extensión OpenSSL
+   - ✓ Funciones de Socket
+
+3. HAZ CLIC en "Enviar Correo de Prueba"
+
+4. REVISA en https://mailtrap.io:
+   - Inbox > Envía cualquiera de los inboxes
+   - Busca el correo de prueba que acabas de enviar
+   - Si está ahí, la configuración SMTP funciona
+
+5. SI FUNCIONA LA PRUEBA:
+   - Intenta hacer una reserva o préstamo
+   - El sistema ahora enviará correos automáticamente
+   - Revisa Mailtrap para confirmar la entrega
+
+6. REVISA LOS LOGS:
+   - Los detalles se guardan en: app/logs/notificaciones.log
+   - Usa esto para diagnosticar problemas
+
+================================================================================
+NOTAS IMPORTANTES:
+================================================================================
+
+✓ Usuarios con correo vacío:
+  Si el usuario no tiene correo registrado, se saltará el envío sin error
+
+✓ Mailtrap en modo sandbox:
+  Los correos se capturan pero no se entregan a direcciones reales
+  Para producción, cambiar las credenciales SMTP
+
+✓ Credenciales actuales (SANDBOX):
+  Host: sandbox.smtp.mailtrap.io
+  Puerto: 587
+  Usuario: 1e13c866082a8c
+  Contraseña: 735e36197e7af0
+  Seguridad: STARTTLS
+
+✓ Para cambiar el "From" (remitente):
+  Editar línea en Mailer.php:
+  private $fromEmail = 'noreply@biblioteckj.local';
+
+================================================================================
+ARCHIVOS MODIFICADOS:
+================================================================================
+
+app/helpers/Mailer.php
+  - Línea 15: Añadido $fromEmail
+  - Línea 33: Cambio de setFrom() a usar $this->fromEmail
+  - Línea 42-48: Mejorado logging con detalles
+
+ARCHIVOS CREADOS:
+================================================================================
+
+diagnostico_mailer.php (raíz del proyecto)
+  - Interface web para diagnosticar el sistema de correos
+
+app/logs/ (directorio)
+  - Para guardar registros de notificaciones
+
+================================================================================
+
+¿PROBLEMAS? Revisa:
+1. http://localhost/BibliotecKJ01/diagnostico_mailer.php
+2. https://mailtrap.io (bandeja de entrada)
+3. El archivo error.log de PHP (configurado en php.ini)

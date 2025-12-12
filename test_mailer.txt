@@ -1,0 +1,88 @@
+<?php
+// Script de prueba para verificar la conexión con Mailtrap
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+date_default_timezone_set('America/Bogota');
+
+require_once __DIR__ . '/config/Conexion.php';
+require_once __DIR__ . '/app/helpers/Mailer.php';
+
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Mailer - BibliotecKJ</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .success { color: green; padding: 10px; background: #f0f0f0; border-left: 4px solid green; }
+        .error { color: red; padding: 10px; background: #f0f0f0; border-left: 4px solid red; }
+        .info { color: blue; padding: 10px; background: #f0f0f0; border-left: 4px solid blue; }
+    </style>
+</head>
+<body>
+    <h2>Test de Mailer - BibliotecKJ</h2>
+    
+    <?php
+    
+    // Verificar que exista directorio de logs
+    $logDir = __DIR__ . '/app/logs';
+    if (!is_dir($logDir)) {
+        mkdir($logDir, 0755, true);
+    }
+    
+    echo "<div class='info'>";
+    echo "<strong>Información del sistema:</strong><br>";
+    echo "PHP Version: " . phpversion() . "<br>";
+    echo "Server: " . php_uname() . "<br>";
+    echo "Log Directory: $logDir<br>";
+    echo "</div>";
+    
+    try {
+        $mailer = new Mailer();
+        
+        // Usar un correo de prueba. Si tienes una cuenta real, úsala
+        $testEmail = 'test@sandbox.mailtrap.io'; // Usa un correo que sea válido
+        $subject = 'Test BibliotecKJ - ' . date('Y-m-d H:i:s');
+        $content = "Este es un correo de prueba desde BibliotecKJ<br>Fecha: " . date('d/m/Y H:i:s') . "<br><br>Si recibiste este mensaje, la configuración de Mailer es correcta.";
+        
+        echo "<div class='info'>";
+        echo "<strong>Enviando correo de prueba:</strong><br>";
+        echo "A: $testEmail<br>";
+        echo "Asunto: $subject<br>";
+        echo "</div>";
+        
+        $resultado = $mailer->send($testEmail, $subject, $content);
+        
+        if ($resultado === true) {
+            echo "<div class='success'>";
+            echo "<strong>✓ Correo enviado exitosamente</strong><br>";
+            echo "Revisa Mailtrap (https://mailtrap.io) para ver el correo.";
+            echo "</div>";
+        } else {
+            echo "<div class='error'>";
+            echo "<strong>✗ Error al enviar:</strong><br>";
+            echo "Resultado: " . var_export($resultado, true);
+            echo "</div>";
+        }
+        
+    } catch (Exception $e) {
+        echo "<div class='error'>";
+        echo "<strong>✗ Excepción:</strong><br>";
+        echo $e->getMessage();
+        echo "</div>";
+    }
+    
+    echo "<div class='info'>";
+    echo "<strong>Instrucciones:</strong><br>";
+    echo "1. Verifica que PHP error.log muestre detalles<br>";
+    echo "2. Revisa Mailtrap (https://mailtrap.io) para ver emails enviados<br>";
+    echo "3. Verifica el archivo " . $logDir . "/notificaciones.log<br>";
+    echo "</div>";
+    
+    echo "<p><a href='index.php'>Volver al inicio</a></p>";
+    
+    ?>
+</body>
+</html>
+
