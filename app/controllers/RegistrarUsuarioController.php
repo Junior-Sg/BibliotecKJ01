@@ -3,6 +3,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
+require_once __DIR__ . '/../core/BaseController.php';
 require_once __DIR__ . '/../../config/Conexion.php';
 require_once __DIR__ . '/../models/Usuario.php';
 
@@ -62,10 +63,15 @@ class RegistrarUsuarioController {
 
         $id_usuario = $this->model->registrar($nombre, $correo, $clave, $telefono, $tipo_documento, $numero_documento);
 
+        if ($id_usuario === 'duplicate_entry') {
+            header("Location: " . $redirect_url . "&error=El correo electrónico ya está registrado");
+            exit;
+        }
+
         if (!$id_usuario) {
             $dbError = $this->db->error ?? '';
             $msg = 'No se pudo registrar';
-            if (!empty($dbError) && defined('IS_DEVELOPMENT') && IS_DEVELOPMENT) { // Ocultar errores detallados en producción
+            if (!empty($dbError) && defined('IS_DEVELOPMENT')) { // Ocultar errores detallados en producción
                 $msg .= ': ' . $dbError;
             }
             header("Location: " . $redirect_url . "&error=" . urlencode($msg));

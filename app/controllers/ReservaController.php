@@ -1,25 +1,34 @@
 <?php
-
+require_once __DIR__ . '/../core/BaseController.php';
 require_once __DIR__ . '/../models/Reserva.php';
 require_once __DIR__ . '/../models/PrestamoModelo.php';
 require_once __DIR__ . '/../../config/Conexion.php';
 require_once __DIR__ . '/../helpers/Mailer.php';
 
-class ReservaController
+class ReservaController extends BaseController
 {
     private $reservaModel;
     private $db;
 
     public function __construct() {
+        parent::__construct();
         $this->db = (new Conexion())->conectar();
         $this->reservaModel = new Reserva($this->db);
     }
 
     public function gestion() {
+        if (!$this->isAdmin()) {
+            $this->redirect('LoginUsuario', 'index');
+        }
         require_once __DIR__ . '/../views/ADMIN/GestionReservas.php';
     }
 
     public function listarReservas() {
+        if (!$this->isAdmin()) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Acceso denegado.']);
+            exit;
+        }
         header('Content-Type: application/json');
         $reservas = $this->reservaModel->obtenerReservasActivas();
         echo json_encode(['success' => true, 'data' => $reservas]);
@@ -27,6 +36,11 @@ class ReservaController
     }
 
     public function registrarReservaAdmin() {
+        if (!$this->isAdmin()) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Acceso denegado.']);
+            exit;
+        }
         header('Content-Type: application/json');
         $idUsuario = $_POST['id_usuario'] ?? null;
         $idLibro = $_POST['id_libro'] ?? null;
@@ -88,6 +102,11 @@ class ReservaController
     }
 
     public function convertirReservaAPrestamo() {
+        if (!$this->isAdmin()) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Acceso denegado.']);
+            exit;
+        }
         header('Content-Type: application/json');
         try {
             $idReserva = $_POST['id_reserva'] ?? null;
@@ -189,11 +208,8 @@ class ReservaController
 
     public function nueva()
     {
-        session_start();
-
-        if (!isset($_SESSION['id_usuario'])) {
-            header("Location: index.php?controller=Usuario&action=login");
-            exit;
+        if (!$this->isLoggedIn()) {
+            $this->redirect('LoginUsuario', 'index');
         }
 
         $idLibro = (int)($_GET['id_libro'] ?? 0);
@@ -210,11 +226,8 @@ class ReservaController
 
     public function guardar()
     {
-        session_start();
-
-        if (!isset($_SESSION['id_usuario'])) {
-            header("Location: index.php?controller=Usuario&action=login");
-            exit;
+        if (!$this->isLoggedIn()) {
+            $this->redirect('LoginUsuario', 'index');
         }
 
         $idLibro = (int)($_POST['id_libro'] ?? 0);
@@ -276,6 +289,38 @@ class ReservaController
     public function confirmacion()
     {
         require __DIR__ . '/../views/reservas/confirmacion.php';
+    }
+
+    public function guardarAjax()
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        if (!$this->isLoggedIn()) {
+            echo json_encode(['ok' => false, 'error' => 'No autenticado']);
+            exit;
+        }
+
+        $idLibro = (int)($_POST['id_libro'] ?? 0);
+        $idUsuario = (int)$_SESSION['id_usuario'];
+
+        if ($idLibro <= 0) {
+            echo json_encode(['ok' => false, 'error' => 'ID de libro inválido']);
+            exit;
+        }
+
+        // Límite de reservas por usuario (misma regla que en guardar())
+        $reservasActivas = $this->reservaModel->contarReservasActivasPorUsuario($idUsuario);
+        if ($reservasActivas >= 3) {
+            echo json_encode(['ok' => false, 'error' => 'Límite de reservas alcanzado (3)']);
+            exit;
+        }
+
+        $ok = $this->reservaModel->crearReserva($idUsuario, $idLibro);
+        if ($ok) {
+            echo json_encode(['ok' => true]);
+        } else {
+            echo json_encode(['ok' => false, 'error' => 'Error al crear la reserva']);
+        }
+        exit;
     }
 }
 

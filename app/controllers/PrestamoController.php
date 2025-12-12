@@ -1,17 +1,23 @@
 <?php
+require_once __DIR__ . '/../core/BaseController.php';
 require_once __DIR__ . '/../../config/Conexion.php';
 require_once __DIR__ . '/../models/LibroModelo.php';
 require_once __DIR__ . '/../models/PrestamoModelo.php';
 require_once __DIR__ . '/../models/Usuario.php';
 require_once __DIR__ . '/../helpers/Mailer.php';
 
-class PrestamoController {
+class PrestamoController extends BaseController {
 
     private $libroModelo;
     private $prestamoModelo;
     private $usuarioModelo;
 
     public function __construct() {
+        parent::__construct();
+        if (!$this->isAdmin()) {
+            $this->redirect('LoginUsuario', 'index');
+        }
+
         $this->libroModelo = new LibroModelo();
         $this->prestamoModelo = new PrestamoModelo();
         $this->usuarioModelo = new Usuario((new Conexion())->conectar());

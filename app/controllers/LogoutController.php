@@ -1,11 +1,11 @@
 <?php
 
-class LogoutController {
+require_once __DIR__ . '/../core/BaseController.php';
+
+class LogoutController extends BaseController {
 
     public function index() {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
+        parent::__construct(); // Ensure BaseController's constructor is called to start session and prevent caching
 
         // 1. Vaciar todas las variables de sesión
         $_SESSION = array();
@@ -22,14 +22,7 @@ class LogoutController {
         // 3. Destruir la sesión finalmente
         session_destroy();
         
-        // Determinar el mensaje de redirección
-        $message = "Sesión cerrada correctamente";
-        if (isset($_GET['error'])) {
-            $message = "Error: " . htmlspecialchars($_GET['error']);
-        }
-
         // 4. Redirigir al catálogo de libros
-        header("Location: /BibliotecKJ01/index.php?controller=Libro&action=index");
-        exit;
+        $this->redirect('Libro', 'index', '&msg=Sesión cerrada correctamente');
     }
 }

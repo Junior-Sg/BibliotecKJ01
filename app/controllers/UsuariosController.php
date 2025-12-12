@@ -1,13 +1,19 @@
 <?php
+require_once __DIR__ . '/../core/BaseController.php';
 require_once __DIR__ . '/../../config/Conexion.php';
 require_once __DIR__ . '/../models/Usuario.php';
 
-class UsuariosController {
+class UsuariosController extends BaseController {
 
     private $model;
     private $db;
 
     public function __construct() {
+        parent::__construct();
+        if (!$this->isAdmin()) {
+            $this->redirect('LoginUsuario', 'index');
+        }
+
         $this->db = (new Conexion())->conectar();
         $this->model = new Usuario($this->db);
     }

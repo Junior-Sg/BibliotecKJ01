@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 27-11-2025 a las 18:51:22
+-- Tiempo de generación: 11-12-2025 a las 07:08:36
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -42,7 +42,10 @@ INSERT INTO `autor` (`id_autor`, `nombre`) VALUES
 (3, 'Carlos Ruiz'),
 (4, 'Junior'),
 (5, 'Mark Manson'),
-(6, 'Inma Rubiales');
+(6, 'Inma Rubiales'),
+(7, 'César Pérez Gellida'),
+(8, 'Alex Rovira'),
+(9, 'Fernando Trias Bes');
 
 -- --------------------------------------------------------
 
@@ -62,11 +65,13 @@ CREATE TABLE `disponibilidad` (
 --
 
 INSERT INTO `disponibilidad` (`id_disponibilidad`, `id_libro`, `cantidad_disponible`, `id_estado`) VALUES
-(1, 1, 10, 1),
-(2, 2, 6, 1),
-(3, 4, 4, 1),
-(4, 5, 8, 1),
-(5, 6, 7, 1);
+(1, 1, 8, 1),
+(2, 2, 10, 1),
+(3, 4, 3, 1),
+(4, 5, 3, 1),
+(5, 6, 5, 1),
+(9, 10, 8, 1),
+(10, 11, 25, 1);
 
 -- --------------------------------------------------------
 
@@ -86,7 +91,9 @@ CREATE TABLE `editorial` (
 INSERT INTO `editorial` (`id_editorial`, `nombre`) VALUES
 (1, 'Reynal & Hitchcock'),
 (2, 'Planeta'),
-(3, 'Harper Collins');
+(3, 'Harper Collins'),
+(4, 'Suma de letras'),
+(5, 'Zenith');
 
 -- --------------------------------------------------------
 
@@ -106,7 +113,21 @@ CREATE TABLE `estado` (
 INSERT INTO `estado` (`id_estado`, `nombre`) VALUES
 (1, 'disponible'),
 (2, 'prestado'),
-(3, 'reservado');
+(3, 'reservado'),
+(4, 'Activo');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `favorito`
+--
+
+CREATE TABLE `favorito` (
+  `id_favorito` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `id_libro` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -131,7 +152,10 @@ INSERT INTO `genero` (`id_genero`, `nombre`) VALUES
 (5, 'romance gotico'),
 (6, 'Autoayuda contemporánea'),
 (7, 'psicología práctica'),
-(8, 'Novela juvenil romántica');
+(8, 'Novela juvenil romántica'),
+(9, 'Novela negra/Thriller'),
+(10, 'Autoayuda'),
+(11, 'Fábula motivacional');
 
 -- --------------------------------------------------------
 
@@ -155,11 +179,13 @@ CREATE TABLE `libro` (
 --
 
 INSERT INTO `libro` (`id_libro`, `titulo`, `Estante`, `año_publicacion`, `id_editorial`, `cantidad_total`, `Imagen`, `sipnosis`) VALUES
-(1, 'El principito', 'A1', '1943', 1, 10, '1764103726_imagen_2025-11-25_154845600.png', ''),
-(2, 'Nosotros en la Luna', 'A1', '2020', 2, 6, '1764103541_imagen_2025-11-25_154539710.png', ''),
-(4, 'La sombra del viento', 'A2', '2001', 2, 4, '1764105729_imagen_2025-11-25_162207530.png', ''),
-(5, 'El sutil arte de que te importe un carajo', 'A2', '2016', 3, 10, '1764181496_imagen_2025-11-26_132454847.png', ''),
-(6, 'El arte de ser nosotros', 'A2', '2023', 2, 10, '1764186964_imagen_2025-11-26_145546863.png', '');
+(1, 'El principito', 'A1', '1943', 1, 12, '1765055714_imagen_2025-12-06_161512812.png', ''),
+(2, 'Nosotros en la Luna', 'A1', '2020', 2, 15, '1764906442_imagen_2025-12-04_224720701.png', ''),
+(4, 'La sombra del viento', 'A2', '2001', 2, 8, '1764906366_imagen_2025-12-04_224604365.png', ''),
+(5, 'El sutil arte de que te importe un carajo', 'A2', '2016', 3, 10, '1765153379_imagen_2025-12-07_192258549.png', ''),
+(6, 'El arte de ser nosotros', 'A2', '2023', 2, 10, '1764906399_imagen_2025-12-04_224637584.png', ''),
+(10, 'Memento Mori', 'A2', '2013', 4, 10, '6928977428d1b_imagen_2025-11-27_132437633.png', 'Memento Mori arranca con el hallazgo del cadáver de una joven en Valladolid, cuyos párpados han sido mutilados y en cuyo cuerpo aparecen escritos unos versos inquietantes. El inspector Ramiro Sancho se enfrenta a un asesino culto y meticuloso que utiliza la poesía y la música como parte de su macabro ritual. A medida que avanza la investigación, se despliega un juego psicológico entre cazador y presa, donde la inteligencia del criminal y la tensión narrativa convierten la historia en un thriller oscuro y absorbente que mezcla crimen, arte y obsesión.'),
+(11, 'La buena suerte. Claves de la prosperidad', 'A3', '2004', 5, 25, '1764905733_imagen_2025-12-04_223319039.png', '');
 
 --
 -- Disparadores `libro`
@@ -191,7 +217,10 @@ INSERT INTO `libro_autor` (`id_libro`, `id_autor`) VALUES
 (4, 3),
 (4, 4),
 (5, 5),
-(6, 6);
+(6, 6),
+(10, 7),
+(11, 8),
+(11, 9);
 
 -- --------------------------------------------------------
 
@@ -216,7 +245,10 @@ INSERT INTO `libro_genero` (`id_libro`, `id_genero`) VALUES
 (4, 5),
 (5, 6),
 (5, 7),
-(6, 8);
+(6, 8),
+(10, 9),
+(11, 10),
+(11, 11);
 
 -- --------------------------------------------------------
 
@@ -249,12 +281,13 @@ CREATE TABLE `prestamo` (
 --
 
 INSERT INTO `prestamo` (`id_prestamo`, `id_usuario`, `id_libro`, `fecha_prestamo`, `fecha_devolucion`, `estado`) VALUES
-(2, 13, 6, '2025-11-26', '2025-11-29', ''),
-(3, 11, 6, '2025-11-26', '2025-12-05', ''),
-(4, 13, 1, '2025-11-26', '2025-11-29', ''),
-(5, 13, 5, '2025-11-26', '2025-11-28', ''),
-(6, 14, 6, '2025-11-27', '2025-11-29', ''),
-(7, 13, 5, '2025-11-27', '2025-11-29', '');
+(21, 14, 6, '2025-12-03', '2025-12-03', 'devuelto'),
+(22, 14, 6, '2025-12-03', '2025-12-03', 'devuelto'),
+(31, 13, 1, '2025-12-06', '2025-12-21', 'activo'),
+(32, 14, 5, '2025-12-06', '2025-12-13', 'activo'),
+(33, 14, 2, '2025-12-07', '2025-12-14', 'activo'),
+(34, 14, 1, '2025-12-07', '2025-12-14', 'activo'),
+(35, 14, 2, '2025-12-07', '2025-12-14', 'activo');
 
 -- --------------------------------------------------------
 
@@ -269,6 +302,23 @@ CREATE TABLE `reserva` (
   `fecha_reserva` date NOT NULL,
   `estado` enum('pendiente','prestado','cancelado','devuelto') DEFAULT 'pendiente'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `reserva`
+--
+
+INSERT INTO `reserva` (`id_reserva`, `id_usuario`, `id_libro`, `fecha_reserva`, `estado`) VALUES
+(1, 14, 2, '2025-12-06', 'prestado'),
+(2, 13, 1, '2025-12-06', 'prestado'),
+(3, 14, 5, '2025-12-06', 'prestado'),
+(4, 14, 1, '2025-12-07', 'prestado'),
+(5, 14, 2, '2025-12-07', 'prestado'),
+(6, 14, 6, '2025-12-07', 'pendiente'),
+(7, 13, 2, '2025-12-07', 'pendiente'),
+(8, 13, 1, '2025-12-10', 'pendiente'),
+(9, 18, 10, '2025-12-10', 'pendiente'),
+(10, 18, 2, '2025-12-10', 'pendiente'),
+(11, 18, 2, '2025-12-10', '');
 
 -- --------------------------------------------------------
 
@@ -311,7 +361,10 @@ INSERT INTO `rol_user` (`id_usuario`, `id_rol`) VALUES
 (11, 2),
 (12, 2),
 (13, 2),
-(14, 2);
+(14, 2),
+(15, 2),
+(17, 2),
+(18, 2);
 
 -- --------------------------------------------------------
 
@@ -326,21 +379,26 @@ CREATE TABLE `usuario` (
   `contraseña` varchar(255) NOT NULL,
   `telefono` varchar(15) DEFAULT NULL,
   `tipo_documento` varchar(20) DEFAULT NULL,
-  `numero_documento` varchar(20) DEFAULT NULL
+  `numero_documento` varchar(20) DEFAULT NULL,
+  `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp(),
+  `avatar_emoji` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`id_usuario`, `nombre`, `correo`, `contraseña`, `telefono`, `tipo_documento`, `numero_documento`) VALUES
-(1, 'Admin', 'admid@gmail.com', '$2y$10$UN2yuKpUbkpWHOM.tRHqGu21oSiXJpBlvtTvvOWsCJ56TbrSL1WWW', NULL, NULL, NULL),
-(5, 'Marco Medina Molina1', 'marcos@gmail.com', '$2y$10$mJbttWTcdL0RvJuhooK43.cOtBz.UmypVK/q6IlK/U/TdqOX2Qafi', NULL, NULL, NULL),
-(8, 'Valeria pulido', 'valeria@gmail.com', '$2y$10$YEsOi07x68k0MT3h.QQ9x.jTzUuuOTNMAroC/BS2rlU8/x6A8mSsS', NULL, NULL, NULL),
-(11, 'Eulices Santamaria', 'eulises@gmail.com', '$2y$10$3vhHFdmOLLrKwrxQQCgYZe79DKn4zHCd8ANgfzQ.s56JlSe65hSw.', '3135224574', 'CC', '6708977'),
-(12, 'Daniel Suarez', 'daniel@gmail.com', '$2y$10$rw3k/leScaaVhwhZH0lnWucu3naPPF9OUWQ3F1UEqU12XTpEeNTL.', '3124225212', 'CC', '11111111'),
-(13, 'Dana Cifuentes', 'Danacici04@gmail.com', '$2y$10$.qFF/QJwrhs8I./1Pu52f.JP6zvW.wTVTCxxbxCw8g0J5hfUOSjZK', '3124750781', 'CC', '1056768630'),
-(14, 'junior', 'santamaria@gmail.com', '$2y$10$34mB90rdFzZujUrhdn73W..w9V2HR2JX9uSuMObaEMOaulIOu2UOq', '3152417443', 'CC', '1056769689');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `correo`, `contraseña`, `telefono`, `tipo_documento`, `numero_documento`, `fecha_registro`, `avatar_emoji`) VALUES
+(1, 'Admin', 'admid@gmail.com', '$2y$10$UN2yuKpUbkpWHOM.tRHqGu21oSiXJpBlvtTvvOWsCJ56TbrSL1WWW', NULL, NULL, NULL, '2025-12-10 14:47:44', NULL),
+(5, 'Marco Medina Molina1', 'marcos@gmail.com', '$2y$10$mJbttWTcdL0RvJuhooK43.cOtBz.UmypVK/q6IlK/U/TdqOX2Qafi', NULL, NULL, NULL, '2025-12-10 14:47:44', NULL),
+(8, 'Valeria pulido', 'valeria@gmail.com', '$2y$10$YEsOi07x68k0MT3h.QQ9x.jTzUuuOTNMAroC/BS2rlU8/x6A8mSsS', NULL, NULL, NULL, '2025-12-10 14:47:44', NULL),
+(11, 'Eulices Santamaria', 'eulises@gmail.com', '$2y$10$3vhHFdmOLLrKwrxQQCgYZe79DKn4zHCd8ANgfzQ.s56JlSe65hSw.', '3135224574', 'CC', '6708977', '2025-12-10 14:47:44', NULL),
+(12, 'Daniel Suarez', 'daniel@gmail.com', '$2y$10$rw3k/leScaaVhwhZH0lnWucu3naPPF9OUWQ3F1UEqU12XTpEeNTL.', '3124225212', 'CC', '00000000', '2025-12-10 14:47:44', NULL),
+(13, 'Dana Cifuentes', 'Danacici04@gmail.com', '$2y$10$.qFF/QJwrhs8I./1Pu52f.JP6zvW.wTVTCxxbxCw8g0J5hfUOSjZK', '3124750781', 'CC', '1056768630', '2025-12-10 14:47:44', NULL),
+(14, 'junior', 'santamaria@gmail.com', '$2y$10$34mB90rdFzZujUrhdn73W..w9V2HR2JX9uSuMObaEMOaulIOu2UOq', '3152417443', 'CC', '1056769689', '2025-12-10 14:47:44', NULL),
+(15, 'Daniela Caicedo', 'daniela@gmail.com', '$2y$10$zqElRzVdBsy10oWaMZKCa.htd4o3CBdcwierwl1hddTbytZS66Qxa', '1325255432', 'CC', '123124514154', '2025-12-10 14:47:44', NULL),
+(17, 'Cataliana Gonzales', 'cata@gmail.com', '$2y$10$9xd1TGjTI9yNqK5.E57zHO7Iu8yzYS7cJvupgKxlXy8JGozqsJVSO', '12335469678', 'CC', '12435554862', '2025-12-10 14:47:44', NULL),
+(18, 'Kasandra', '12345@gmail.com', '$2y$10$DRLi09k9JEJVhUL96UYT0Oo9aushFoqxsy7d5Z6KYqf1WU4P62Fju', '3124750781', 'CC', '123456789', '2025-12-10 14:47:44', '😁');
 
 --
 -- Índices para tablas volcadas
@@ -371,6 +429,15 @@ ALTER TABLE `editorial`
 --
 ALTER TABLE `estado`
   ADD PRIMARY KEY (`id_estado`);
+
+--
+-- Indices de la tabla `favorito`
+--
+ALTER TABLE `favorito`
+  ADD PRIMARY KEY (`id_favorito`),
+  ADD UNIQUE KEY `ux_usuario_libro` (`id_usuario`,`id_libro`),
+  ADD KEY `idx_favorito_usuario` (`id_usuario`),
+  ADD KEY `idx_favorito_libro` (`id_libro`);
 
 --
 -- Indices de la tabla `genero`
@@ -449,37 +516,43 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `autor`
 --
 ALTER TABLE `autor`
-  MODIFY `id_autor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_autor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `disponibilidad`
 --
 ALTER TABLE `disponibilidad`
-  MODIFY `id_disponibilidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_disponibilidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `editorial`
 --
 ALTER TABLE `editorial`
-  MODIFY `id_editorial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_editorial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `estado`
 --
 ALTER TABLE `estado`
-  MODIFY `id_estado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_estado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `favorito`
+--
+ALTER TABLE `favorito`
+  MODIFY `id_favorito` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `genero`
 --
 ALTER TABLE `genero`
-  MODIFY `id_genero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_genero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `libro`
 --
 ALTER TABLE `libro`
-  MODIFY `id_libro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_libro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `permiso`
@@ -491,13 +564,13 @@ ALTER TABLE `permiso`
 -- AUTO_INCREMENT de la tabla `prestamo`
 --
 ALTER TABLE `prestamo`
-  MODIFY `id_prestamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_prestamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT de la tabla `reserva`
 --
 ALTER TABLE `reserva`
-  MODIFY `id_reserva` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_reserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -509,7 +582,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- Restricciones para tablas volcadas
@@ -521,6 +594,13 @@ ALTER TABLE `usuario`
 ALTER TABLE `disponibilidad`
   ADD CONSTRAINT `disponibilidad_ibfk_1` FOREIGN KEY (`id_libro`) REFERENCES `libro` (`id_libro`),
   ADD CONSTRAINT `fk_estado_disponibilidad` FOREIGN KEY (`id_estado`) REFERENCES `estado` (`id_estado`);
+
+--
+-- Filtros para la tabla `favorito`
+--
+ALTER TABLE `favorito`
+  ADD CONSTRAINT `fk_favorito_libro` FOREIGN KEY (`id_libro`) REFERENCES `libro` (`id_libro`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_favorito_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `libro`
