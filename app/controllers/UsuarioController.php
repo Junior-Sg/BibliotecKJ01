@@ -1,82 +1,77 @@
 <?php
+require_once __DIR__ . '/../core/BaseController.php';
 require_once __DIR__ . '/../../config/Conexion.php';
 require_once __DIR__ . '/../models/Usuario.php';
+require_once __DIR__ . '/../models/PrestamoModelo.php'; // Incluir PrestamoModelo
 require_once __DIR__ . '/../core/helpers.php';
 
-class UsuarioController {
+class UsuarioController extends BaseController {
     private $model;
     private $db;
 
     public function __construct() {
-        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        parent::__construct();
+        if (!$this->isLoggedIn()) {
+            $this->redirect('LoginUsuario', 'index');
+        }
+
         $this->db = (new Conexion())->conectar();
         $this->model = new Usuario($this->db);
     }
-    
 
-// método perfil
-public function perfil() {
-    if (!isset($_SESSION['id_usuario'])) {
-        header('Location: ' . (defined('BASE_URL') ? rtrim(BASE_URL, '/') : '') . '/index.php?controller=LoginUsuario&action=form');
-        exit;
-    }
-    $id = (int)$_SESSION['id_usuario'];
+    public function perfil() {
+        $id = (int)$_SESSION['id_usuario'];
 
-    // Obtener datos necesarios para la vista
-    $usuario   = $this->model->obtenerPorId($id);
-    $favoritos = $this->model->obtenerFavoritos($id);   // mysqli_result o false
-    $reservas  = $this->model->obtenerReservas($id);    // mysqli_result o false
+        // Instanciar PrestamoModelo para el historial
+        $prestamoModelo = new PrestamoModelo($this->db);
+        $historialLectura = $prestamoModelo->obtenerHistorialDeLectura($id);
 
-    render_view('usuario/perfil', [
-        'usuario'   => $usuario,
-        'favoritos' => $favoritos,
-        'reservas'  => $reservas
-    ]);
-}
+        // Obtener datos necesarios para la vista
+        $usuario   = $this->model->obtenerPorId($id);
+        $favoritos = $this->model->obtenerFavoritos($id);   // mysqli_result o false
+        $reservas  = $this->model->obtenerReservas($id);    // mysqli_result o false
 
-// método actualizar perfil
-public function actualizar()
-{
-    if (!isset($_SESSION['id_usuario'])) {
-        http_response_code(403);
-        echo "Acceso no autorizado";
-        exit;
+        render_view('usuario/perfil', [
+            'usuario'   => $usuario,
+            'favoritos' => $favoritos,
+            'reservas'  => $reservas,
+            'historialLectura' => $historialLectura // Pasar historial a la vista
+        ]);
     }
 
-    $id = (int)$_SESSION['id_usuario'];
-    $nombre = trim($_POST['nombre'] ?? '');
-    $correo = trim($_POST['correo'] ?? '');
-    $telefono = trim($_POST['telefono'] ?? '');
-    $direccion = trim($_POST['direccion'] ?? '');
+    public function actualizar()
+    {
+        $id = (int)$_SESSION['id_usuario'];
+        $nombre = trim($_POST['nombre'] ?? '');
+        $correo = trim($_POST['correo'] ?? '');
+        $telefono = trim($_POST['telefono'] ?? '');
+        $direccion = trim($_POST['direccion'] ?? '');
 
-    // validaciones básicas
-    if (empty($nombre) || empty($correo)) {
-        $_SESSION['flash_error'] = "Nombre y correo son requeridos.";
+        // validaciones básicas
+        if (empty($nombre) || empty($correo)) {
+            $_SESSION['flash_error'] = "Nombre y correo son requeridos.";
+            header("Location: " . (defined('BASE_URL') ? rtrim(BASE_URL, '/') : '') . "/index.php?controller=Usuario&action=perfil");
+            exit;
+        }
+
+        $ok = $this->model->actualizarPerfil($id, $nombre, $correo, $telefono, $direccion);
+
+        if ($ok) {
+            $_SESSION['nombre'] = $nombre;
+            $_SESSION['correo'] = $correo;
+            $_SESSION['flash_ok'] = "Perfil actualizado.";
+        } else {
+            $_SESSION['flash_error'] = "No se pudo actualizar perfil.";
+        }
+
         header("Location: " . (defined('BASE_URL') ? rtrim(BASE_URL, '/') : '') . "/index.php?controller=Usuario&action=perfil");
         exit;
     }
 
-    $ok = $this->model->actualizarPerfil($id, $nombre, $correo, $telefono, $direccion);
-
-    if ($ok) {
-        $_SESSION['nombre'] = $nombre;
-        $_SESSION['correo'] = $correo;
-        $_SESSION['flash_ok'] = "Perfil actualizado.";
-    } else {
-        $_SESSION['flash_error'] = "No se pudo actualizar perfil.";
-    }
-
-    header("Location: " . (defined('BASE_URL') ? rtrim(BASE_URL, '/') : '') . "/index.php?controller=Usuario&action=perfil");
-    exit;
-}
-
     public function elegirEmoji()
     {
         header('Content-Type: application/json; charset=utf-8');
-        if (!isset($_SESSION['id_usuario'])) {
-            echo json_encode(['ok'=>false,'error'=>'No autenticado']);
-            exit;
-        }
+        
         $emoji = $_POST['emoji'] ?? '';
         $id = (int)$_SESSION['id_usuario'];
         if (empty($emoji)) {
@@ -99,10 +94,7 @@ public function actualizar()
     public function cancelarReservaAjax()
     {
         header('Content-Type: application/json; charset=utf-8');
-        if (!isset($_SESSION['id_usuario'])) {
-            echo json_encode(['ok'=>false,'error'=>'No autenticado']);
-            exit;
-        }
+        
         $idReserva = (int)($_POST['id_reserva'] ?? 0);
         if ($idReserva <= 0) {
             echo json_encode(['ok'=>false,'error'=>'Reserva inválida']);
@@ -111,6 +103,27 @@ public function actualizar()
         $idUsuario = (int)$_SESSION['id_usuario'];
         $ok = $this->model->cancelarReserva($idReserva, $idUsuario);
         echo json_encode(['ok' => (bool)$ok]);
+        exit;
+    }
+    
+    public function agregarFavoritoAjax()
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        
+        $idLibro = (int)($_POST['id_libro'] ?? 0);
+        if ($idLibro <= 0) {
+            echo json_encode(['ok' => false, 'error' => 'Libro inválido']);
+            exit;
+        }
+        
+        $idUsuario = (int)$_SESSION['id_usuario'];
+        $ok = $this->model->agregarFavorito($idUsuario, $idLibro);
+        
+        if ($ok) {
+            echo json_encode(['ok' => true]);
+        } else {
+            echo json_encode(['ok' => false, 'error' => 'No se pudo agregar a favoritos']);
+        }
         exit;
     }
 }

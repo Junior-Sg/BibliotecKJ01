@@ -29,12 +29,21 @@ class Usuario
 
         $stmt->bind_param("ssssss", $nombre, $correo, $claveHash, $telefonoVal, $tipoDocVal, $numDocVal);
 
-        if (!$stmt->execute()) {
-            error_log("Error ejecutar registrar: " . $stmt->error);
-            return false;
+        try {
+            if ($stmt->execute()) {
+                return $this->conexion->insert_id;
+            } else {
+                error_log("Error ejecutar registrar: " . $stmt->error);
+                return false;
+            }
+        } catch (mysqli_sql_exception $e) {
+            if ($e->getCode() == 1062) {
+                return 'duplicate_entry';
+            } else {
+                error_log("Error ejecutar registrar: " . $e->getMessage());
+                return false;
+            }
         }
-
-        return $this->conexion->insert_id;
     }
 
     // =========================
@@ -241,17 +250,15 @@ class Usuario
     }
     
     //  método actualizarPerfil 
-    public function actualizarPerfil(int $id, string $nombre, string $correo, ?string $telefono)
+    public function actualizarPerfil(int $id, string $nombre, string $correo, string $telefono, string $avatar_emoji)
     {
-        $sql = "UPDATE usuario SET nombre = ?, correo = ?, telefono = ? WHERE id_usuario = ?";
+        $sql = "UPDATE usuario SET nombre = ?, correo = ?, telefono = ?, avatar_emoji = ? WHERE id_usuario = ?";
         $stmt = $this->conexion->prepare($sql);
         if (!$stmt) {
             error_log("Error preparar actualizarPerfil: " . $this->conexion->error);
             return false;
         }
-
-        // tipos: s = string, i = int
-        $stmt->bind_param("sssi", $nombre, $correo, $telefono, $id);
+        $stmt->bind_param("ssssi", $nombre, $correo, $telefono, $avatar_emoji, $id);
         $res = $stmt->execute();
         $stmt->close();
         return $res;
@@ -288,6 +295,29 @@ class Usuario
         $stmt->execute();
         $res = $stmt->get_result();
         return $res;
+    }
+
+    public function agregarFavorito(int $idUsuario, int $idLibro)
+    {
+        // 1. Verificar si ya existe
+        $sqlCheck = "SELECT id_favorito FROM favorito WHERE id_usuario = ? AND id_libro = ?";
+        $stmtCheck = $this->conexion->prepare($sqlCheck);
+        $stmtCheck->bind_param("ii", $idUsuario, $idLibro);
+        $stmtCheck->execute();
+        $resCheck = $stmtCheck->get_result();
+        if ($resCheck->num_rows > 0) {
+            return true; // Ya es favorito, no es un error
+        }
+
+        // 2. Insertar si no existe
+        $sql = "INSERT INTO favorito (id_usuario, id_libro) VALUES (?, ?)";
+        $stmt = $this->conexion->prepare($sql);
+        if (!$stmt) {
+            error_log("Error preparar agregarFavorito: " . $this->conexion->error);
+            return false;
+        }
+        $stmt->bind_param("ii", $idUsuario, $idLibro);
+        return $stmt->execute();
     }
 
     // Historial reservas: asume tabla reserva (id_reserva, id_usuario, id_libro, fecha_reserva, estado)

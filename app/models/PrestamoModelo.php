@@ -298,4 +298,23 @@ class PrestamoModelo {
         $sql = "UPDATE prestamo SET estado = 'retrasado' WHERE fecha_devolucion < CURDATE() AND estado = 'activo'";
         $this->db->query($sql);
     }
+
+    public function obtenerHistorialDeLectura($idUsuario) {
+        $sql = "SELECT 
+                    p.id_prestamo,
+                    p.fecha_devolucion,
+                    l.id_libro,
+                    l.titulo,
+                    l.Imagen
+                FROM prestamo p
+                JOIN libro l ON p.id_libro = l.id_libro
+                WHERE p.id_usuario = ? AND p.estado = 'devuelto'
+                ORDER BY p.fecha_devolucion DESC";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $idUsuario);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        return $resultado->fetch_all(MYSQLI_ASSOC);
+    }
 }

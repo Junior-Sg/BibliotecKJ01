@@ -1,12 +1,16 @@
 <?php
-
+require_once __DIR__ . '/../core/BaseController.php';
 require_once __DIR__ . '/../models/InventarioModelo.php';
 
-class InventarioController {
+class InventarioController extends BaseController {
 
     private $modelo;
 
     public function __construct() {
+        parent::__construct();
+        if (!$this->isAdmin()) {
+            $this->redirect('LoginUsuario', 'index');
+        }
         $this->modelo = new InventarioModelo();
     }
 

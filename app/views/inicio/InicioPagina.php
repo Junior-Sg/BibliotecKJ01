@@ -49,6 +49,18 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
             border:none;
         }
 
+        /* TABS DE FILTROS */
+        .nav-pills .nav-link {
+            color: #8b6f57;
+            background-color: #fff;
+            border: 1px solid #8b6f57;
+            margin: 0 5px;
+        }
+        .nav-pills .nav-link.active {
+            color: #fff;
+            background-color: #8b6f57;
+        }
+
         /* CARRUSEL */
         .carrusel-box {
             background: #8b6f57;
@@ -106,6 +118,11 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
             object-fit: cover;
             border-radius: 10px;
         }
+
+        /* Ocultar elementos por defecto para JS */
+        .libro-item.hidden {
+            display: none;
+        }
     </style>
 </head>
 
@@ -114,17 +131,9 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 <!-- NAVBAR -->
 <?php include __DIR__ . '../../layouts/navbar.php'; ?>
 
-<div class="container mt-4">
+<?php include __DIR__ . '../../libros/busqueda.php'; ?>
 
-    <!-- BUSCADOR -->
-    <div class="buscador-wrap">
-        <form action="index.php" method="get">
-            <input type="hidden" name="controller" value="Libro">
-            <input type="hidden" name="action" value="buscar">
-            <input class="buscador-input" type="text" name="q" placeholder="Buscar por título o autor...">
-            <button class="buscador-btn">Buscar</button>
-        </form>
-    </div>
+<div class="container mt-4">
 
     <!-- CARRUSEL -->
     <div class="carrusel-box">
@@ -140,38 +149,75 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
         </div>
     </div>
 
-    <!-- SECCIÓN: Más reservados -->
-    <div class="text-center">
+    <!-- SECCIÓN: LIBROS MÁS RESERVADOS -->
+    <div class="text-center mt-5">
         <h2 class="section-title">LIBROS MÁS RESERVADOS</h2>
     </div>
 
-    <div class="d-flex flex-wrap justify-content-center gap-4 mb-5">
-        <?php foreach ($masreservados as $l): ?>
-        <div class="mini-card">
-            <img src="<?= BASE_URL ?>/public/img/Libros/<?= $l['Imagen'] ?>">
-            <p class="mt-2 small"><?= htmlspecialchars($l['titulo']) ?></p>
+    <!-- Filtros -->
+    <ul class="nav nav-pills justify-content-center mb-4" id="reservados-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="hoy-tab" data-bs-toggle="pill" data-bs-target="#hoy" type="button" role="tab">Hoy</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="semanal-tab" data-bs-toggle="pill" data-bs-target="#semanal" type="button" role="tab">Semanal</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="mensual-tab" data-bs-toggle="pill" data-bs-target="#mensual" type="button" role="tab">Mensual</button>
+        </li>
+    </ul>
+
+    <!-- Contenido Libros Reservados -->
+    <div class="tab-content" id="reservados-content">
+        <!-- Para simplificar, usamos los mismos datos. En una app real, aquí irían datos distintos por pestaña -->
+        <div class="tab-pane fade show active" id="hoy" role="tabpanel">
+            <div class="row row-cols-1 row-cols-md-3 g-4" id="lista-reservados">
+                <?php foreach ($masreservados as $index => $l): ?>
+                    <div class="col libro-item <?= $index >= 3 ? 'hidden' : '' ?>">
+                        <div class="mini-card mx-auto">
+                            <img src="<?= BASE_URL ?>/public/img/Libros/<?= $l['Imagen'] ?>" alt="<?= htmlspecialchars($l['titulo']) ?>">
+                            <p class="mt-2 small fw-bold"><?= htmlspecialchars($l['titulo']) ?></p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <?php if (count($masreservados) > 3): ?>
+            <div class="text-center mt-4">
+                <button id="ver-mas-reservados" class="btn btn-outline-light">Ver más</button>
+            </div>
+            <?php endif; ?>
         </div>
-        <?php endforeach; ?>
+        <!-- Aquí irían los otros tab-pane para Semanal y Mensual -->
     </div>
 
-    <!-- SECCIÓN: Libros nuevos -->
-    <div class="text-center">
+    <!-- SECCIÓN: LIBROS NUEVOS -->
+    <div class="text-center mt-5">
         <h2 class="section-title">LIBROS NUEVOS EN LA BIBLIOTECA</h2>
     </div>
 
-    <div class="d-flex flex-wrap justify-content-center gap-4 mb-5">
-        <?php foreach ($nuevos as $l): ?>
-        <div class="mini-card">
-            <img src="<?= BASE_URL ?>/public/img/Libros/<?= $l['Imagen'] ?>">
-            <p class="mt-2 small"><?= htmlspecialchars($l['titulo']) ?></p>
-        </div>
+    <div class="row row-cols-1 row-cols-md-4 g-4 mb-5" id="lista-nuevos">
+         <?php foreach ($nuevos as $index => $l): ?>
+            <div class="col libro-item <?= $index >= 4 ? 'hidden' : '' ?>">
+                <div class="mini-card mx-auto">
+                    <img src="<?= BASE_URL ?>/public/img/Libros/<?= $l['Imagen'] ?>" alt="<?= htmlspecialchars($l['titulo']) ?>">
+                    <p class="mt-2 small fw-bold"><?= htmlspecialchars($l['titulo']) ?></p>
+                </div>
+            </div>
         <?php endforeach; ?>
     </div>
+    <?php if (count($nuevos) > 4): ?>
+    <div class="text-center mt-2 mb-5">
+        <button id="ver-mas-nuevos" class="btn btn-outline-light">Ver más</button>
+    </div>
+    <?php endif; ?>
 
 </div>
 
 <!-- FOOTER -->
 <?php include __DIR__ . '../../layouts/footer.php'; ?>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 // ---- CARRUSEL AUTOMÁTICO ----
@@ -196,6 +242,39 @@ function goToSlide(i) {
 
 // Auto cada 5 segundos
 setInterval(() => cambiarSlide(1), 5000);
+
+// ---- LÓGICA "VER MÁS" ----
+
+// Para libros más reservados
+const btnVerMasReservados = document.getElementById('ver-mas-reservados');
+if (btnVerMasReservados) {
+    btnVerMasReservados.addEventListener('click', function() {
+        const itemsOcultos = document.querySelectorAll('#lista-reservados .libro-item.hidden');
+        const itemsAMostrar = Array.from(itemsOcultos).slice(0, 3);
+        
+        itemsAMostrar.forEach(item => item.classList.remove('hidden'));
+
+        // Si ya no hay más ítems ocultos, esconde el botón "Ver más"
+        if (document.querySelectorAll('#lista-reservados .libro-item.hidden').length === 0) {
+            this.style.display = 'none';
+        }
+    });
+}
+
+// Para libros nuevos
+const btnVerMasNuevos = document.getElementById('ver-mas-nuevos');
+if (btnVerMasNuevos) {
+    btnVerMasNuevos.addEventListener('click', function() {
+        const itemsOcultos = document.querySelectorAll('#lista-nuevos .libro-item.hidden');
+        const itemsAMostrar = Array.from(itemsOcultos).slice(0, 4);
+        
+        itemsAMostrar.forEach(item => item.classList.remove('hidden'));
+
+        if (document.querySelectorAll('#lista-nuevos .libro-item.hidden').length === 0) {
+            this.style.display = 'none';
+        }
+    });
+}
 </script>
 
 </body>

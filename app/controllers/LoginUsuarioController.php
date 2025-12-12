@@ -1,17 +1,16 @@
 <?php
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
 
+require_once __DIR__ . '/../core/BaseController.php';
 require_once __DIR__ . '/../../config/Conexion.php';
 require_once __DIR__ . '/../models/Usuario.php';
 
-class LoginUsuarioController {
+class LoginUsuarioController extends BaseController {
 
     private $model;
     private $db;
 
     public function __construct() {
+        parent::__construct(); // Call the parent constructor
         $this->db = (new Conexion())->conectar();
         $this->model = new Usuario($this->db);
     }
@@ -21,7 +20,8 @@ class LoginUsuarioController {
      */
     public function index() {
         // Redirige al inicio si el usuario ya está logueado
-        if (isset($_SESSION['id_usuario'])) {
+        // (Aunque BaseController ya hace una redirección similar, esta es más específica por rol)
+        if ($this->isLoggedIn()) {
             $this->redirigirPorRol($_SESSION['rol'] ?? null);
         }
         require_once __DIR__ . '/../views/auth/Login_usuario.php';
@@ -35,20 +35,20 @@ class LoginUsuarioController {
         $clave  = trim($_POST["clave"] ?? "");
 
         if (empty($correo) || empty($clave)) {
-            header("Location: " . BASE_URL . "LoginUsuario?error=Datos incompletos");
+            $this->redirect('LoginUsuario', 'index', '&error=Datos incompletos');
             exit;
         }
 
         // Validación de formato de correo electrónico
         if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-            header("Location: " . BASE_URL . "LoginUsuario?error=Formato de correo electrónico inválido");
+            $this->redirect('LoginUsuario', 'index', '&error=Formato de correo electrónico inválido');
             exit;
         }
 
         $data = $this->model->login($correo, $clave);
 
         if (!$data) {
-            header("Location: " . BASE_URL . "LoginUsuario?error=Correo o contraseña incorrectos");
+            $this->redirect('LoginUsuario', 'index', '&error=Correo o contraseña incorrectos');
             exit;
         }
 
@@ -68,14 +68,20 @@ class LoginUsuarioController {
     private function redirigirPorRol($rol) {
         switch ($rol) {
             case 1: // Admin
-                header("Location: /BibliotecKJ01/index.php?controller=Inicio&action=index");
+                $this->redirect('Inicio', 'index');
                 break;
             case 2: // Cliente
-                header("Location: /BibliotecKJ01/index.php?controller=Libro&action=index");
+                $this->redirect('Libro', 'index');
                 break;
             default: // Rol no reconocido o sin rol
-                header("Location: /BibliotecKJ01/index.php?controller=LoginUsuario&action=index&error=Rol no asignado");
+                $this->redirect('LoginUsuario', 'index', '&error=Rol no asignado');
         }
+    }
+
+    // Override del método redirect para añadir parámetros extra si es necesario
+    protected function redirect($controller, $action = 'index', $params = '') {
+        $baseUrl = rtrim(BASE_URL, '/');
+        header("Location: {$baseUrl}/index.php?controller={$controller}&action={$action}{$params}");
         exit;
     }
 }

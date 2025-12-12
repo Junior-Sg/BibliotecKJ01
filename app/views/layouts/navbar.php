@@ -44,10 +44,10 @@ $avatarFileUrl  = $usuarioAutenticado && file_exists($avatarFilePath) ? BASE_URL
             <span class="user-name"><?= htmlspecialchars($nombreUsuario ?: 'Usuario') ?></span>
         </a>
         <!-- Logout separado -->
-        <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Auth&action=logout" class="btn-logout">Cerrar Sesión</a>
+        <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Logout&action=index" class="btn-logout">Cerrar Sesión</a>
     </div>
 <?php else: ?>
-    <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=LoginUsuario&action=form" class="btn-login">Iniciar Sesión</a>
+    <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=LoginUsuario&action=index" class="btn-login">Iniciar Sesión</a>
 <?php endif; ?>
         </div>
     </div>
@@ -56,26 +56,9 @@ $avatarFileUrl  = $usuarioAutenticado && file_exists($avatarFilePath) ? BASE_URL
 <nav class="navbar-custom">
     <ul class="menu">
         <li><a href="<?= BASE_URL ?>index.php?controller=InicioPagina&action=index">Inicio</a></li>
-        <li><a href="index.php?controller=Libro&action=index">Librería</a></li>
+        <li><a href="index.php?controller=Libro&action=index">Genero</a></li>
 
-        <li class="despliegue">
-            <a href="#" class="trigger">Género</a>
-            <ul class="despliegue-menu">
-                <li><a href="<?= BASE_URL ?>index.php?controller=Libro&action=index&genero=Comedia">Comedia</a></li>
-                <li><a href="<?= BASE_URL ?>index.php?controller=Libro&action=index&genero=Drama">Drama</a></li>
-                <li><a href="<?= BASE_URL ?>index.php?controller=Libro&action=index&genero=Acción">Acción</a></li>
-                <li><a href="<?= BASE_URL ?>index.php?controller=Libro&action=index&genero=Romance">Romance</a></li>
-                <li><a href="<?= BASE_URL ?>index.php?controller=Libro&action=index&genero=Biología">Biología</a></li>
-                <li><a href="<?= BASE_URL ?>index.php?controller=Libro&action=index&genero=Musical">Musical</a></li>
-                <li><a href="<?= BASE_URL ?>index.php?controller=Libro&action=index&genero=Biografía">Biografía</a></li>
-                <li><a href="<?= BASE_URL ?>index.php?controller=Libro&action=index&genero=Historia">Historia</a></li>
-                <li><a href="<?= BASE_URL ?>index.php?controller=Libro&action=index&genero=Matemáticas">Matemáticas</a></li>
-                <li><a href="<?= BASE_URL ?>index.php?controller=Libro&action=index&genero=Ciencias Sociales">Ciencias Sociales</a></li>
-                <li><a href="<?= BASE_URL ?>index.php?controller=Libro&action=index&genero=Ciencias Naturales">Ciencias Naturales</a></li>
-                <li><a href="<?= BASE_URL ?>index.php?controller=Libro&action=index&genero=Informática">Informática</a></li>
-                <li><a href="<?= BASE_URL ?>index.php?controller=Libro&action=index&genero=Artística">Artística</a></li>
-            </ul>
-        </li>
+        <li><a href="index.php?controller=Libro&action=catalogo">Libreria</a></li>
     </ul>
 </nav>
 
@@ -400,3 +383,64 @@ $avatarFileUrl  = $usuarioAutenticado && file_exists($avatarFilePath) ? BASE_URL
         transform: translateX(-50%) translateY(0);
     }
 </style>
+
+<!-- Botón para volver arriba -->
+<a href="#" id="scrollToTopBtn" title="Volver arriba">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up">
+        <line x1="12" y1="19" x2="12" y2="5"></line>
+        <polyline points="5 12 12 5 19 12"></polyline>
+    </svg>
+</a>
+
+<style>
+    /* Estilos para el botón de scroll to top */
+    #scrollToTopBtn {
+        display: none; /* Oculto por defecto */
+        position: fixed;
+        bottom: 20px;
+        right: 30px;
+        z-index: 99;
+        border: none;
+        outline: none;
+        background-color: #8b6f57;
+        color: white;
+        cursor: pointer;
+        padding: 15px;
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: opacity 0.3s, transform 0.3s;
+    }
+
+    #scrollToTopBtn:hover {
+        background-color: #7d5a50;
+        transform: scale(1.1);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var scrollToTopBtn = document.getElementById("scrollToTopBtn");
+
+        // Mostrar u ocultar el botón
+        window.onscroll = function() {
+            scrollFunction();
+        };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                scrollToTopBtn.style.display = "block";
+            } else {
+                scrollToTopBtn.style.display = "none";
+            }
+        }
+
+        // Al hacer clic, volver arriba
+        scrollToTopBtn.onclick = function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    });
+</script>

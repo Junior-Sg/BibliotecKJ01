@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/../core/BaseController.php';
 require_once __DIR__ . '/../../config/Conexion.php';
 require_once __DIR__ . '/../models/Libro.php';
 
@@ -9,146 +10,179 @@ class LibroController
 
     public function __construct()
     {
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
         $this->Libro = new Libro((new Conexion())->conectar());
     }
 
-    // catalogo principal
-    public function index()
+    /* ============================================================
+       CATALOGO DE LIBRERIA
+    ============================================================ */
+    public function catalogo()
     {
-        $selectedGenero = $_GET["genero"] ?? null;
-
-        if ($selectedGenero) {
-        $libros = $this->Libro->obtenerPorGenero($selectedGenero);
-    } else {
-    $libros = $this->Libro->obtenerTodos();
+        $libros = $this->Libro->obtenerTodos(0, 20);
+        require __DIR__ . "/../views/libros/catalogo.php";
     }
 
-        // lista de géneros disponible para la vista
-        $generos = $this->Libro->obtenerGenerosTodos();
+    /* ============================================================
+       CATALOGO PRINCIPAL
+    ============================================================ */
+    public function index()
+    {
+        // Listas para filtros, la vista espera arrays con estos nombres
+        $generosRes = $this->Libro->obtenerGenerosTodos();
+        $autoresRes = $this->Libro->obtenerAutoresTodos();
 
-        // Debugging output
-        echo "<!-- Debugging Info for LibroController::index() -->";
-        echo "<!-- Selected Genre: " . htmlspecialchars($selectedGenero ?? 'None') . " -->";
-        echo "<!-- Libros type: " . gettype($libros) . " -->";
-        if (is_object($libros) && method_exists($libros, 'num_rows')) {
-            echo "<!-- Libros num_rows: " . $libros->num_rows . " -->";
-        } elseif ($libros === false) {
-            // Avoid accessing an undefined property on the Libro model; provide a safe fallback message.
-            $librosErr = error_get_last()['message'] ?? 'query failed';
-            echo "<!-- Libros query failed: " . htmlspecialchars($librosErr) . " -->";
+        $generos = []; // para la vista
+        if ($generosRes && $generosRes->num_rows) {
+            while ($r = $generosRes->fetch_assoc()) {
+                $generos[] = $r;
+            }
         }
-        echo "<!-- Generos type: " . gettype($generos) . " -->";
-        if (is_object($generos) && method_exists($generos, 'num_rows')) {
-            echo "<!-- Generos num_rows: " . $generos->num_rows . " -->";
-        } elseif ($generos === false) {
-            // Avoid accessing an undefined property on the Libro model; provide a safe fallback message.
-            $generosErr = error_get_last()['message'] ?? 'query failed';
-            echo "<!-- Generos query failed: " . htmlspecialchars($generosErr) . " -->";
+        $autores = []; // para la vista
+        if ($autoresRes && $autoresRes->num_rows) {
+            while ($r = $autoresRes->fetch_assoc()) {
+                $autores[] = $r;
+            }
         }
-        echo "<!-- End Debugging Info -->";
 
+        // Manejo de filtros
+        $filterGenero = !empty($_GET['id']) ? (int)$_GET['id'] : (!empty($_GET['genre_id']) ? (int)$_GET['genre_id'] : 0);
+        $filterGeneros = isset($_GET['generos']) && $_GET['generos'] ? array_filter(array_map('intval', explode(',', $_GET['generos']))) : [];
+        $filterAutor = isset($_GET['author_id']) ? (int)$_GET['author_id'] : 0;
+        $filterAutores = isset($_GET['autores']) && $_GET['autores'] ? array_filter(array_map('intval', explode(',', $_GET['autores']))) : [];
+        $q = trim($_GET['q'] ?? '');
+
+        $is_filtered = !empty($filterGeneros) || !empty($filterAutores) || $filterGenero > 0 || $filterAutor > 0 || $q !== '';
+
+        $libros = null;
+        $topByGenero = [];
+
+        if ($is_filtered) {
+            if (!empty($filterGeneros) || !empty($filterAutores)) {
+                $libros = $this->Libro->filtrarLibros($filterGeneros, $filterAutores);
+            } elseif ($filterGenero > 0) {
+                $libros = $this->Libro->obtenerPorGeneroId($filterGenero);
+            } elseif ($filterAutor > 0) {
+                $libros = $this->Libro->obtenerPorAutor($filterAutor);
+            } elseif ($q !== '') {
+                $libros = $this->Libro->buscarGeneral($q);
+            }
+        } else {
+            // Showcase por género (hasta 4), solo si no hay filtros activos
+            foreach ($generos as $g) {
+                $topByGenero[$g['id_genero']] = [
+                    'nombre' => $g['nombre'],
+                    'libros' => $this->Libro->obtenerPorGeneroLimit((int)$g['id_genero'], 4)
+                ];
+            }
+        }
+
+        // Pasar a la vista variables con nombres consistentes
         require __DIR__ . "/../views/libros/libros.php";
     }
 
-    // Detalle de un libro
+    /* ============================================================
+       DETALLE HTML (NO JSON)
+    ============================================================ */
     public function detalle($idLibro)
     {
-        $libros = $this->Libro->obtenerPorId($idLibro);
+        $libro = $this->Libro->obtenerPorId($idLibro);
         $autores = $this->Libro->obtenerAutores($idLibro);
         $generos = $this->Libro->obtenerGeneros($idLibro);
         $disponibilidad = $this->Libro->obtenerDisponibilidad($idLibro);
 
-        require "../views/libros/detalle.php";
+        require __DIR__ . "/../views/libros/detalle_full.php";
     }
 
-    // Búsqueda (Título o Autor)
+    /* ============================================================
+       BUSQUEDA (TITULO O AUTOR)
+    ============================================================ */
     public function buscar()
     {
-        // usar el mismo nombre que el formulario (q)
         $texto = $_GET["q"] ?? "";
+
         $libros = $this->Libro->buscarGeneral($texto);
         $generos = $this->Libro->obtenerGenerosTodos();
+        $autores = $this->Libro->obtenerAutoresTodos();
+        $totalLibros = $libros ? $libros->num_rows : 0;
 
         require __DIR__ . "/../views/libros/libros.php";
     }
 
-    // Json para el modal detalle
-
+    /* ============================================================
+       DETALLE PARA MODAL EN FORMATO JSON
+    ============================================================ */
     public function detalleJson()
     {
         header('Content-Type: application/json; charset=utf-8');
-        $idLibro = (int)($_GET['id'] ?? 0);
+
+        $idLibro = (int)($_GET["id"] ?? 0);
+
         if ($idLibro <= 0) {
+            echo json_encode(['ok' => false, 'error' => 'ID inválido']);
+            return;
+        }
+
+        // Obtener libro como array
+        $libro = $this->Libro->obtenerPorId($idLibro);
+        if (!$libro) {
             echo json_encode(['ok' => false, 'error' => 'Libro no encontrado']);
             return;
         }
 
-        //Autores
-
+        // Autores
         $autoresRes = $this->Libro->obtenerAutores($idLibro);
         $autores = [];
         if ($autoresRes) {
-            // soporta mysqli_result o array
-            if (is_object($autoresRes) && method_exists($autoresRes, 'fetch_assoc')) {
-                while ($row = $autoresRes->fetch_assoc()) {
-                    $autores[] = $row['nombre'];
-                }
-            } elseif (is_array($autoresRes)) {
-                foreach ($autoresRes as $row) {
-                    $autores[] = $row['nombre'] ?? null;
-                }
+            while ($row = $autoresRes->fetch_assoc()) {
+                $autores[] = $row["nombre"];
             }
         }
 
-        //Géneros
-
+        // Géneros
         $generosRes = $this->Libro->obtenerGeneros($idLibro);
         $generos = [];
         if ($generosRes) {
-            if (is_object($generosRes) && method_exists($generosRes, 'fetch_assoc')) {
-                while ($row = $generosRes->fetch_assoc()) {
-                    $generos[] = $row['nombre'];
-                }
-            } elseif (is_array($generosRes)) {
-                foreach ($generosRes as $row) {
-                    $generos[] = $row['nombre'] ?? null;
-                }
+            while ($row = $generosRes->fetch_assoc()) {
+                $generos[] = $row["nombre"];
             }
         }
 
-        // Obtener datos del libro
-        $libro = $this->Libro->obtenerPorId($idLibro);
-
-        //Disponibilidad
-
-        $disponibilidad = $this->Libro->obtenerDisponibilidad($idLibro);
+        // Disponibilidad
+        $disp = $this->Libro->obtenerDisponibilidad($idLibro);
         $cantidad = 0;
-        if (is_array($disponibilidad)) {
-            $cantidad = $disponibilidad['cantidad_disponible'] ?? 0;
-        } elseif (is_object($disponibilidad) && method_exists($disponibilidad, 'fetch_assoc')) {
-            $dispRow = $disponibilidad->fetch_assoc();
-            $cantidad = $dispRow['cantidad_disponible'] ?? 0;
+        if ($disp) {
+            $d = is_array($disp) ? $disp : $disp->fetch_assoc();
+            $cantidad = $d["cantidad_disponible"] ?? 0;
         }
 
         echo json_encode([
-            'ok' => true,
+            "ok" => true,
             "data" => [
-                "titulo" => $libro['titulo'] ?? '',
-                "editorial" => $libro['editorial'] ?? "",
-                "año_publicacion" => $libro['año_publicacion'] ?? "",
-                "Estante" => $libro['Estante'] ?? "",
-                "Imagen" => $libro['Imagen'] ?? "",
-                "autores" => $autores,
-                "generos" => $generos,
-                "disponibilidad" => (int)$cantidad,
-                "sipnosis" => $libro['sipnosis'] ?? "Sin sipnosis disponible."
+                "id_libro"        => $idLibro,
+                "titulo"          => $libro["titulo"] ?? "",
+                "editorial"       => $libro["editorial"] ?? "",
+                "año_publicacion" => $libro["año_publicacion"] ?? "",
+                "Estante"         => $libro["Estante"] ?? "",
+                "Imagen"          => $libro["Imagen"] ?? "",
+                "autores"         => $autores,
+                "generos"         => $generos,
+                "disponibilidad"  => (int)$cantidad,
+                "sinopsis"        => $libro["sinopsis"] ?? $libro["sipnosis"] ?? "Sin sinopsis disponible."
             ]
         ]);
     }
+
+    /* ============================================================
+       BOTÓN "VER MÁS" (AJAX)
+    ============================================================ */
+    public function cargarMas()
+    {
+        $offset = (int)($_GET["offset"] ?? 0);
+
+        // Método correcto con OFFSET y LIMIT
+        $masLibros = $this->Libro->obtenerTodos($offset);
+
+        require __DIR__ . "/../views/libros/masLibros.php";
+    }
 }
-
 ?>
-
-
