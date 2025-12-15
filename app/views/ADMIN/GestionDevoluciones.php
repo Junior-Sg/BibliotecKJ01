@@ -115,7 +115,7 @@ require_once __DIR__ . '/../layouts/NavADM.php';
         const formData = new FormData();
         formData.append('id_prestamo', idPrestamo);
 
-        fetch('index.php?controller=Prestamo&action=eliminarPrestamo', {
+        fetch('index.php?controller=Prestamo&action=registrarDevolucion', {
             method: 'POST',
             body: formData
         })

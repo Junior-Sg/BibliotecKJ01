@@ -159,15 +159,26 @@ require_once __DIR__ . '/../layouts/NavADM.php';
                     method: 'POST',
                     body: formData
                 });
-                const result = await response.json();
+                    const text = await response.text();
+                    console.log('Respuesta raw:', text);
+                    let result;
+                    try {
+                        result = JSON.parse(text);
+                    } catch (e) {
+                        console.error('Respuesta no JSON al generar préstamo:', e, text);
+                        showAlert('Respuesta inválida del servidor: ' + (text || 'vací­a'), 'danger');
+                        return;
+                    }
 
                 if (result.success) {
                     showAlert(result.message || 'Préstamo generado con éxito.');
-                    // Eliminar la tarjeta de la vista
-                    const card = document.getElementById(`reserva-card-${reserva.id_reserva}`);
-                    if (card) {
-                        card.remove();
-                    }
+                        setTimeout(() => {
+                            const card = document.getElementById(`reserva-card-${reserva.id_reserva}`);
+                            if (card) {
+                                card.remove();
+                            }
+                            location.reload();
+                        }, 1000);
                 } else {
                     showAlert(result.message || 'Error al generar el préstamo.', 'danger');
                 }
@@ -190,7 +201,16 @@ require_once __DIR__ . '/../layouts/NavADM.php';
                     method: 'POST',
                     body: formData
                 });
-                const result = await response.json();
+                const text = await response.text();
+                console.log('Respuesta raw (registro reserva):', text);
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (e) {
+                    console.error('Respuesta no JSON al crear reserva:', e, text);
+                    showAlert('Respuesta inválida del servidor: ' + (text || 'vací­a'), 'danger');
+                    return;
+                }
 
                 if (result.success) {
                     showAlert(result.message || 'Reserva eliminada con éxito.');

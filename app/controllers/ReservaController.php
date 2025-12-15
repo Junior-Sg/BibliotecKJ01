@@ -57,6 +57,18 @@ class ReservaController extends BaseController
             exit;
         }
 
+        // Verificar si ya tiene el libro prestado o reservado
+        $prestamoModelo = new PrestamoModelo($this->db);
+        if ($prestamoModelo->hasActiveLoan((int)$idUsuario, (int)$idLibro)) {
+            echo json_encode(['success' => false, 'message' => 'El usuario ya tiene este libro prestado.']);
+            exit;
+        }
+
+        if ($this->reservaModel->hasActiveReservation((int)$idUsuario, (int)$idLibro)) {
+            echo json_encode(['success' => false, 'message' => 'El usuario ya tiene una reserva activa para este libro.']);
+            exit;
+        }
+
         $resultado = $this->reservaModel->crearReserva((int)$idUsuario, (int)$idLibro);
 
         if ($resultado) {
@@ -93,9 +105,10 @@ class ReservaController extends BaseController
             } catch (Exception $e) {
                 error_log("Error al enviar notificación de reserva (admin): " . $e->getMessage());
             }
-
+            ob_clean();
             echo json_encode(['success' => true, 'message' => 'Reserva registrada correctamente.']);
         } else {
+            ob_clean();
             echo json_encode(['success' => false, 'message' => 'Error al registrar la reserva.']);
         }
         exit;
@@ -104,16 +117,19 @@ class ReservaController extends BaseController
     public function convertirReservaAPrestamo() {
         if (!$this->isAdmin()) {
             header('Content-Type: application/json');
+            ob_clean();
             echo json_encode(['success' => false, 'message' => 'Acceso denegado.']);
             exit;
         }
         header('Content-Type: application/json');
+        ob_clean();
         try {
             $idReserva = $_POST['id_reserva'] ?? null;
             $idUsuario = $_POST['id_usuario'] ?? null;
             $idLibro = $_POST['id_libro'] ?? null;
 
             if (!$idReserva || !$idUsuario || !$idLibro) {
+                ob_clean();
                 echo json_encode(['success' => false, 'message' => 'Datos incompletos para generar el préstamo.']);
                 exit;
             }
@@ -124,6 +140,12 @@ class ReservaController extends BaseController
             $prestamosActivos = $prestamoModelo->contarPrestamosActivosPorUsuario((int)$idUsuario);
             if ($prestamosActivos >= 3) {
                 echo json_encode(['success' => false, 'message' => 'El usuario ya tiene 3 préstamos activos. No se puede realizar un nuevo préstamo.']);
+                exit;
+            }
+
+            // Verificar si el usuario ya tiene el libro prestado
+            if ($prestamoModelo->hasActiveLoan((int)$idUsuario, (int)$idLibro)) {
+                echo json_encode(['success' => false, 'message' => 'El usuario ya tiene este libro prestado.']);
                 exit;
             }
             
@@ -172,17 +194,24 @@ class ReservaController extends BaseController
                         error_log("Error al enviar notificación de préstamo: " . $e->getMessage());
                     }
                     
+                    ob_clean();
                     echo json_encode(['success' => true, 'message' => 'Préstamo generado y reserva actualizada.']);
-                } else {
+                        exit;
+                    } else {
+                    ob_clean();
                     echo json_encode(['success' => false, 'message' => 'Préstamo generado, pero hubo un error al actualizar el estado de la reserva.']);
+                        exit;
                 }
             } else {
+                ob_clean();
                 echo json_encode(['success' => false, 'message' => 'Error al generar el préstamo. Verifique la disponibilidad del libro.']);
+                    exit;
             }
         } catch (Exception $e) {
+            ob_clean();
             echo json_encode(['success' => false, 'message' => 'Error al procesar la solicitud: ' . $e->getMessage()]);
+                exit;
         }
-        exit;
     }
 
     public function eliminarReserva() {
@@ -244,7 +273,20 @@ class ReservaController extends BaseController
             header('Location: index.php?controller=libro&action=listar&msg_error=' . urlencode($mensaje));
             exit;
         }
-        
+        // Verificar si ya tiene el libro prestado o reservado
+        $prestamoModelo = new PrestamoModelo($this->db);
+        if ($prestamoModelo->hasActiveLoan((int)$idUsuario, (int)$idLibro)) {
+            $mensaje = 'No puede reservar este libro porque ya lo tiene prestado.';
+            header('Location: index.php?controller=libro&action=listar&msg_error=' . urlencode($mensaje));
+            exit;
+        }
+
+        if ($this->reservaModel->hasActiveReservation((int)$idUsuario, (int)$idLibro)) {
+            $mensaje = 'Ya tienes una reserva activa para este libro.';
+            header('Location: index.php?controller=libro&action=listar&msg_error=' . urlencode($mensaje));
+            exit;
+        }
+
         // Crear la reserva
         if ($this->reservaModel->crearReserva($idUsuario, $idLibro)) {
             // Obtener datos para enviar el correo (sin parar si hay error)

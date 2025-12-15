@@ -69,6 +69,17 @@ class Reserva
         return $fila['total'] ?? 0;
     }
 
+    // Verifica si un usuario ya tiene una reserva activa para un libro específico
+    public function hasActiveReservation($idUsuario, $idLibro) {
+        $sql = "SELECT COUNT(id_reserva) as total FROM reserva WHERE id_usuario = ? AND id_libro = ? AND estado = 'pendiente'";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("ii", $idUsuario, $idLibro);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        $fila = $resultado->fetch_assoc();
+        return (intval($fila['total'] ?? 0) > 0);
+    }
+
     public function eliminarReserva($idReserva) {
         $sql = "DELETE FROM reserva WHERE id_reserva = ?";
         $stmt = $this->conexion->prepare($sql);

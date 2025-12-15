@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-12-2025 a las 07:08:36
+-- Tiempo de generación: 12-12-2025 a las 04:07:55
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -70,7 +70,7 @@ INSERT INTO `disponibilidad` (`id_disponibilidad`, `id_libro`, `cantidad_disponi
 (3, 4, 3, 1),
 (4, 5, 3, 1),
 (5, 6, 5, 1),
-(9, 10, 8, 1),
+(9, 10, 6, 1),
 (10, 11, 25, 1);
 
 -- --------------------------------------------------------
@@ -287,7 +287,9 @@ INSERT INTO `prestamo` (`id_prestamo`, `id_usuario`, `id_libro`, `fecha_prestamo
 (32, 14, 5, '2025-12-06', '2025-12-13', 'activo'),
 (33, 14, 2, '2025-12-07', '2025-12-14', 'activo'),
 (34, 14, 1, '2025-12-07', '2025-12-14', 'activo'),
-(35, 14, 2, '2025-12-07', '2025-12-14', 'activo');
+(35, 14, 2, '2025-12-07', '2025-12-14', 'activo'),
+(36, 18, 10, '2025-12-11', '2025-12-18', 'activo'),
+(37, 18, 10, '2025-12-11', '2025-12-18', 'activo');
 
 -- --------------------------------------------------------
 
@@ -316,9 +318,10 @@ INSERT INTO `reserva` (`id_reserva`, `id_usuario`, `id_libro`, `fecha_reserva`, 
 (6, 14, 6, '2025-12-07', 'pendiente'),
 (7, 13, 2, '2025-12-07', 'pendiente'),
 (8, 13, 1, '2025-12-10', 'pendiente'),
-(9, 18, 10, '2025-12-10', 'pendiente'),
+(9, 18, 10, '2025-12-10', 'prestado'),
 (10, 18, 2, '2025-12-10', 'pendiente'),
-(11, 18, 2, '2025-12-10', '');
+(11, 18, 2, '2025-12-10', ''),
+(12, 18, 10, '2025-12-11', 'prestado');
 
 -- --------------------------------------------------------
 
@@ -364,7 +367,9 @@ INSERT INTO `rol_user` (`id_usuario`, `id_rol`) VALUES
 (14, 2),
 (15, 2),
 (17, 2),
-(18, 2);
+(18, 2),
+(21, 2),
+(22, 2);
 
 -- --------------------------------------------------------
 
@@ -398,7 +403,9 @@ INSERT INTO `usuario` (`id_usuario`, `nombre`, `correo`, `contraseña`, `telefon
 (14, 'junior', 'santamaria@gmail.com', '$2y$10$34mB90rdFzZujUrhdn73W..w9V2HR2JX9uSuMObaEMOaulIOu2UOq', '3152417443', 'CC', '1056769689', '2025-12-10 14:47:44', NULL),
 (15, 'Daniela Caicedo', 'daniela@gmail.com', '$2y$10$zqElRzVdBsy10oWaMZKCa.htd4o3CBdcwierwl1hddTbytZS66Qxa', '1325255432', 'CC', '123124514154', '2025-12-10 14:47:44', NULL),
 (17, 'Cataliana Gonzales', 'cata@gmail.com', '$2y$10$9xd1TGjTI9yNqK5.E57zHO7Iu8yzYS7cJvupgKxlXy8JGozqsJVSO', '12335469678', 'CC', '12435554862', '2025-12-10 14:47:44', NULL),
-(18, 'Kasandra', '12345@gmail.com', '$2y$10$DRLi09k9JEJVhUL96UYT0Oo9aushFoqxsy7d5Z6KYqf1WU4P62Fju', '3124750781', 'CC', '123456789', '2025-12-10 14:47:44', '😁');
+(18, 'Kasandra', '12345@gmail.com', '$2y$10$DRLi09k9JEJVhUL96UYT0Oo9aushFoqxsy7d5Z6KYqf1WU4P62Fju', '3124750781', 'CC', '123456789', '2025-12-10 14:47:44', '😁'),
+(21, 'Kass', 'Kass@gmail.com', '$2y$10$O/2uITXYFSj6.yI3fDd21O7D6ncHFJzGD.RWXy5CVuIXbirwhdnly', '3124750781', 'CC', '1056768630', '2025-12-11 20:29:59', '👩‍🏫'),
+(22, 'Kass', 'kasscifuentes@gmail.com', '$2y$10$5L.T.oBVttAaU28fdCNlNurVi/.GfPC41Y6RWlWmq4RkTDYmCtfZ2', '3124750123', 'CC', '1056768630', '2025-12-11 23:39:11', '🥳');
 
 --
 -- Índices para tablas volcadas
@@ -564,13 +571,13 @@ ALTER TABLE `permiso`
 -- AUTO_INCREMENT de la tabla `prestamo`
 --
 ALTER TABLE `prestamo`
-  MODIFY `id_prestamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id_prestamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT de la tabla `reserva`
 --
 ALTER TABLE `reserva`
-  MODIFY `id_reserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id_reserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -582,7 +589,7 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- Restricciones para tablas volcadas

@@ -179,6 +179,19 @@ class Usuario
         return $stmt->execute();
     }
 
+    public function actualizarClave(int $id, string $clave)
+    {
+        $claveHash = password_hash($clave, PASSWORD_BCRYPT);
+        $sql = "UPDATE usuario SET contraseña = ? WHERE id_usuario = ?";
+        $stmt = $this->conexion->prepare($sql);
+        if (!$stmt) {
+            error_log("Error preparar actualizarClave: " . $this->conexion->error);
+            return false;
+        }
+        $stmt->bind_param("si", $claveHash, $id);
+        return $stmt->execute();
+    }
+
     public function eliminarUsuario($id)
     {
         // eliminar rol_user
@@ -229,11 +242,6 @@ class Usuario
         return $fila['total'] ?? 0;
     }
 
-    // Alias para mantener consistencia con otros modelos
-    public function obtenerPorId($id) {
-        return $this->getUsuarioById($id);
-    }
-
     // =========================
     // PERFIL DEL USUARIO
     // =========================
@@ -255,15 +263,15 @@ class Usuario
     }
     
     //  método actualizarPerfil 
-    public function actualizarPerfil(int $id, string $nombre, string $correo, string $telefono, string $avatar_emoji)
+    public function actualizarPerfil(int $id, string $nombre, string $correo, string $telefono)
     {
-        $sql = "UPDATE usuario SET nombre = ?, correo = ?, telefono = ?, avatar_emoji = ? WHERE id_usuario = ?";
+        $sql = "UPDATE usuario SET nombre = ?, correo = ?, telefono = ? WHERE id_usuario = ?";
         $stmt = $this->conexion->prepare($sql);
         if (!$stmt) {
             error_log("Error preparar actualizarPerfil: " . $this->conexion->error);
             return false;
         }
-        $stmt->bind_param("ssssi", $nombre, $correo, $telefono, $avatar_emoji, $id);
+        $stmt->bind_param("sssi", $nombre, $correo, $telefono, $id);
         $res = $stmt->execute();
         $stmt->close();
         return $res;

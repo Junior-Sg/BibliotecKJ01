@@ -50,13 +50,15 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
                 <?php if ($favoritos && $favoritos->num_rows): ?>
                     <?php while($f = $favoritos->fetch_assoc()): // Guardamos el resultado para poder reiniciarlo si es necesario ?>
                         <div class="card p-2 mini-card" style="width:120px;">
-                            <img src="<?= BASE_URL ?>public/img/Libros/<?= $f['Imagen'] ?>" style="height:100px;object-fit:cover;width:100%">
+                            <img src="<?= base_url('public/img/Libros/' . $f['Imagen']) ?>" style="height:100px;object-fit:cover;width:100%">
                             <div class="small mt-1"><?= htmlspecialchars($f['titulo']) ?></div>
                         </div>
-                    <?php endwhile; ?>
+                    <?php endwhile; 
+                          $favoritos->data_seek(0); // Reiniciamos el puntero por si se usa después
+                    ?>
                 <?php else: ?>
                     <p class="small">No tienes favoritos aún</p>
-                <?php endif; $favoritos->data_seek(0); // Reiniciamos el puntero por si se usa después ?>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -70,7 +72,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
                         <?php while($r = $reservas->fetch_assoc()): ?>
                         <tr id="res-<?= $r['id_reserva'] ?>">
                             <td>
-                                <img src="<?= BASE_URL ?>public/img/Libros/<?= $r['Imagen'] ?>" style="width:56px;height:70px;object-fit:cover;margin-right:8px">
+                                <img src="<?= base_url('public/img/Libros/' . $r['Imagen']) ?>" style="width:56px;height:70px;object-fit:cover;margin-right:8px">
                                 <?= htmlspecialchars($r['titulo']) ?>
                             </td>
                             <td><?= htmlspecialchars($r['fecha_reserva']) ?></td>
@@ -100,7 +102,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
                         <?php foreach($historialLectura as $h): ?>
                         <tr>
                             <td>
-                                <img src="<?= BASE_URL ?>public/img/Libros/<?= $h['Imagen'] ?>" style="width:56px;height:70px;object-fit:cover;margin-right:8px">
+                                <img src="<?= base_url('public/img/Libros/' . $h['Imagen']) ?>" style="width:56px;height:70px;object-fit:cover;margin-right:8px">
                                 <?= htmlspecialchars($h['titulo']) ?>
                             </td>
                             <td><?= htmlspecialchars($h['fecha_devolucion']) ?></td>

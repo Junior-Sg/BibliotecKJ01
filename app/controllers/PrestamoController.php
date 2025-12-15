@@ -65,6 +65,22 @@ class PrestamoController extends BaseController {
                 exit;
             }
 
+            // Verificar si el usuario ya tiene este libro prestado o reservado
+            require_once __DIR__ . '/../models/Reserva.php';
+            $reservaModel = new Reserva((new Conexion())->conectar());
+
+            if ($this->prestamoModelo->hasActiveLoan((int)$idUsuario, (int)$idLibro)) {
+                $mensaje = 'El usuario ya tiene este libro prestado.';
+                header('Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_error=' . urlencode($mensaje));
+                exit;
+            }
+
+            if ($reservaModel->hasActiveReservation((int)$idUsuario, (int)$idLibro)) {
+                $mensaje = 'El usuario tiene una reserva activa para este libro. Convierte la reserva si deseas prestar.';
+                header('Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_error=' . urlencode($mensaje));
+                exit;
+            }
+
             // Llamar al modelo para registrar el préstamo
             $resultado = $this->prestamoModelo->registrarPrestamo($idUsuario, $idLibro, $fechaPrestamo, $fechaDevolucion);
 
@@ -109,19 +125,27 @@ class PrestamoController extends BaseController {
         }
     }
 
-    // Registrar devolución (por id de préstamo)
     public function registrarDevolucion() {
+        header('Content-Type: application/json');
         $idPrestamo = isset($_POST['id_prestamo']) ? intval($_POST['id_prestamo']) : 0;
+
         if ($idPrestamo === 0) {
-            header('Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_error=' . urlencode('ID de préstamo inválido.'));
-            return;
+            echo json_encode(['success' => false, 'message' => 'ID de préstamo inválido.']);
+            exit;
         }
+
         // Obtener información del préstamo antes de marcar como devuelto
         $prestamoInfo = $this->prestamoModelo->getPrestamoById($idPrestamo);
+        if (!$prestamoInfo) {
+            echo json_encode(['success' => false, 'message' => 'Préstamo no encontrado.']);
+            exit;
+        }
+        
         $idUsuario = $prestamoInfo['id_usuario'] ?? null;
         $idLibro = $prestamoInfo['id_libro'] ?? null;
 
         $ok = $this->prestamoModelo->registrarDevolucion($idPrestamo);
+
         if ($ok) {
             // Enviar notificación de devolución (no bloquear el flujo si falla)
             try {
@@ -145,10 +169,11 @@ class PrestamoController extends BaseController {
                 error_log("Error al enviar notificación de devolución: " . $e->getMessage());
             }
 
-            header("Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_success=" . urlencode('Devolución registrada correctamente.'));
+            echo json_encode(['success' => true, 'message' => 'Devolución registrada correctamente.']);
         } else {
-            header("Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_error=" . urlencode('No se pudo registrar la devolución.'));
+            echo json_encode(['success' => false, 'message' => 'No se pudo registrar la devolución.']);
         }
+        exit;
     }
 
     public function verPrestamos() {

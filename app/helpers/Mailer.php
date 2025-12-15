@@ -10,7 +10,7 @@ class Mailer
 {
     private $host = 'smtp-relay.brevo.com'; // Nuevo HOST
     private $username = '9ddf02001@smtp-brevo.com'; // Usuario SMTP Brevo
-   $smtpKey = getenv('SENDINBLUE_SMTP_KEY'); // Cambia por tu clave SMTP de Brevo colocar la clave si os si 
+    //  colocar la contraseña SMTP de Brevo
     private $port = 587; // Puerto recomendado
     private $fromEmail = 'bibli0teckj01@gmail.com'; // DEBE estar verificado en Brevo
     private $fromName = 'Sistema BibliotecKJ';
