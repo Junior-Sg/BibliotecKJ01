@@ -40,3 +40,18 @@
     </style>
   </div>
 </footer>
+
+<script>
+    // Este script previene que las páginas protegidas se muestren desde el caché del navegador 
+    // después de que un usuario ha cerrado sesión.
+    // El evento 'pageshow' se dispara cada vez que una página se muestra.
+    // La propiedad 'persisted' es 'true' si la página fue cargada desde el caché de navegación (back-forward cache).
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            // Si la página se está mostrando desde el caché, forzamos una recarga completa
+            // desde el servidor. El servidor entonces verificará la sesión y redirigirá 
+            // al login si el usuario ya no está autenticado.
+            window.location.reload();
+        }
+    });
+</script>

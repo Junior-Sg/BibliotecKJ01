@@ -22,7 +22,7 @@ class LogoutController extends BaseController {
         // 3. Destruir la sesión finalmente
         session_destroy();
         
-        // 4. Redirigir al catálogo de libros
-        $this->redirect('Libro', 'index', '&msg=Sesión cerrada correctamente');
+        // 4. Redirigir a la página de login con un mensaje de éxito.
+        $this->redirect('LoginUsuario', 'index', '&msg=logout_success');
     }
 }
