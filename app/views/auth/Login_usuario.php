@@ -82,7 +82,11 @@
           <button type="submit">Ingresar</button>
 
           <div class="extra">
-            <a href="#" id="openRegister">¿No tienes cuenta? Regístrate</a>
+                      <a href="#" id="openRegister">¿No tienes cuenta? Regístrate</a>
+          </div>
+
+          <div class="extra">
+            <a href="<?= BASE_URL ?>index.php?controller=PasswordReset&action=request">¿Olvidaste tu contraseña?</a>
           </div>
 
           <div class="back">

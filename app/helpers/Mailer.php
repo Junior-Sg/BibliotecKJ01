@@ -8,29 +8,40 @@ require_once __DIR__ . '/../Librerias/PHPMailer/SMTP.php';
 
 class Mailer
 {
-    private $host = 'smtp-relay.brevo.com'; // Nuevo HOST
-    private $username = '9ddf02001@smtp-brevo.com'; // Usuario SMTP Brevo
-    //  colocar la contraseña SMTP de Brevo
-    private $port = 587; // Puerto recomendado
-    private $fromEmail = 'bibli0teckj01@gmail.com'; // DEBE estar verificado en Brevo
-    private $fromName = 'Sistema BibliotecKJ';
+    private $config;
     private $projectName = 'BibliotecKJ';
     private $logoUrl = '/BibliotecKJ01/public/img/Logos/L1.jpg';
+    private $debugMode = 0; // Cambiar a 2 para depuración detallada
 
-    public function send($to, $subject, $bodyContent)
+    public function __construct()
+    {
+        $configPath = __DIR__ . '/mail_config.php';
+        if (file_exists($configPath)) {
+            $this->config = require $configPath;
+        } else {
+            throw new Exception("El archivo de configuración de correo no existe.");
+        }
+    }
+
+    public function enableDebug()
+    {
+        $this->debugMode = 2; // Nivel de depuración SMTP
+    }
+
+    public function send($to, $subject, $bodyContent, $isHtml = true)
     {
         $mail = new PHPMailer(true);
 
         try {
             // Configuración SMTP Brevo
             $mail->isSMTP();
-            $mail->Host = $this->host;
+            $mail->Host = $this->config['host'];
             $mail->SMTPAuth = true;
-            $mail->Username = $this->username;
-            $mail->Password = $this->password;
-            $mail->Port = $this->port;
+            $mail->Username = $this->config['username'];
+            $mail->Password = $this->config['password'];
+            $mail->Port = $this->config['port'];
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->SMTPDebug = 0;
+            $mail->SMTPDebug = $this->debugMode;
             $mail->CharSet = 'UTF-8';
             // Desactivar verificación SSL para evitar problemas con certificados de Brevo
             $mail->SMTPOptions = array(
@@ -42,8 +53,8 @@ class Mailer
             );
 
             // Remitente y receptor
-            $mail->setFrom($this->fromEmail, $this->fromName);
-            $mail->addReplyTo($this->fromEmail, $this->fromName);
+            $mail->setFrom($this->config['fromEmail'], $this->config['fromName']);
+            $mail->addReplyTo($this->config['fromEmail'], $this->config['fromName']);
             $mail->addAddress($to);
 
             // Intentar incrustar logo localmente para evitar problemas de carga remota
@@ -60,10 +71,10 @@ class Mailer
             }
 
             // Contenido
-            $mail->isHTML(true);
+            $mail->isHTML($isHtml);
             $mail->Subject = $subject;
             $logoSrc = $logoCid ? ('cid:' . $logoCid) : $this->logoUrl;
-            $mail->Body = $this->generateTemplate($subject, $bodyContent, $logoSrc);
+            $mail->Body = $isHtml ? $this->generateTemplate($subject, $bodyContent, $logoSrc) : $bodyContent;
             $mail->AltBody = strip_tags(html_entity_decode($bodyContent));
 
             $resultado = $mail->send();
