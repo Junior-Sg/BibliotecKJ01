@@ -179,6 +179,19 @@ class Usuario
         return $stmt->execute();
     }
 
+    public function actualizarClave(int $id, string $clave)
+    {
+        $claveHash = password_hash($clave, PASSWORD_BCRYPT);
+        $sql = "UPDATE usuario SET contraseña = ? WHERE id_usuario = ?";
+        $stmt = $this->conexion->prepare($sql);
+        if (!$stmt) {
+            error_log("Error preparar actualizarClave: " . $this->conexion->error);
+            return false;
+        }
+        $stmt->bind_param("si", $claveHash, $id);
+        return $stmt->execute();
+    }
+
     public function eliminarUsuario($id)
     {
         // eliminar rol_user
@@ -250,15 +263,15 @@ class Usuario
     }
     
     //  método actualizarPerfil 
-    public function actualizarPerfil(int $id, string $nombre, string $correo, string $telefono, string $avatar_emoji)
+    public function actualizarPerfil(int $id, string $nombre, string $correo, string $telefono)
     {
-        $sql = "UPDATE usuario SET nombre = ?, correo = ?, telefono = ?, avatar_emoji = ? WHERE id_usuario = ?";
+        $sql = "UPDATE usuario SET nombre = ?, correo = ?, telefono = ? WHERE id_usuario = ?";
         $stmt = $this->conexion->prepare($sql);
         if (!$stmt) {
             error_log("Error preparar actualizarPerfil: " . $this->conexion->error);
             return false;
         }
-        $stmt->bind_param("ssssi", $nombre, $correo, $telefono, $avatar_emoji, $id);
+        $stmt->bind_param("sssi", $nombre, $correo, $telefono, $id);
         $res = $stmt->execute();
         $stmt->close();
         return $res;
@@ -351,5 +364,92 @@ class Usuario
         $res = $stmt->execute();
         $stmt->close();
         return $res;
+    }
+
+    // =================================
+    // RECUPERACIÓN DE CONTRASEÑA
+    // =================================
+
+    /**
+     * Busca un usuario por su dirección de correo electrónico.
+     *
+     * @param string $correo El correo electrónico del usuario.
+     * @return array|null Los datos del usuario si se encuentra, o null si no.
+     */
+    public function findByEmail($correo) {
+        $stmt = $this->conexion->prepare("SELECT * FROM usuario WHERE correo = ?");
+        if (!$stmt) {
+            error_log("Error al preparar la consulta para buscar por email: " . $this->conexion->error);
+            return null;
+        }
+        $stmt->bind_param("s", $correo);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            return $result->fetch_assoc();
+        }
+        
+        return null;
+    }
+
+    /**
+     * Crea un token (código) de restablecimiento de contraseña para un usuario.
+     * Asume una tabla `password_reset_tokens` con (id_usuario, token, expires_at).
+     *
+     * @param int $id_usuario ID del usuario.
+     * @param string $token El código o token generado.
+     * @return bool True si se creó, false en caso de error.
+     */
+    public function createPasswordResetToken(int $id_usuario, string $token) {
+        // Eliminar tokens antiguos para este usuario para evitar duplicados
+        $this->conexion->query("DELETE FROM password_reset_tokens WHERE id_usuario = $id_usuario");
+
+        // El token expira en 15 minutos
+        $expires_at = date('Y-m-d H:i:s', strtotime('+15 minutes'));
+        
+        $sql = "INSERT INTO password_reset_tokens (id_usuario, token, expires_at) VALUES (?, ?, ?)";
+        $stmt = $this->conexion->prepare($sql);
+        if (!$stmt) {
+            error_log("Error al preparar createPasswordResetToken: " . $this->conexion->error);
+            return false;
+        }
+        $stmt->bind_param("iss", $id_usuario, $token, $expires_at);
+        return $stmt->execute();
+    }
+
+    /**
+     * Busca un token de restablecimiento y devuelve los datos asociados.
+     *
+     * @param string $token El token a buscar.
+     * @return array|null Los datos del token si es válido, o null.
+     */
+    public function findByResetToken(string $token) {
+        $sql = "SELECT * FROM password_reset_tokens WHERE token = ? LIMIT 1";
+        $stmt = $this->conexion->prepare($sql);
+        if (!$stmt) {
+            error_log("Error al preparar findByResetToken: " . $this->conexion->error);
+            return null;
+        }
+        $stmt->bind_param("s", $token);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
+    /**
+     * Elimina un token de restablecimiento de contraseña después de su uso.
+     *
+     * @param string $token El token a eliminar.
+     * @return bool True si se eliminó, false en caso de error.
+     */
+    public function deletePasswordResetToken(string $token) {
+        $sql = "DELETE FROM password_reset_tokens WHERE token = ?";
+        $stmt = $this->conexion->prepare($sql);
+        if (!$stmt) {
+            return false;
+        }
+        $stmt->bind_param("s", $token);
+        return $stmt->execute();
     }
 }

@@ -42,7 +42,8 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
         overflow: hidden;
         box-shadow: 0 6px 12px rgba(0,0,0,.2);
         transition: transform .2s;
-        text-decoration: none;
+          cursor: pointer;
+          text-decoration: none;
       }
       .book-card:hover {
         transform: scale(1.03);
@@ -85,12 +86,12 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     <div id="catalogo-grid" class="catalogo-grid">
         <?php if ($libros && $libros->num_rows > 0): ?>
             <?php while($libro = $libros->fetch_assoc()): ?>
-                <a href="index.php?controller=Libro&action=detalle&id=<?= $libro['id_libro'] ?>" class="book-card">
+                <div class="book-card" role="button" tabindex="0" data-bs-toggle="modal" data-bs-target="#modalDetalle" data-id="<?= (int)$libro['id_libro'] ?>">
                     <img src="<?= BASE_URL ?>public/img/Libros/<?= htmlspecialchars($libro['Imagen']) ?>" alt="Portada del libro <?= htmlspecialchars($libro['titulo']) ?>" class="book-cover">
                     <div class="book-info">
                         <h5><?= htmlspecialchars($libro['titulo']) ?></h5>
                     </div>
-                </a>
+                </div>
             <?php endwhile; ?>
         <?php else: ?>
             <p class="text-center">No hay libros disponibles en este momento.</p>
@@ -99,8 +100,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
     <button id="btnVerMas" data-offset="20">Ver más</button>
 </div>
-
-<?php include __DIR__ . '/../layouts/footer.php'; ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -124,6 +123,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<?php if (file_exists(__DIR__ . '/detalle.php')) include __DIR__ . '/detalle.php'; ?>
+<?php if (file_exists(__DIR__ . '/../reservas/reserva.php')) include __DIR__ . '/../reservas/reserva.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>
+
+<script>
+  window.BASE_URL = "<?= rtrim(BASE_URL, '/') ?>";
+  window.USER_LOGGED = <?= isset($_SESSION['id_usuario']) ? 'true' : 'false' ?>;
+</script>
+<script src="<?= rtrim(BASE_URL, '/') ?>/public/js/detalle.js"></script>
+<script src="<?= rtrim(BASE_URL, '/') ?>/public/js/reserva.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

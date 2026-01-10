@@ -6,7 +6,7 @@
   <title>Bibliotec_KJ - Acceso</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="/BibliotecKJ01/public/css/Login_usuario.css">
+  <link rel="stylesheet" href="/BibliotecKJ01/public/css/login_usuario.css">
 
 </head>
 <body>
@@ -59,7 +59,7 @@
           <h1>Bibliotec_KJ</h1>
           <p>Tu mundo de conocimiento</p>
           <button id="openBook">Ver libro</button>
-          <button id="openBook">Volver</button>
+          <a href="<?= BASE_URL ?>index.php?controller=InicioPagina&action=index" class="btn btn-secondary" id="backToHome">Volver</a>
         </div>
       </div>
 
@@ -82,7 +82,11 @@
           <button type="submit">Ingresar</button>
 
           <div class="extra">
-            <a href="#" id="openRegister">¿No tienes cuenta? Regístrate</a>
+                      <a href="#" id="openRegister">¿No tienes cuenta? Regístrate</a>
+          </div>
+
+          <div class="extra">
+            <a href="<?= BASE_URL ?>index.php?controller=PasswordReset&action=request">¿Olvidaste tu contraseña?</a>
           </div>
 
           <div class="back">
@@ -140,7 +144,7 @@
           <button type="submit">Registrar</button>
 
           <div class="extra">
-            <a href="#" id="backToLogin">← Volver al inicio</a>
+            <a href="<?= BASE_URL ?>index.php?controller=LoginUsuario&action=login" id="backToLogin">← Volver al inicio</a>
           </div>
         </form>
       </div>

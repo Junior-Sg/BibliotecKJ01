@@ -45,7 +45,6 @@ class UsuarioController extends BaseController {
         $nombre = trim($_POST['nombre'] ?? '');
         $correo = trim($_POST['correo'] ?? '');
         $telefono = trim($_POST['telefono'] ?? '');
-        $direccion = trim($_POST['direccion'] ?? '');
 
         // validaciones básicas
         if (empty($nombre) || empty($correo)) {
@@ -54,7 +53,7 @@ class UsuarioController extends BaseController {
             exit;
         }
 
-        $ok = $this->model->actualizarPerfil($id, $nombre, $correo, $telefono, $direccion);
+        $ok = $this->model->actualizarPerfil($id, $nombre, $correo, $telefono);
 
         if ($ok) {
             $_SESSION['nombre'] = $nombre;

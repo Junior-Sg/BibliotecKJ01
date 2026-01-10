@@ -131,6 +131,9 @@
           <label>Correo:</label>
           <input type="email" name="correo" class="form-control" required>
 
+          <label>Contraseña:</label>
+          <input type="password" name="clave" class="form-control" required>
+
           <label>Teléfono:</label>
           <input type="text" name="telefono" class="form-control" required maxlength="10" pattern="\d{7,10}" oninput="this.value = this.value.replace(/\D/g,'').slice(0,10);">
 
@@ -187,6 +190,10 @@
 
           <label>Correo:</label>
           <input type="email" name="correo" id="edit_correo" class="form-control">
+
+          <label>Nueva Contraseña:</label>
+          <input type="password" name="clave" id="edit_clave" class="form-control">
+          <small class="form-text text-muted">Dejar en blanco para no cambiar la contraseña.</small>
 
           <label>Teléfono:</label>
           <input type="text" name="telefono" id="edit_telefono" class="form-control" maxlength="10" pattern="\d{7,10}" oninput="this.value = this.value.replace(/\D/g,'').slice(0,10);">

@@ -41,18 +41,17 @@ class UsuariosController extends BaseController {
         $tipo_documento = trim($_POST['tipo_documento'] ?? '');
         $numero_documento = trim($_POST['numero_documento'] ?? '');
         $rol = intval($_POST['rol'] ?? 2);
+        $clave = trim($_POST['clave'] ?? '');
 
-        if (empty($nombre) || empty($correo)) {
-            $this->redirigirConError('Datos incompletos');
+        if (empty($nombre) || empty($correo) || empty($clave)) {
+            $this->redirigirConError('Datos incompletos, nombre, correo y clave son requeridos.');
         }
 
         if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
             $this->redirigirConError('Correo inválido');
         }
 
-        // Contraseña por defecto mínima
-        $defaultPass = '123456';
-        $id = $this->model->crearDesdeAdmin($nombre, $correo, $defaultPass, $telefono, $tipo_documento, $numero_documento);
+        $id = $this->model->crearDesdeAdmin($nombre, $correo, $clave, $telefono, $tipo_documento, $numero_documento);
 
         if (!$id) {
             $this->redirigirConError('No se pudo crear el usuario: ' . ($this->db->error ?? 'Error desconocido'));
@@ -70,6 +69,7 @@ class UsuariosController extends BaseController {
         $tipo_documento = trim($_POST['tipo_documento'] ?? '');
         $numero_documento = trim($_POST['numero_documento'] ?? '');
         $rol = intval($_POST['rol'] ?? 2);
+        $clave = trim($_POST['clave'] ?? '');
 
         if ($id <= 0) {
             $this->redirigirConError('ID de usuario inválido');
@@ -78,6 +78,11 @@ class UsuariosController extends BaseController {
         $ok = $this->model->actualizarUsuario($id, $nombre, $correo, $telefono, $tipo_documento, $numero_documento);
         if (!$ok) {
             $this->redirigirConError('No se pudo actualizar el usuario');
+        }
+
+        // Si se proveyó una clave nueva, actualizarla
+        if (!empty($clave)) {
+            $this->model->actualizarClave($id, $clave);
         }
 
         $this->model->actualizarRol($id, $rol);

@@ -5,41 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Registrar Préstamo</title>
-    <style>
-        /* Estilo empresarial tonos cafés */
-        body { background: #f7f5f2; }
-        .card { border-left: 6px solid #44290e; background: #ffffff; }
-        .btn-primary { background-color: #5a3417; border-color: #5a3417; }
-        .btn-primary:hover { background-color: #7a4a24; border-color: #7a4a24; }
-        .btn-outline-primary { color: #5a3417; border-color: #5a3417; }
-        .btn-outline-primary:hover { background-color: rgba(90,52,23,0.06); }
-        .modal-header { background: rgba(68,41,14,0.85); color: #fff; }
-        .main-content { padding-left: 260px; }
-        .card .form-label { color: #3b2a20; font-weight: 600; }
-        .floating-alerts .alert { box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
-        /* Custom styles for compact cards */
-        .compact-card .card-img-top {
-            height: 120px;
-            object-fit: cover;
-        }
-        .compact-card .card-body {
-            padding: 0.5rem; /* Equivalent to p-2 */
-        }
-        .compact-card .card-title {
-            font-size: 0.875rem; /* text-sm */
-        }
-        .compact-card .card-text {
-            font-size: 0.75rem; /* text-xs */
-        }
-        .btn-xs {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-            line-height: 1.5;
-            border-radius: 0.2rem;
-        }
-    </style>
+    <link rel="stylesheet" href="<?= BASE_URL ?>public/css/ADM/GestionGlobal.css">
 </head>
 <body>
 
@@ -70,7 +36,6 @@ require_once __DIR__ . '/../layouts/NavADM.php';
          <h2 class="text-center mb-4 display-6">¡Busca el libro y realiza un prestamo!</h2>
          
      <button type="button" class="btn btn-primary" 
-        style="background-color: #6d4c41; border-color: #6d4c41; margin-bottom: 15px;" 
         data-bs-toggle="modal" data-bs-target="#verPrestamosModal">
          Ver Préstamos
      </button>
@@ -159,7 +124,7 @@ require_once __DIR__ . '/../layouts/NavADM.php';
                                     <input type="date" class="form-control" name="fecha_devolucion" id="fecha_devolucion_modal" required>
                                 </div>
 
-                                <button type="submit" id="btnRegistrarPrestamo" class="btn btn-primary w-100" disabled>Registrar Préstamo</button>
+                                <button type="submit" id="btnRegistrarPrestamo" class="btn btn-primary w-100" style="background-color: #44290e; border-color: #44290e;" disabled>Registrar Préstamo</button>
                             </form>
                         </div>
                     </div>

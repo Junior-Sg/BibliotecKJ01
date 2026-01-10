@@ -83,14 +83,14 @@ class LibroController
     /* ============================================================
        DETALLE HTML (NO JSON)
     ============================================================ */
-    public function detalle($idLibro)
+    public function detalle($id)
     {
-        $libro = $this->Libro->obtenerPorId($idLibro);
-        $autores = $this->Libro->obtenerAutores($idLibro);
-        $generos = $this->Libro->obtenerGeneros($idLibro);
-        $disponibilidad = $this->Libro->obtenerDisponibilidad($idLibro);
+        $libro = $this->Libro->obtenerPorId($id);
+        $autores = $this->Libro->obtenerAutores($id);
+        $generos = $this->Libro->obtenerGeneros($id);
+        $disponibilidad = $this->Libro->obtenerDisponibilidad($id);
 
-        require __DIR__ . "/../views/libros/detalle_full.php";
+        require __DIR__ . "/../views/libros/detalle.php";
     }
 
     /* ============================================================
@@ -115,22 +115,22 @@ class LibroController
     {
         header('Content-Type: application/json; charset=utf-8');
 
-        $idLibro = (int)($_GET["id"] ?? 0);
+        $id = (int)($_GET["id"] ?? 0);
 
-        if ($idLibro <= 0) {
+        if ($id <= 0) {
             echo json_encode(['ok' => false, 'error' => 'ID inválido']);
             return;
         }
 
         // Obtener libro como array
-        $libro = $this->Libro->obtenerPorId($idLibro);
+        $libro = $this->Libro->obtenerPorId($id);
         if (!$libro) {
             echo json_encode(['ok' => false, 'error' => 'Libro no encontrado']);
             return;
         }
 
         // Autores
-        $autoresRes = $this->Libro->obtenerAutores($idLibro);
+        $autoresRes = $this->Libro->obtenerAutores($id);
         $autores = [];
         if ($autoresRes) {
             while ($row = $autoresRes->fetch_assoc()) {
@@ -139,7 +139,7 @@ class LibroController
         }
 
         // Géneros
-        $generosRes = $this->Libro->obtenerGeneros($idLibro);
+        $generosRes = $this->Libro->obtenerGeneros($id);
         $generos = [];
         if ($generosRes) {
             while ($row = $generosRes->fetch_assoc()) {
@@ -148,7 +148,7 @@ class LibroController
         }
 
         // Disponibilidad
-        $disp = $this->Libro->obtenerDisponibilidad($idLibro);
+        $disp = $this->Libro->obtenerDisponibilidad($id);
         $cantidad = 0;
         if ($disp) {
             $d = is_array($disp) ? $disp : $disp->fetch_assoc();
@@ -158,7 +158,7 @@ class LibroController
         echo json_encode([
             "ok" => true,
             "data" => [
-                "id_libro"        => $idLibro,
+                "id_libro"        => $id,
                 "titulo"          => $libro["titulo"] ?? "",
                 "editorial"       => $libro["editorial"] ?? "",
                 "año_publicacion" => $libro["año_publicacion"] ?? "",

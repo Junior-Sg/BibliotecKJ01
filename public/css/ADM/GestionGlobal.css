@@ -1,0 +1,76 @@
+body {
+    background-image: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url('../../../public/img/Fondos/f5.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-filter: blur(1px);
+}
+
+.main-content {
+    padding-left: 260px;
+    background-color: rgba(255, 255, 255, 0.92); /* Fondo blanco más opaco para mejor contraste */
+    min-height: 100vh;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.card {
+    border-left: 6px solid #44290e;
+    background: #ffffff;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.card-img-top {
+    width: 100%;
+    height: 12vw;
+    object-fit: cover;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #44290e;
+}
+
+.display-1 {
+    font-weight: 300;
+}
+
+.btn-primary,
+.btn-success,
+.btn-warning {
+    background-color: #44290e;
+    border-color: #44290e;
+    color: #fff; /* Asegura que el texto sea legible */
+}
+
+.btn-primary:hover,
+.btn-success:hover,
+.btn-warning:hover {
+    background-color: #5a3e2b;
+    border-color: #5a3e2b;
+    color: #fff;
+}
+
+.modal-header {
+    background: rgba(68,41,14,0.85);
+    color: #fff;
+}
+
+/* Estilo para el botón 'Seleccionar' de los libros */
+.seleccionar-libro-btn {
+    background-color: #5a3e2b; /* Un tono de marrón más suave */
+    border-color: #5a3e2b;
+    color: #fff;
+}
+
+.seleccionar-libro-btn:hover {
+    background-color: #44290e; /* Marrón más oscuro al pasar el mouse */
+    border-color: #44290e;
+    color: #fff;
+}

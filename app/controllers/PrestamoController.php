@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../config/Conexion.php';
 require_once __DIR__ . '/../models/LibroModelo.php';
 require_once __DIR__ . '/../models/PrestamoModelo.php';
 require_once __DIR__ . '/../models/Usuario.php';
+require_once __DIR__ . '/../helpers/Mailer.php';
 
 class PrestamoController extends BaseController {
 
@@ -64,8 +65,58 @@ class PrestamoController extends BaseController {
                 exit;
             }
 
+            // Verificar si el usuario ya tiene este libro prestado o reservado
+            require_once __DIR__ . '/../models/Reserva.php';
+            $reservaModel = new Reserva((new Conexion())->conectar());
+
+            if ($this->prestamoModelo->hasActiveLoan((int)$idUsuario, (int)$idLibro)) {
+                $mensaje = 'El usuario ya tiene este libro prestado.';
+                header('Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_error=' . urlencode($mensaje));
+                exit;
+            }
+
+            if ($reservaModel->hasActiveReservation((int)$idUsuario, (int)$idLibro)) {
+                $mensaje = 'El usuario tiene una reserva activa para este libro. Convierte la reserva si deseas prestar.';
+                header('Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_error=' . urlencode($mensaje));
+                exit;
+            }
+
             // Llamar al modelo para registrar el préstamo
             $resultado = $this->prestamoModelo->registrarPrestamo($idUsuario, $idLibro, $fechaPrestamo, $fechaDevolucion);
+
+            if ($resultado) {
+                // Enviar notificación por correo (sin parar si hay error)
+                try {
+                    require_once __DIR__ . '/../models/Libro.php';
+                    $libroModel = new Libro((new Conexion())->conectar());
+                    $libro = $libroModel->obtenerPorId($idLibro);
+                    $usuario = $this->usuarioModelo->obtenerPorId($idUsuario);
+                    
+                    if ($libro && $usuario && !empty($usuario['correo'])) {
+                        $mailer = new Mailer();
+                        $tituloLibro = htmlspecialchars($libro['titulo'] ?? 'Desconocido');
+                        $usuarioNombre = htmlspecialchars($usuario['nombre'] ?? 'Usuario');
+                        $usuarioCorreo = $usuario['correo'];
+                        $fechaInicio = date('d/m/Y', strtotime($fechaPrestamo));
+                        $fechaFin = date('d/m/Y', strtotime($fechaDevolucion));
+                        
+                        $contenido = "
+                            Estimado(a) <strong>$usuarioNombre</strong><br><br>
+                            Se ha registrado el préstamo del libro <strong>$tituloLibro</strong> exitosamente.<br><br>
+                            <strong>Detalles del préstamo:</strong><br>
+                            Fecha de préstamo: <strong>$fechaInicio</strong><br>
+                            Fecha de entrega: <strong>$fechaFin</strong><br><br>
+                            Por favor, devuelve el libro en la fecha indicada.<br>
+                            Recuerda que pasada esta fecha incurrirás en sanciones por retraso.
+                        ";
+                        
+                        $mailer->send($usuarioCorreo, "Préstamo Registrado", $contenido);
+                    }
+                } catch (Exception $e) {
+                    // Log del error pero no interrumpir el flujo
+                    error_log("Error al enviar notificación de préstamo: " . $e->getMessage());
+                }
+            }
 
             $mensaje = $resultado ? 'Préstamo realizado correctamente.' : 'Error al registrar el préstamo.';
             $param = $resultado ? 'msg_success' : 'msg_error';
@@ -74,20 +125,55 @@ class PrestamoController extends BaseController {
         }
     }
 
-    // Registrar devolución (por id de préstamo)
     public function registrarDevolucion() {
+        header('Content-Type: application/json');
         $idPrestamo = isset($_POST['id_prestamo']) ? intval($_POST['id_prestamo']) : 0;
+
         if ($idPrestamo === 0) {
-            header('Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_error=' . urlencode('ID de préstamo inválido.'));
-            return;
+            echo json_encode(['success' => false, 'message' => 'ID de préstamo inválido.']);
+            exit;
         }
 
-        $ok = $this->prestamoModelo->registrarDevolucion($idPrestamo);
-        if ($ok) {
-            header("Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_success=" . urlencode('Devolución registrada correctamente.'));
-        } else {
-            header("Location: index.php?controller=Prestamo&action=vistaCrearPrestamo&msg_error=" . urlencode('No se pudo registrar la devolución.'));
+        // Obtener información del préstamo antes de marcar como devuelto
+        $prestamoInfo = $this->prestamoModelo->getPrestamoById($idPrestamo);
+        if (!$prestamoInfo) {
+            echo json_encode(['success' => false, 'message' => 'Préstamo no encontrado.']);
+            exit;
         }
+        
+        $idUsuario = $prestamoInfo['id_usuario'] ?? null;
+        $idLibro = $prestamoInfo['id_libro'] ?? null;
+
+        $ok = $this->prestamoModelo->registrarDevolucion($idPrestamo);
+
+        if ($ok) {
+            // Enviar notificación de devolución (no bloquear el flujo si falla)
+            try {
+                require_once __DIR__ . '/../models/Libro.php';
+                $libroModel = new Libro((new Conexion())->conectar());
+                $libro = $libroModel->obtenerPorId($idLibro);
+                $usuario = $this->usuarioModelo->obtenerPorId($idUsuario);
+
+                if ($libro && $usuario && !empty($usuario['correo'])) {
+                    $mailer = new Mailer();
+                    $tituloLibro = htmlspecialchars($libro['titulo'] ?? 'Desconocido');
+                    $usuarioNombre = htmlspecialchars($usuario['nombre'] ?? 'Usuario');
+                    $usuarioCorreo = $usuario['correo'];
+                    $fechaDevolucion = date('d/m/Y');
+
+                    $contenido = "Estimado(a) <strong>$usuarioNombre</strong><br><br>Hemos registrado la devolución del libro <strong>$tituloLibro</strong> el día <strong>$fechaDevolucion</strong>.<br><br>Gracias por utilizar la biblioteca.";
+
+                    $mailer->send($usuarioCorreo, "Devolución registrada", $contenido);
+                }
+            } catch (Exception $e) {
+                error_log("Error al enviar notificación de devolución: " . $e->getMessage());
+            }
+
+            echo json_encode(['success' => true, 'message' => 'Devolución registrada correctamente.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'No se pudo registrar la devolución.']);
+        }
+        exit;
     }
 
     public function verPrestamos() {

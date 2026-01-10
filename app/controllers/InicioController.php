@@ -32,6 +32,10 @@ class InicioController extends BaseController {
         $prestamosActivos = $this->prestamoModelo->contarPrestamosActivos();
         $totalUsuarios = $this->usuarioModelo->contarTotalUsuarios();
         $ultimosPrestamos = $this->prestamoModelo->obtenerUltimosPrestamos(5);
+            // Actualizar estados y obtener préstamos retrasados para mostrar en el panel
+            $this->prestamoModelo->actualizarEstadosDePrestamosRetrasados();
+            $retrasadosCount = $this->prestamoModelo->contarPrestamosRetrasados();
+            $retrasados = $this->prestamoModelo->obtenerPrestamosRetrasados(5);
 
         // Cargar la vista del dashboard
         require_once __DIR__ . "/../views/ADMIN/Inicio.php";

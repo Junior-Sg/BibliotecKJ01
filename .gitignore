@@ -1,0 +1,16 @@
+# Ignorar archivo de variables de entorno
+.env
+
+# Ignorar credenciales
+*.key
+*.pem
+
+# Ignorar configuraciones locales
+.vscode/
+.idea/
+
+# Ignorar dependencias (si usas Composer)
+vendor/
+
+# Ignorar logs
+*.log

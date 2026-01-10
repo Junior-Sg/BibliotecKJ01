@@ -1,7 +1,7 @@
 <?php
 class BaseController {
 
-    protected array $publicRoutes = [
+        protected array $publicRoutes = [
         'LoginUsuario/index', // Vista de inicio de sesión
         'LoginUsuario/login', // Procesamiento del formulario de inicio de sesión
         'RegistrarUsuario/registrar', // Procesamiento del formulario de registro

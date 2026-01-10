@@ -4,4 +4,23 @@ Colocar filtros o barra de buscador en Iventario-----hecho
 
 Nuevos. 
 actualizar el o colocar la funcion en reservas de que si el usuario tiene tres libros prestados no se pueda prestar mas.
-Actualizar diseño. 
+Actualizar diseño.-------hecho
+
+
+realizar vista editar contenidos: 
+vamos a realizar el apartado de informes, en este de ser posibles quiero graficas, no se algo empresarial bonito,----Hecho 
+
+dentro de este vamos a poder exportar cuandos libros se prestaron actualmente y en el mes, cuantas personas nuevas se registraron tambien por mes, los reportes mensuales, cuantos libros se prestaron, cuantas reservas se realizaron, y que se pueda exportar cada uno mediante un excel--Hecho
+
+
+arreglar el envio de los correos, el correo prueba se senvia pero no se envia cuando se selecciona un uuario real por medio del ID, y tampoco se envian los correos al hacer una reserva o un prestamo o una devolucion posiblemente sea por que en la prueba no se puede enviar correos con el ID, asi que no encuentra el correo del usuario----Hecho 
+
+142415
+
+
+Agregar que en admin no se pueda prestar o reservar el mismo libro si ya lo tiene prestado o reservado---- Hecho 
+
+----------------------------------------------------------------------------------------------------------------
+enero---arreglar el apartado de informes permitir escoger el mes para realizar la descarga 
+--- arreglar el boton de volver en el loguin---- hecho
+--- arreglar cuando  se cierra sesión que nos envie al apartado de inicio----hecho
