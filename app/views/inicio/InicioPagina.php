@@ -18,7 +18,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
     <style>
         body {
-            background: url('<?= BASE_URL ?>/public/img/fondo-textura.jpg');
+            background: url('<?= BASE_URL ?>/public/img/Carrucel') no-repeat center center fixed;
             background-size: cover;
             background-attachment: fixed;
             font-family: 'Poppins', sans-serif;
