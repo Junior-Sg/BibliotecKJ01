@@ -19,3 +19,8 @@ arreglar el envio de los correos, el correo prueba se senvia pero no se envia cu
 
 
 Agregar que en admin no se pueda prestar o reservar el mismo libro si ya lo tiene prestado o reservado---- Hecho 
+
+----------------------------------------------------------------------------------------------------------------
+enero---arreglar el apartado de informes permitir escoger el mes para realizar la descarga 
+--- arreglar el boton de volver en el loguin---- hecho
+--- arreglar cuando  se cierra sesión que nos envie al apartado de inicio----hecho

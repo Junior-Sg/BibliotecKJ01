@@ -119,6 +119,30 @@ button {
   font-weight: 600;
 }
 
+/* Hacer que el enlace 'Volver' tenga el mismo estilo que el botón 'Ver libro' */
+#backToHome,
+.cover #openBook {
+  display: inline-block;
+  padding: 10px 15px;
+  cursor: pointer;
+  border: none;
+  background: #6b4949;
+  color: white !important;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#backToHome:hover,
+.cover #openBook:hover {
+  background: #5a3b3b;
+}
+
+#backToHome:focus {
+  outline: 3px solid rgba(107,73,73,0.18);
+  outline-offset: 2px;
+}
+
 .extra, .back {
   margin-top: 10px;
 }
