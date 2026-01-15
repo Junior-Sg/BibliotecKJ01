@@ -9,12 +9,12 @@ class InventarioModelo {
         // usar la clase Conexion desde config
         $this->db = (new Conexion())->conectar();
         // Asegurar que la tabla de disponibilidad exista (creación idempotente)
+        // Usar la estructura que coincide con la base de datos existente
         $this->db->query("CREATE TABLE IF NOT EXISTS disponibilidad (
             id_disponibilidad INT AUTO_INCREMENT PRIMARY KEY,
             id_libro INT NOT NULL,
-            cantidad_actual INT NULL,
-            estado VARCHAR(20) NOT NULL DEFAULT 'disponible',
-            fecha_actualizacion DATETIME NULL,
+            cantidad_disponible INT NOT NULL,
+            id_estado INT NOT NULL DEFAULT 1,
             INDEX (id_libro)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
     }
@@ -365,8 +365,8 @@ class InventarioModelo {
 
     /*============================
       DISPONIBILIDAD HELPERS
-      Tabla esperada: disponibilidad(id_disponibilidad, id_libro, cantidad_actual, estado, fecha_actualizacion)
-      estado: 'disponible', 'reservado', 'prestado'
+      Tabla esperada: disponibilidad(id_disponibilidad, id_libro, cantidad_disponible, id_estado, fecha_actualizacion)
+      id_estado: 1=disponible, 2=reservado, 3=prestado
     ============================*/
     public function crearDisponibilidad($idLibro, $cantidadInicial) {
         // Insertar o actualizar registro de disponibilidad
@@ -376,48 +376,49 @@ class InventarioModelo {
             return $this->setDisponibilidadCantidad($idLibro, $cantidadInicial);
         }
 
-        $estado = ($cantidadInicial === null || intval($cantidadInicial) > 0) ? 'disponible' : 'prestado';
-        $sql = "INSERT INTO disponibilidad (id_libro, cantidad_actual, estado, fecha_actualizacion) VALUES (?, ?, ?, NOW())";
+        $idEstado = ($cantidadInicial === null || intval($cantidadInicial) > 0) ? 1 : 3; // 1=disponible, 3=prestado
+        $sql = "INSERT INTO disponibilidad (id_libro, cantidad_disponible, id_estado, fecha_actualizacion) VALUES (?, ?, ?, NOW())";
         $stmt = $this->db->prepare($sql);
         if (!$stmt) return false;
         $cantidadVal = $cantidadInicial === null ? null : intval($cantidadInicial);
-        $stmt->bind_param('iss', $idLibro, $cantidadVal, $estado);
+        $stmt->bind_param('iii', $idLibro, $cantidadVal, $idEstado);
         return $stmt->execute();
     }
 
     public function setDisponibilidadCantidad($idLibro, $cantidad) {
         $cantidadVal = $cantidad === null ? null : intval($cantidad);
-        // determinar estado según cantidad
-        $estado = ($cantidadVal === null || $cantidadVal > 0) ? 'disponible' : 'prestado';
-        $sql = "UPDATE disponibilidad SET cantidad_actual = ?, estado = ?, fecha_actualizacion = NOW() WHERE id_libro = ?";
+        // Usar la estructura correcta de la base de datos
+        // id_estado: 1 = disponible, 2 = reservado, 3 = prestado, etc.
+        $idEstado = ($cantidadVal === null || $cantidadVal > 0) ? 1 : 3; // 1=disponible, 3=prestado
+        $sql = "UPDATE disponibilidad SET cantidad_disponible = ?, id_estado = ? WHERE id_libro = ?";
         $stmt = $this->db->prepare($sql);
         if (!$stmt) return false;
-        $stmt->bind_param('isi', $cantidadVal, $estado, $idLibro);
+        $stmt->bind_param('iii', $cantidadVal, $idEstado, $idLibro);
         return $stmt->execute();
     }
 
     public function decrementarDisponibilidad($idLibro) {
-        // decrementar cantidad_actual si no es NULL
+        // decrementar cantidad_disponible si no es NULL
         $this->db->begin_transaction();
         try {
             // obtener valor actual
-            $res = $this->db->query("SELECT cantidad_actual FROM disponibilidad WHERE id_libro = " . intval($idLibro) . " FOR UPDATE");
+            $res = $this->db->query("SELECT cantidad_disponible FROM disponibilidad WHERE id_libro = " . intval($idLibro) . " FOR UPDATE");
             if (!$res || $res->num_rows === 0) {
                 $this->db->rollback();
                 return false;
             }
             $row = $res->fetch_assoc();
-            $cant = $row['cantidad_actual'] === null ? null : intval($row['cantidad_actual']);
+            $cant = $row['cantidad_disponible'] === null ? null : intval($row['cantidad_disponible']);
             if ($cant === null) {
                 // ilimitado, nothing to decrement
                 $this->db->commit();
                 return true;
             }
             $nueva = max(0, $cant - 1);
-            $estado = $nueva > 0 ? 'disponible' : 'prestado';
-            $stmt = $this->db->prepare("UPDATE disponibilidad SET cantidad_actual = ?, estado = ?, fecha_actualizacion = NOW() WHERE id_libro = ?");
+            $idEstado = $nueva > 0 ? 1 : 3; // 1=disponible, 3=prestado
+            $stmt = $this->db->prepare("UPDATE disponibilidad SET cantidad_disponible = ?, id_estado = ? WHERE id_libro = ?");
             if (!$stmt) throw new Exception($this->db->error);
-            $stmt->bind_param('isi', $nueva, $estado, $idLibro);
+            $stmt->bind_param('iii', $nueva, $idEstado, $idLibro);
             if (!$stmt->execute()) throw new Exception($stmt->error);
             $this->db->commit();
             return true;
@@ -431,23 +432,23 @@ class InventarioModelo {
     public function incrementarDisponibilidad($idLibro) {
         $this->db->begin_transaction();
         try {
-            $res = $this->db->query("SELECT cantidad_actual FROM disponibilidad WHERE id_libro = " . intval($idLibro) . " FOR UPDATE");
+            $res = $this->db->query("SELECT cantidad_disponible FROM disponibilidad WHERE id_libro = " . intval($idLibro) . " FOR UPDATE");
             if (!$res || $res->num_rows === 0) {
                 $this->db->rollback();
                 return false;
             }
             $row = $res->fetch_assoc();
-            $cant = $row['cantidad_actual'] === null ? null : intval($row['cantidad_actual']);
+            $cant = $row['cantidad_disponible'] === null ? null : intval($row['cantidad_disponible']);
             if ($cant === null) {
                 // ilimitado, nothing to increment
                 $this->db->commit();
                 return true;
             }
             $nueva = $cant + 1;
-            $estado = $nueva > 0 ? 'disponible' : 'prestado';
-            $stmt = $this->db->prepare("UPDATE disponibilidad SET cantidad_actual = ?, estado = ?, fecha_actualizacion = NOW() WHERE id_libro = ?");
+            $idEstado = 1; // disponible
+            $stmt = $this->db->prepare("UPDATE disponibilidad SET cantidad_disponible = ?, id_estado = ? WHERE id_libro = ?");
             if (!$stmt) throw new Exception($this->db->error);
-            $stmt->bind_param('isi', $nueva, $estado, $idLibro);
+            $stmt->bind_param('iii', $nueva, $idEstado, $idLibro);
             if (!$stmt->execute()) throw new Exception($stmt->error);
             $this->db->commit();
             return true;

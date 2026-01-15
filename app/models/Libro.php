@@ -186,5 +186,12 @@ class Libro
     $stmt->execute();
     return $stmt->get_result();
 }
+
+    public function contarTotalLibros() {
+        $sql = "SELECT COUNT(id_libro) as total FROM libro";
+        $resultado = $this->conexion->query($sql);
+        $fila = $resultado->fetch_assoc();
+        return $fila['total'] ?? 0;
+    }
 }
 ?>

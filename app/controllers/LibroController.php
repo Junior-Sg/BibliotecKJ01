@@ -55,16 +55,29 @@ class LibroController
 
         $libros = null;
         $topByGenero = [];
+        $totalLibros = 0;
 
         if ($is_filtered) {
             if (!empty($filterGeneros) || !empty($filterAutores)) {
                 $libros = $this->Libro->filtrarLibros($filterGeneros, $filterAutores);
+                if ($libros && $libros->num_rows > 0) {
+                    $totalLibros = $libros->num_rows;
+                }
             } elseif ($filterGenero > 0) {
                 $libros = $this->Libro->obtenerPorGeneroId($filterGenero);
+                if ($libros && $libros->num_rows > 0) {
+                    $totalLibros = $libros->num_rows;
+                }
             } elseif ($filterAutor > 0) {
                 $libros = $this->Libro->obtenerPorAutor($filterAutor);
+                if ($libros && $libros->num_rows > 0) {
+                    $totalLibros = $libros->num_rows;
+                }
             } elseif ($q !== '') {
                 $libros = $this->Libro->buscarGeneral($q);
+                if ($libros && $libros->num_rows > 0) {
+                    $totalLibros = $libros->num_rows;
+                }
             }
         } else {
             // Showcase por género (hasta 4), solo si no hay filtros activos
@@ -74,6 +87,7 @@ class LibroController
                     'libros' => $this->Libro->obtenerPorGeneroLimit((int)$g['id_genero'], 4)
                 ];
             }
+            $totalLibros = $this->Libro->contarTotalLibros();
         }
 
         // Pasar a la vista variables con nombres consistentes

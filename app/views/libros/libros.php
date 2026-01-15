@@ -152,20 +152,6 @@ function to_array_list($res) {
 // Normalizar listas para la vista
 $generosList = to_array_list($generos);
 $autoresList = to_array_list($autores);
-
-// Si controlador pasó "topByGenero" lo usaremos; si no, creamos un modelo local (fallback)
-$libroModel = null;
-if (!isset($topByGenero)) {
-    // require Conexion y modelo solo si es necesario
-    require_once __DIR__ . '/../../../config/Conexion.php';
-    require_once __DIR__ . '/../../models/Libro.php';
-    $libroModel = new Libro((new Conexion())->conectar());
-}
-
-if ($totalLibros === null) {
-    if (is_array($primeros12)) $totalLibros = count($primeros12);
-    else $totalLibros = 0;
-}
 ?>
 
 <div class="catalogo-wrapper">
