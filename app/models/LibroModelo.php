@@ -83,6 +83,73 @@ class LibroModelo {
         $fila = $resultado->fetch_assoc();
         return $fila['total'] ?? 0;
     }
+    // Obtener libros más reservados
+    public function obtenerLibrosMasReservados($limite = 8) {
+        $sql = "
+            SELECT 
+                l.id_libro,
+                l.titulo,
+                l.año_publicacion,
+                e.nombre AS editorial,
+                l.Estante,
+                l.Imagen,
+                COUNT(r.id_reserva) AS total_reservas
+            FROM libro l
+            LEFT JOIN editorial e ON e.id_editorial = l.id_editorial
+            LEFT JOIN reserva r ON r.id_libro = l.id_libro AND r.estado != 'cancelado'
+            GROUP BY l.id_libro, l.titulo, l.año_publicacion, e.nombre, l.Estante, l.Imagen
+            ORDER BY total_reservas DESC, l.titulo ASC
+            LIMIT " . intval($limite) . "
+        ";
+        
+        $res = $this->db->query($sql);
+        
+        $libros = [];
+        if ($res) {
+            while ($fila = $res->fetch_assoc()) {
+                $libros[] = $fila;
+            }
+        } else {
+            error_log("Error en obtenerLibrosMasReservados: " . $this->db->error);
+        }
+        
+        return $libros;
+    }
+
+    // Obtener libros favoritos (más añadidos a favoritos)
+    public function obtenerLibrosFavoritos($limite = 8) {
+        $sql = "
+            SELECT 
+                l.id_libro,
+                l.titulo,
+                l.año_publicacion,
+                e.nombre AS editorial,
+                l.Estante,
+                l.Imagen,
+                COUNT(f.id_favorito) AS total_favoritos
+            FROM libro l
+            LEFT JOIN editorial e ON e.id_editorial = l.id_editorial
+            LEFT JOIN favorito f ON f.id_libro = l.id_libro
+            GROUP BY l.id_libro, l.titulo, l.año_publicacion, e.nombre, l.Estante, l.Imagen
+            HAVING COUNT(f.id_favorito) > 0
+            ORDER BY total_favoritos DESC, l.titulo ASC
+            LIMIT " . intval($limite) . "
+        ";
+        
+        $res = $this->db->query($sql);
+        
+        $libros = [];
+        if ($res) {
+            while ($fila = $res->fetch_assoc()) {
+                $libros[] = $fila;
+            }
+        } else {
+            error_log("Error en obtenerLibrosFavoritos: " . $this->db->error);
+        }
+        
+        return $libros;
+    }
 
 }
 ?>
+

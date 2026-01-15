@@ -2,7 +2,7 @@
 // app/views/libros/libros.php
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 ?>
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="es">
 <head>
     <meta charset="UTF-8">
