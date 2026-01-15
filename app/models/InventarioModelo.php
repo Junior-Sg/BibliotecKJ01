@@ -356,6 +356,25 @@ class InventarioModelo {
       ELIMINAR LIBRO
     ============================*/
     public function eliminarLibro($idLibro) {
+        // Verificar si hay préstamos activos
+        $query = "SELECT COUNT(*) as count FROM prestamo WHERE id_libro = " . intval($idLibro) . " AND estado != 'devuelto'";
+        $result = $this->db->query($query);
+        $row = $result->fetch_assoc();
+        if ($row['count'] > 0) {
+            return false; // No se puede eliminar si hay préstamos activos
+        }
+
+        // Verificar si hay reservas pendientes
+        $query = "SELECT COUNT(*) as count FROM reserva WHERE id_libro = " . intval($idLibro) . " AND estado = 'pendiente'";
+        $result = $this->db->query($query);
+        $row = $result->fetch_assoc();
+        if ($row['count'] > 0) {
+            return false; // No se puede eliminar si hay reservas pendientes
+        }
+
+        // Eliminar dependencias
+        $this->db->query("DELETE FROM prestamo WHERE id_libro = " . intval($idLibro));
+        $this->db->query("DELETE FROM reserva WHERE id_libro = " . intval($idLibro));
         $this->db->query("DELETE FROM libro_autor WHERE id_libro = " . intval($idLibro));
         $this->db->query("DELETE FROM libro_genero WHERE id_libro = " . intval($idLibro));
         // eliminar disponibilidad asociada

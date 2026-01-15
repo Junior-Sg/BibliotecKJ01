@@ -118,7 +118,7 @@ class InventarioController extends BaseController {
         if ($ok) {
             $this->redirigirConExito('Libro eliminado correctamente.');
         } else {
-            $this->redirigirConError('No se pudo eliminar el libro.');
+            $this->redirigirConError('No se puede eliminar el libro porque tiene préstamos activos o reservas pendientes.');
         }
     }
 
