@@ -7,9 +7,9 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     <meta charset="utf-8">
     <title>Mi perfil</title>
     <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
         .avatar-emoji { font-size:28px; display:inline-flex; width:64px; height:64px; align-items:center; justify-content:center; border-radius:50%; background:#f0f0f0; }
@@ -109,7 +109,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
                             <td>
                                 <button class="btn btn-sm btn-success btn-add-favorito" data-id-libro="<?= $h['id_libro'] ?>">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                                      <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-1.114 2.175-.229 4.842 2.365 7.027l.175.176L8 14.348l4.06-4.092.175-.176c2.594-2.185 3.48-4.852 2.365-7.027C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-1.114 2.175-.229 4.842 2.365 7.027l.175.176L8 14.348l4.06-4.092.175-.176c2.594-2.185 3.48-4.852 2.365-7.027C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
                                     </svg>
                                     Favorito
                                 </button>

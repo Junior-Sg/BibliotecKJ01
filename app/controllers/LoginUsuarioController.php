@@ -55,6 +55,7 @@ class LoginUsuarioController extends BaseController {
         $_SESSION["id_usuario"] = $data["id_usuario"];
         $_SESSION["nombre"]     = $data["nombre"];
         $_SESSION["correo"]     = $data["correo"];
+        $_SESSION["avatar_emoji"] = $data["avatar_emoji"];
 
         $rol = $this->model->obtenerRol($data["id_usuario"]);
         $_SESSION["rol"] = $rol;

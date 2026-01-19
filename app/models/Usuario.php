@@ -51,7 +51,7 @@ class Usuario
     // =========================
     public function login($correo, $clave)
     {
-        $sql = "SELECT id_usuario, nombre, correo, contraseña FROM usuario WHERE correo = ? LIMIT 1";
+        $sql = "SELECT id_usuario, nombre, correo, contraseña, avatar_emoji FROM usuario WHERE correo = ? LIMIT 1";
         $stmt = $this->conexion->prepare($sql);
         if (!$stmt) {
             error_log("Error preparar login: " . $this->conexion->error);

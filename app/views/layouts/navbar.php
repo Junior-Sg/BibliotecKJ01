@@ -7,11 +7,6 @@ $usuarioAutenticado = isset($_SESSION['id_usuario']);
 $nombreUsuario = $_SESSION['nombre'] ?? '';
 $correoUsuario = $_SESSION['correo'] ?? '';
 
-// Elegir emoji de avatar (persistir en sesión)
-if ($usuarioAutenticado && empty($_SESSION['avatar_emoji'])) {
-    $emojis = ['😀','😃','😄','😁','😆','😊','😎','🤓','🫠','🙂','🙃','🤩','🥳','🧐','🤠','🧑‍🎓','🧑‍💻','👩‍🏫'];
-    $_SESSION['avatar_emoji'] = $emojis[array_rand($emojis)];
-}
 $avatarEmoji = $_SESSION['avatar_emoji'] ?? '👤';
 
 // Ruta de archivo avatar personalizado
@@ -29,7 +24,7 @@ $avatarFileUrl  = $usuarioAutenticado && file_exists($avatarFilePath) ? BASE_URL
         </div>
 
         <div class="titulo-wrap">
-            <h1 class="titulo">BIBLIOTEC.KJ</h1>
+            <h1 class="titulo">BIBLIOTEC_KJ</h1>
         </div>
 
         <div class="user-wrap">
