@@ -64,6 +64,11 @@ class InventarioController extends BaseController {
             $this->redirigirConError('Todos los campos son obligatorios.');
         }
 
+        // Validar imagen (obligatoria para registrar nuevo libro)
+        if (!$idLibro && (empty($_FILES['imagen']) || $_FILES['imagen']['error'] !== UPLOAD_ERR_OK)) {
+            $this->redirigirConError('Debe seleccionar una imagen para registrar el libro.');
+        }
+
         // Gestionar Editorial
         $editorial = $this->modelo->getEditorialByName($editorialNombre);
         $idEditorial = $editorial ? $editorial['id_editorial'] : $this->modelo->insertarEditorial($editorialNombre);

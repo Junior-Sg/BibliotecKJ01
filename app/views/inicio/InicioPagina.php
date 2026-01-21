@@ -16,177 +16,170 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            background: url('<?= BASE_URL ?>public/img/Backgrounds/bg1.jpg') no-repeat center center fixed;
-            background-size: cover;
-            background-attachment: fixed;
-            font-family: 'Poppins', sans-serif;
-        }
+    
+<style>
 
-        /* BUSCADOR */
-        .buscador-wrap {
-            margin: 20px auto;
-            max-width: 700px;
-            position: relative;
-        }
-        .buscador-input {
-            width: 100%;
-            padding: 14px 20px;
-            border-radius: 40px;
-            border: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .buscador-btn {
-            position: absolute;
-            right: 6px;
-            top: 6px;
-            bottom: 6px;
-            padding: 4px 18px;
-            border-radius: 40px;
-            background:#8b6f57;
-            color:#fff;
-            border:none;
-        }
+/* 🎨 FONDO GENERAL */
+body {
+    background: linear-gradient(135deg, #F0D0C7, #FEEAF0);
+    background-attachment: fixed;
+    font-family: 'Poppins', sans-serif;
+    color: #241705;
+}
 
-        /* TABS DE FILTROS */
-        .nav-pills .nav-link {
-            color: #8b6f57;
-            background-color: #fff;
-            border: 1px solid #8b6f57;
-            margin: 0 5px;
-        }
-        .nav-pills .nav-link.active {
-            color: #fff;
-            background-color: #8b6f57;
-        }
+/* 🔎 BUSCADOR */
+.buscador-wrap {
+    margin: 20px auto;
+    max-width: 700px;
+    position: relative;
+}
+.buscador-input {
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: 40px;
+    border: 1px solid rgba(36,23,5,0.20);
+    background: rgba(255,255,255,0.85);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.buscador-input:focus {
+    border-color: #F09410;
+    outline: none;
+    box-shadow: 0 0 6px rgba(240,148,16,0.4);
+}
+.buscador-btn {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    bottom: 6px;
+    padding: 4px 18px;
+    border-radius: 40px;
+    background: #F09410;
+    color: #fff;
+    border: none;
+}
+.buscador-btn:hover {
+    background: #BC430D;
+}
 
-        /* CARRUSEL */
-        .carrusel-box {
-            background: #8b6f57;
-            margin: 20px auto;
-            max-width: 900px;
-            height: 500px;
-            border-radius: 14px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-            background-size: contain;   /* 👈 CAMBIO CLAVE */
-            background-repeat: no-repeat;
-            background-color: #8b6f57;  /* relleno elegante */
-            background-position: center;
-            transition: background-image 0.5s ease-in-out;
-        }
-        
-        .carrusel-box::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.35); /* oscurece la imagen */
-            z-index: 1;
-        }
-        
-        #carrusel-texto {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 2;
-            color: #fff;
-            font-size: 22px;
-            text-align: center;
-            max-width: 80%;
-            font-weight: 500;
-            padding: 12px 20px;
-            border-radius: 10px;
-            line-height: 1.4;
-        }
-        
-        .carrusel-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 48px;
-            color: #fff;
-            cursor: pointer;
-            user-select: none;
-            z-index: 4;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.8);
-            background: rgba(0,0,0,0.3);
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background 0.3s ease;
-        }
-        
-        .carrusel-arrow:hover {
-            background: rgba(0,0,0,0.5);
-        }
-        
-        .carrusel-left  { left: 20px; }
-        .carrusel-right { right: 20px; }
+/* 📌 TABS */
+.nav-pills .nav-link {
+    color: #BC430D;
+    background-color: #fff;
+    border: 1px solid #BC430D;
+    margin: 0 5px;
+}
+.nav-pills .nav-link.active {
+    color: #fff;
+    background-color: #BC430D;
+}
 
-        .carrusel-dots {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 4;
-            display: flex;
-            gap: 8px;
-        }
+/* 🎠 CARRUSEL */
+.carrusel-box {
+    background: #BC430D;
+    margin: 20px auto;
+    max-width: 900px;
+    height: 500px;
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.carrusel-box::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    background: rgba(0,0,0,0.40);
+}
 
-        .carrusel-dots span {
-            font-size: 18px;
-            cursor: pointer;
-            color: rgba(255, 255, 255, 0.6);
-            transition: color 0.3s ease;
-        }
-        
-        .carrusel-dots span.active {
-            color: #fff;
-            font-size: 24px;
-        }
+#carrusel-texto {
+    position:absolute;
+    z-index:2;
+    top:50%; left:50%;
+    transform:translate(-50%, -50%);
+    color:#fff;
+    font-size:22px;
+    text-align:center;
+    max-width:80%;
+}
 
-        /* TITULOS DE SECCIÓN */
-        .section-title {
-            font-family: 'Merriweather', serif;
-            font-size: 28px;
-            color: #fff;
-            background: #8b6f57;
-            padding: 10px 20px;
-            border-radius: 10px;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
+.carrusel-arrow {
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:48px;
+    color:#fff;
+    cursor:pointer;
+    z-index:4;
+    background: rgba(0,0,0,0.35);
+    width:50px;
+    height:50px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    transition:.2s;
+}
+.carrusel-arrow:hover {
+    background: rgba(0,0,0,0.55);
+}
+.carrusel-left { left:20px; }
+.carrusel-right { right:20px; }
 
-        /* CARDS MINIATURE (como la imagen) */
-        .mini-card {
-            width: 160px;
-            border-radius: 12px;
-            background: #fff;
-            padding: 8px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
-        .mini-card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
+.carrusel-dots {
+    position:absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:4;
+    display:flex;
+    gap:8px;
+}
+.carrusel-dots span {
+    cursor:pointer;
+    font-size:20px;
+    color:rgba(255,255,255,0.6);
+}
+.carrusel-dots span.active {
+    color: #fff;
+}
 
-        /* Ocultar elementos por defecto para JS */
-        .libro-item.hidden {
-            display: none;
-        }
-    </style>
+/* 📚 TÍTULOS */
+.section-title {
+    font-family:'Merriweather', serif;
+    font-size:28px;
+    color:#fff;
+    background:#BC430D;
+    padding:10px 20px;
+    border-radius:10px;
+}
+
+/* 🃏 CARDS */
+.mini-card {
+    width:160px;
+    border-radius:12px;
+    background:#fff;
+    padding:8px;
+    text-align:center;
+    box-shadow:0 4px 15px rgba(0,0,0,0.15);
+}
+.mini-card img {
+    width:100%;
+    height:180px;
+    object-fit:cover;
+    border-radius:10px;
+}
+
+.libro-item.hidden {
+    display:none;
+}
+</style>
+
 </head>
 
 <body>

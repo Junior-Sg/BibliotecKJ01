@@ -292,7 +292,7 @@ include __DIR__ . '/../layouts/alerts.php';
 
                         <div class="col-md-4 mb-3">
                             <label>Imagen del Libro:</label>
-                            <input type="file" class="form-control" name="imagen" accept="image/*">
+                            <input type="file" class="form-control" name="imagen" accept="image/*" required>
                         </div>
 
                     </div>

@@ -24,5 +24,3 @@ Agregar que en admin no se pueda prestar o reservar el mismo libro si ya lo tien
 enero---arreglar el apartado de informes permitir escoger el mes para realizar la descarga 
 --- arreglar el boton de volver en el loguin---- hecho
 --- arreglar cuando  se cierra sesión que nos envie al apartado de inicio----hecho
-
-__CORREGIR__ Fatal error: Uncaught mysqli_sql_exception: Column 'Imagen' cannot be null in C:\xampp\htdocs\BibliotecKJ01\app\models\InventarioModelo.php:196 Stack trace: #0 C:\xampp\htdocs\BibliotecKJ01\app\models\InventarioModelo.php(196): mysqli_stmt->execute() #1 C:\xampp\htdocs\BibliotecKJ01\app\controllers\InventarioController.php(104): InventarioModelo->insertarLibro('James y el melo...', 'L017', 2022, 83, 8, NULL, 'James vive una ...') #2 C:\xampp\htdocs\BibliotecKJ01\app\controllers\InventarioController.php(43): InventarioController->procesarFormularioLibro() #3 C:\xampp\htdocs\BibliotecKJ01\index.php(105): InventarioController->registrarLibro() #4 {main} thrown in C:\xampp\htdocs\BibliotecKJ01\app\models\InventarioModelo.php on line 196
