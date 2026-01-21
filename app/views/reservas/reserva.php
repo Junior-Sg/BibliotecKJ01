@@ -26,13 +26,21 @@
 </div>
 
 <!-- Toast login (cuando no está autenticado) -->
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
-  <div id="loginToast" class="toast align-items-center text-bg-warning border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">
-        Necesitas iniciar sesión para reservar. <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=LoginUsuario&action=index" class="fw-bold">Iniciar sesión</a>
+<div class="position-fixed p-3" style="z-index: 1080; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+  <div id="loginToast" class="toast border-0" role="alert" aria-live="assertive" aria-atomic="true" style="background: linear-gradient(135deg, #2C5282 0%, #1A365D 100%); box-shadow: 0 12px 32px rgba(44, 82, 130, 0.35); min-width: 380px;">
+    <div class="p-4">
+      <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+        <i class="bi bi-lock-fill" style="font-size: 1.75rem; color: #60A5FA; flex-shrink: 0; margin-top: 2px;"></i>
+        <div style="flex: 1;">
+          <h6 class="text-white mb-1" style="font-size: 1.1rem;">Inicia sesión para reservar</h6>
+          <p class="text-white-50 mb-0" style="font-size: 0.95rem;">Accede a tu cuenta para reservar libros de nuestra biblioteca.</p>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Cerrar" style="margin-top: -4px;"></button>
       </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+      <div class="d-flex gap-2" style="margin-top: 16px;">
+        <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=LoginUsuario&action=index" class="btn btn-sm text-white flex-grow-1" style="background-color: #60A5FA; border: none; font-weight: 500; transition: background-color 0.2s;">Iniciar sesión</a>
+        <button type="button" class="btn btn-sm text-white flex-grow-1" data-bs-dismiss="toast" style="background-color: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.25); font-weight: 500;">Cerrar</button>
+      </div>
     </div>
   </div>
 </div>
