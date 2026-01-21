@@ -1,0 +1,160 @@
+/* 🎨 FONDO GENERAL */
+body {
+    background: linear-gradient(135deg, #F0D0C7, #FEEAF0);
+    background-attachment: fixed;
+    font-family: 'Poppins', sans-serif;
+    color: #241705;
+}
+
+/* 🔎 BUSCADOR */
+.buscador-wrap {
+    margin: 20px auto;
+    max-width: 700px;
+    position: relative;
+}
+.buscador-input {
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: 40px;
+    border: 1px solid rgba(36,23,5,0.20);
+    background: rgba(255,255,255,0.85);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.buscador-input:focus {
+    border-color: #F09410;
+    outline: none;
+    box-shadow: 0 0 6px rgba(240,148,16,0.4);
+}
+.buscador-btn {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    bottom: 6px;
+    padding: 4px 18px;
+    border-radius: 40px;
+    background: #F09410;
+    color: #fff;
+    border: none;
+}
+.buscador-btn:hover {
+    background: #BC430D;
+}
+
+/* 📌 TABS */
+.nav-pills .nav-link {
+    color: #FF9800 !important;
+    background-color: #fff !important;
+    border: 1px solid #FF9800 !important;
+    margin: 0 5px;
+}
+.nav-pills .nav-link.active {
+    color: #fff !important;
+    background-color: #FF9800 !important;
+    border-color: #FF9800 !important;
+}
+
+/* 🎠 CARRUSEL */
+.carrusel-box {
+    background: #BC430D;
+    margin: 20px auto;
+    max-width: 900px;
+    height: 500px;
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.carrusel-box::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    background: rgba(0,0,0,0.40);
+}
+
+#carrusel-texto {
+    position:absolute;
+    z-index:2;
+    top:50%; left:50%;
+    transform:translate(-50%, -50%);
+    color:#fff;
+    font-size:22px;
+    text-align:center;
+    max-width:80%;
+}
+
+.carrusel-arrow {
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:48px;
+    color:#fff;
+    cursor:pointer;
+    z-index:4;
+    background: rgba(0,0,0,0.35);
+    width:50px;
+    height:50px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    transition:.2s;
+}
+.carrusel-arrow:hover {
+    background: rgba(0,0,0,0.55);
+}
+.carrusel-left { left:20px; }
+.carrusel-right { right:20px; }
+
+.carrusel-dots {
+    position:absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:4;
+    display:flex;
+    gap:8px;
+}
+.carrusel-dots span {
+    cursor:pointer;
+    font-size:20px;
+    color:rgba(255,255,255,0.6);
+}
+.carrusel-dots span.active {
+    color: #fff;
+}
+
+/* 📚 TÍTULOS */
+.section-title {
+    font-family:'Merriweather', serif;
+    font-size:28px;
+    color:#fff;
+    background:#BC430D;
+    padding:10px 20px;
+    border-radius:10px;
+}
+
+/* 🃏 CARDS */
+.mini-card {
+    width:160px;
+    border-radius:12px;
+    background:#fff;
+    padding:8px;
+    text-align:center;
+    box-shadow:0 4px 15px rgba(0,0,0,0.15);
+}
+.mini-card img {
+    width:100%;
+    height:180px;
+    object-fit:cover;
+    border-radius:10px;
+}
+
+.libro-item.hidden {
+    display:none;
+}

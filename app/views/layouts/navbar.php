@@ -28,7 +28,7 @@ $activeController = strtolower($_GET['controller'] ?? 'iniciopagina');
     <!-- Marca -->
     <a class="brand" href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=InicioPagina&action=index" aria-label="Inicio">
       <img src="<?= rtrim(BASE_URL, '/') ?>/public/img/Logos/L1.jpg" alt="Logo BibliotecKJ" class="brand__logo" />
-      <span class="brand__name">BIBLIOTEC.KJ</span>
+      <span class="brand__name">BIBLIOTEC_KJ</span>
     </a>
 
     <!-- Navegación -->
