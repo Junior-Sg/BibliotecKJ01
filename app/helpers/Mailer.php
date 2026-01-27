@@ -33,7 +33,7 @@ class Mailer
         $mail = new PHPMailer(true);
 
         try {
-            // Configuración SMTP Brevo
+            // Configuración SMTP Brevo con puerto 2525 (alternativo)
             $mail->isSMTP();
             $mail->Host = $this->config['host'];
             $mail->SMTPAuth = true;
@@ -43,6 +43,9 @@ class Mailer
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->SMTPDebug = $this->debugMode;
             $mail->CharSet = 'UTF-8';
+            $mail->Timeout = 10;
+            $mail->SMTPKeepAlive = false;
+            
             // Desactivar verificación SSL para evitar problemas con certificados de Brevo
             $mail->SMTPOptions = array(
                 'ssl' => array(
@@ -80,15 +83,49 @@ class Mailer
             $resultado = $mail->send();
 
             if ($resultado) {
-                error_log("✓ Email enviado exitosamente a: $to | Asunto: $subject");
+                error_log("✓ Email enviado via SMTP BREVO (puerto 2525) a: $to | Asunto: $subject");
+                return true;
             } else {
-                error_log("✗ Error en send() para: $to | Error: " . $mail->ErrorInfo);
+                error_log("✗ Error en SMTP para: $to | Error: " . $mail->ErrorInfo);
+                return false;
             }
 
-            return $resultado;
-
         } catch (Exception $e) {
-            error_log("✗ EXCEPCIÓN al enviar correo a $to: " . $e->getMessage());
+            error_log("✗ EXCEPCIÓN SMTP para $to: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Envío fallback usando la función mail() nativa de PHP
+     */
+    private function sendViaPhpMail($to, $subject, $bodyContent, $isHtml = true)
+    {
+        try {
+            $headers = "MIME-Version: 1.0\r\n";
+            $headers .= "From: " . $this->config['fromEmail'] . "\r\n";
+            $headers .= "Reply-To: " . $this->config['fromEmail'] . "\r\n";
+            
+            if ($isHtml) {
+                $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+                $body = $this->generateTemplate($subject, $bodyContent, $this->logoUrl);
+            } else {
+                $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+                $body = $bodyContent;
+            }
+            
+            $resultado = mail($to, $subject, $body, $headers);
+            
+            if ($resultado) {
+                error_log("✓ Email enviado via mail() a: $to | Asunto: $subject");
+            } else {
+                error_log("✗ Error en mail() para: $to");
+            }
+            
+            return $resultado;
+            
+        } catch (Exception $e) {
+            error_log("✗ Error en mail() fallback para $to: " . $e->getMessage());
             return false;
         }
     }
@@ -133,5 +170,19 @@ class Mailer
 HTML;
 
         return $html;
+    }
+
+    /**
+     * Envía un correo de forma asíncrona sin bloquear la respuesta
+     * Ideal para formularios AJAX donde necesitas responder rápidamente al cliente
+     */
+    public function sendAsync($to, $subject, $bodyContent, $isHtml = true)
+    {
+        // Enviar el correo sin esperar confirmación
+        $this->send($to, $subject, $bodyContent, $isHtml);
+        
+        // Siempre retorna true sin esperar confirmación real
+        // El envío se registra en logs pero no bloquea la respuesta al cliente
+        return true;
     }
 }

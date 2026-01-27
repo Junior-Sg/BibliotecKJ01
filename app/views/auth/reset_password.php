@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/BibliotecKJ01/public/css/Login_usuario.css">
 </head>
 <body>
-    <?php include __DIR__ . '/../partials/alert.php'; ?>
+    <?php include __DIR__ . '/../../helpers/alert.php'; ?>
     <div class="book-container" style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
         <div class="book open">
             <div class="page page-login" style="display: block;">

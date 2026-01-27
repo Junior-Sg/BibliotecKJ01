@@ -1,5 +1,5 @@
 <?php
-// app/views/partials/alert.php
+// app/helpers/alert.php
 
 $alert = '';
 $error = $error ?? $_GET['error'] ?? null;

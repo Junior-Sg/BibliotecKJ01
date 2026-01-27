@@ -1,0 +1,59 @@
+<?php
+// Prueba de conexión SMTP
+
+require_once __DIR__ . '/app/Librerias/PHPMailer/PHPMailer.php';
+require_once __DIR__ . '/app/Librerias/PHPMailer/SMTP.php';
+require_once __DIR__ . '/app/Librerias/PHPMailer/Exception.php';
+
+$config = require __DIR__ . '/app/helpers/mail_config.php';
+
+echo "<h2>Configuración SMTP:</h2>";
+echo "Host: " . htmlspecialchars($config['host']) . "<br>";
+echo "Port: " . htmlspecialchars($config['port']) . "<br>";
+echo "Username: " . htmlspecialchars($config['username']) . "<br>";
+echo "FromEmail: " . htmlspecialchars($config['fromEmail']) . "<br>";
+echo "<hr>";
+
+$mail = new PHPMailer\PHPMailer\PHPMailer(true);
+
+try {
+    echo "<h3>Intentando conectar...</h3>";
+    
+    $mail->SMTPDebug = 4; // Mostrar todos los detalles
+    $mail->isSMTP();
+    $mail->Host = $config['host'];
+    $mail->SMTPAuth = true;
+    $mail->Username = $config['username'];
+    $mail->Password = $config['password'];
+    $mail->Port = $config['port'];
+    $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+    
+    // Opciones SSL
+    $mail->SMTPOptions = array(
+        'ssl' => array(
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true
+        )
+    );
+    
+    echo "<h3>Configuración completada, iniciando prueba...</h3>";
+    
+    // Intentar conectar
+    $mail->setFrom($config['fromEmail'], 'Test');
+    $mail->addAddress($config['fromEmail']);
+    $mail->Subject = 'Prueba de conexión SMTP';
+    $mail->Body = 'Este es un correo de prueba';
+    
+    echo "<h3>Enviando correo...</h3>";
+    if ($mail->send()) {
+        echo "<h2 style='color: green;'>✓ ÉXITO: Correo enviado correctamente</h2>";
+    } else {
+        echo "<h2 style='color: red;'>✗ Error: " . htmlspecialchars($mail->ErrorInfo) . "</h2>";
+    }
+    
+} catch (Exception $e) {
+    echo "<h2 style='color: red;'>✗ EXCEPCIÓN: " . htmlspecialchars($e->getMessage()) . "</h2>";
+    echo "<pre>" . htmlspecialchars($mail->ErrorInfo) . "</pre>";
+}
+?>

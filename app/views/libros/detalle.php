@@ -3,6 +3,14 @@
 ?>
 <style>
   /* Estilos para el modal de libro abierto */
+  #modalDetalle {
+    z-index: 2000 !important;
+  }
+
+  #modalDetalle .modal-backdrop {
+    z-index: 1999 !important;
+  }
+
   #modalDetalle .modal-content {
     border: none;
     border-radius: 0;

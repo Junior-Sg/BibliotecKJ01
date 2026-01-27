@@ -50,7 +50,7 @@ class PasswordResetController {
             $subject = "Código de recuperación de contraseña - Bibliotec_KJ";
             $body = "Hola {$usuario['nombre']},<br><br>Has solicitado restablecer tu contraseña. Usa el siguiente código para continuar:<br><br><h2 style='text-align:center; letter-spacing: 4px;'>{$code}</h2><br><br>Este código expirará en 15 minutos.<br><br>Si no solicitaste esto, puedes ignorar este correo.<br><br>Gracias,<br>El equipo de Bibliotec_KJ";
 
-            $resultado = $this->mailer->send($correo, $subject, $body);
+            $resultado = $this->mailer->sendAsync($correo, $subject, $body);
 
 
             if ($resultado) {

@@ -26,7 +26,7 @@
 </div>
 
 <!-- Toast login (cuando no está autenticado) -->
-<div class="position-fixed p-3" style="z-index: 1080; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+<div class="position-fixed p-3" style="z-index: 2100; top: 50%; left: 50%; transform: translate(-50%, -50%);">
   <div id="loginToast" class="toast border-0" role="alert" aria-live="assertive" aria-atomic="true" style="background: linear-gradient(135deg, #2C5282 0%, #1A365D 100%); box-shadow: 0 12px 32px rgba(44, 82, 130, 0.35); min-width: 380px;">
     <div class="p-4">
       <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">

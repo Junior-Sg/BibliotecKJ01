@@ -123,6 +123,17 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
             </div> <!-- /.container -->
         </main>
 
+<!-- Estilos para modal detalle -->
+<style>
+  #modalDetalle {
+    z-index: 2000 !important;
+  }
+
+  #modalDetalle .modal-backdrop {
+    z-index: 1999 !important;
+  }
+</style>
+
 <!-- Modal Detalle -->
 <div class="modal fade" id="modalDetalle" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
