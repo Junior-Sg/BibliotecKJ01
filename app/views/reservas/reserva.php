@@ -1,6 +1,17 @@
 <?php
 // partial: reserva.php (modal confirmación + toast login)
 ?>
+<style>
+  /* Asegurar que el modal de confirmación esté por encima del modal de detalles */
+  #confirmReservaModal {
+    z-index: 2050 !important;
+  }
+
+  #confirmReservaModal .modal-backdrop {
+    z-index: 2049 !important;
+  }
+</style>
+
 <!-- Modal Confirmación de Reserva -->
 <div class="modal fade" id="confirmReservaModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
