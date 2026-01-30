@@ -5,13 +5,29 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Mi perfil</title>
+    <title>Mi Perfil</title>
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
+  #modalEditar {
+    z-index: 2000 !important;
+  }
+  #modalEditar .modal-backdrop {
+    z-index: 1999 !important;
+  }
+</style>
+<style>
+  #modalEmoji {
+    z-index: 2000 !important;
+  }
+  #modalEmoji .modal-backdrop {
+    z-index: 1999 !important;
+  }
+</style>
+<style>
         .avatar-emoji { font-size:28px; display:inline-flex; width:64px; height:64px; align-items:center; justify-content:center; border-radius:50%; background:#f0f0f0; }
         .emoji-choice { cursor:pointer; padding:6px; font-size:22px; margin:4px; border-radius:8px; display:inline-block; }
         .emoji-choice.selected { box-shadow:0 0 0 3px rgba(100,150,255,0.25); }

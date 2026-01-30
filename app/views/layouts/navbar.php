@@ -214,10 +214,6 @@ body{
   .brand__name{ display:none; } /* compacta marca en móviles */
   .user-name{ display:none; }
 }
-
-/* Forzar que los modales de Bootstrap se muestren por encima del header/nav */
-.modal-backdrop { z-index: 200000 !important; }
-.modal { z-index: 200001 !important; }
 </style>
 
 <script>

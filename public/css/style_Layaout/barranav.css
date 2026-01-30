@@ -101,9 +101,5 @@ body {
     display: flex;
 }
 
-/* Asegurar que los modales de Bootstrap estén siempre por encima del navbar y otros elementos */
-.modal-backdrop { z-index: 19990 !important; }
-.modal { z-index: 20000 !important; }
-
 /* En caso de usos especiales de navbars con z-index alto, asegurar que no se superpongan al modal */
 .navbar { z-index: 1000; }
