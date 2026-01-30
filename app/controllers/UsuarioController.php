@@ -30,10 +30,12 @@ class UsuarioController extends BaseController {
         $usuario   = $this->model->obtenerPorId($id);
         $favoritos = $this->model->obtenerFavoritos($id);   // mysqli_result o false
         $reservas  = $this->model->obtenerReservas($id);    // mysqli_result o false
+        $favoritosIds = $this->model->obtenerFavoritosIds($id);
 
         render_view('usuario/perfil', [
             'usuario'   => $usuario,
             'favoritos' => $favoritos,
+            'favoritos_ids' => $favoritosIds,
             'reservas'  => $reservas,
             'historialLectura' => $historialLectura // Pasar historial a la vista
         ]);

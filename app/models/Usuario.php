@@ -315,25 +315,46 @@ class Usuario
 
     public function agregarFavorito(int $idUsuario, int $idLibro)
     {
-        // 1. Verificar si ya existe
-        $sqlCheck = "SELECT id_favorito FROM favorito WHERE id_usuario = ? AND id_libro = ?";
-        $stmtCheck = $this->conexion->prepare($sqlCheck);
-        $stmtCheck->bind_param("ii", $idUsuario, $idLibro);
-        $stmtCheck->execute();
-        $resCheck = $stmtCheck->get_result();
-        if ($resCheck->num_rows > 0) {
-            return true; // Ya es favorito, no es un error
-        }
-
-        // 2. Insertar si no existe
-        $sql = "INSERT INTO favorito (id_usuario, id_libro) VALUES (?, ?)";
+        // Usar una inserción tolerante a duplicados para evitar condiciones de carrera.
+        // ON DUPLICATE KEY UPDATE no cambia nada pero evita error por UNIQUE.
+        $sql = "INSERT INTO favorito (id_usuario, id_libro) VALUES (?, ?) ON DUPLICATE KEY UPDATE id_favorito = id_favorito";
         $stmt = $this->conexion->prepare($sql);
         if (!$stmt) {
             error_log("Error preparar agregarFavorito: " . $this->conexion->error);
             return false;
         }
         $stmt->bind_param("ii", $idUsuario, $idLibro);
-        return $stmt->execute();
+        $exec = $stmt->execute();
+        if ($exec) {
+            return true;
+        }
+
+        // Si hubo error, registrar y devolver false
+        error_log("Error ejecutar agregarFavorito: " . $stmt->error);
+        return false;
+    }
+
+    /**
+     * Devuelve un array simple con los ids de libro que el usuario marcó como favoritos.
+     * @param int $idUsuario
+     * @return int[]
+     */
+    public function obtenerFavoritosIds(int $idUsuario)
+    {
+        $sql = "SELECT id_libro FROM favorito WHERE id_usuario = ?";
+        $stmt = $this->conexion->prepare($sql);
+        if (!$stmt) {
+            error_log("Error preparar obtenerFavoritosIds: " . $this->conexion->error);
+            return [];
+        }
+        $stmt->bind_param("i", $idUsuario);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $ids = [];
+        while ($row = $res->fetch_assoc()) {
+            $ids[] = (int)$row['id_libro'];
+        }
+        return $ids;
     }
 
     // Historial reservas: asume tabla reserva (id_reserva, id_usuario, id_libro, fecha_reserva, estado)

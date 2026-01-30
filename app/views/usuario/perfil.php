@@ -107,12 +107,22 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
                             </td>
                             <td><?= htmlspecialchars($h['fecha_devolucion']) ?></td>
                             <td>
-                                <button class="btn btn-sm btn-success btn-add-favorito" data-id-libro="<?= $h['id_libro'] ?>">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-                                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-1.114 2.175-.229 4.842 2.365 7.027l.175.176L8 14.348l4.06-4.092.175-.176c2.594-2.185 3.48-4.852 2.365-7.027C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
-                                    </svg>
-                                    Favorito
-                                </button>
+                                <?php $isFav = in_array((int)$h['id_libro'], $favoritos_ids ?? []); ?>
+                                <?php if ($isFav): ?>
+                                    <button class="btn btn-sm btn-outline-success" disabled>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+                                        <path d="M8 1C6.346-1 3 1.2 3 4.5 3 7 6.2 9 8 11.5 9.8 9 13 7 13 4.5 13 1.2 9.654-1 8 1z"/>
+                                        </svg>
+                                        Favorito
+                                    </button>
+                                <?php else: ?>
+                                    <button class="btn btn-sm btn-success btn-add-favorito" data-id-libro="<?= $h['id_libro'] ?>">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-1.114 2.175-.229 4.842 2.365 7.027l.175.176L8 14.348l4.06-4.092.175-.176c2.594-2.185 3.48-4.852 2.365-7.027C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                        </svg>
+                                        Favorito
+                                    </button>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <?php endforeach; ?>
