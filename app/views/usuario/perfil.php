@@ -285,8 +285,8 @@ btnGuardarEmoji.addEventListener('click', function() {
             // Actualizamos ambos emojis para una experiencia consistente
             document.getElementById('perfilAvatarEmoji').textContent = selectedEmoji;
             
-            // Selector más robusto para el emoji del navbar
-            const navbarEmoji = document.querySelector('.site-header .avatar-emoji');
+            // Selector correcto para el emoji del navbar (usa .app-header)
+            const navbarEmoji = document.querySelector('.app-header .avatar-emoji');
             if (navbarEmoji) navbarEmoji.textContent = selectedEmoji;
 
             modalEmoji.hide();
