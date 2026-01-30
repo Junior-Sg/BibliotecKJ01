@@ -30,7 +30,7 @@
       <ul class="f-links">
         <li><a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Libro&action=catalogo">Catálogo</a></li>
         <li><a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Libro&action=index">Géneros</a></li>
-        <li><a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=InicioPagina&action=index#nuevos">Nuevos</a></li>
+      
       </ul>
     </div>
 
@@ -38,7 +38,7 @@
     <div class="f-col">
       <h6 class="f-title">Soporte</h6>
       <ul class="f-links">
-        <li><a href="mailto:soporte@biblioteckj.com">soporte@biblioteckj.com</a></li>
+        <li><a href="mailto:soporte@biblioteckj.com">bibli0teckj01@gmail.com</a></li>
       </ul>
     </div>
   </div>

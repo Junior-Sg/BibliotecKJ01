@@ -7,10 +7,7 @@ $usuarioAutenticado = isset($_SESSION['id_usuario']);
 $nombreUsuario = $_SESSION['nombre'] ?? '';
 $correoUsuario = $_SESSION['correo'] ?? '';
 
-if ($usuarioAutenticado && empty($_SESSION['avatar_emoji'])) {
-    $emojis = ['😀','😃','😄','😁','😆','😊','😎','🤓','🫠','🙂','🙃','🤩','🥳','🧐','🤠','🧑‍🎓','🧑‍💻','👩‍🏫'];
-    $_SESSION['avatar_emoji'] = $emojis[array_rand($emojis)];
-}
+
 $avatarEmoji = $_SESSION['avatar_emoji'] ?? '👤';
 
 $avatarFilePath = $usuarioAutenticado ? __DIR__ . '/../../../public/img/avatars/avatar_' . intval($_SESSION['id_usuario']) . '.jpg' : null;
@@ -217,6 +214,10 @@ body{
   .brand__name{ display:none; } /* compacta marca en móviles */
   .user-name{ display:none; }
 }
+
+/* Forzar que los modales de Bootstrap se muestren por encima del header/nav */
+.modal-backdrop { z-index: 200000 !important; }
+.modal { z-index: 200001 !important; }
 </style>
 
 <script>

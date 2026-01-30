@@ -298,7 +298,10 @@ class Usuario
     // Favoritos: asume tabla favorito (id_usuario, id_libro)
     public function obtenerFavoritos(int $idUsuario)
     {
-        $sql = "SELECT l.* FROM libro l INNER JOIN favorito f ON l.id_libro = f.id_libro WHERE f.id_usuario = ? ORDER BY f.created_at DESC";
+        // Ordenar por el id del favorito (más recientes primero). Usamos id_favorito
+        // en vez de created_at porque la columna created_at puede no existir
+        // en algunas instalaciones y provocaría un error en la consulta.
+        $sql = "SELECT l.* FROM libro l INNER JOIN favorito f ON l.id_libro = f.id_libro WHERE f.id_usuario = ? ORDER BY f.id_favorito DESC";
         $stmt = $this->conexion->prepare($sql);
         if (!$stmt) {
             error_log("Error preparar obtenerFavoritos: " . $this->conexion->error);
