@@ -58,7 +58,7 @@
           </div>
           <h1>Bibliotec_KJ</h1>
           <p>Tu mundo de conocimiento</p>
-          <button id="openBook">Ver libro</button>
+          <button id="openBook">Iniciar sesión</button>
           <a href="<?= BASE_URL ?>index.php?controller=InicioPagina&action=index" class="btn btn-secondary" id="backToHome">Volver</a>
         </div>
       </div>

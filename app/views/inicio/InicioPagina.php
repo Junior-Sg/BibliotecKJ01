@@ -16,9 +16,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
 
-   
-
-
 </head>
 
 <body>

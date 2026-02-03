@@ -16,12 +16,19 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
         --cafe-claro:  #9A7B4F;
         --caramel:     #65350F;
         --bg-suave:    #f4ede3;
+        
       }
-      body { background: var(--bg-suave); }
+      body { background: var(--bg-suave);
+        --bg-1: #f6f0e3;
+        --bg-2: #eddbc3;
+       
+       }
+
       .catalogo-wrapper {
         max-width: 1200px;
         margin: auto;
         padding: 25px 15px 60px;
+        
       }
       h1 {
         font-family:'Merriweather', serif;

@@ -1,9 +1,12 @@
 /* 🎨 FONDO GENERAL */
 body {
-    background: linear-gradient(135deg, #F0D0C7, #FEEAF0);
+    background: linear-gradient(135deg, #f6f6f6, #f2d5b2);
     background-attachment: fixed;
     font-family: 'Poppins', sans-serif;
     color: #241705;
+    --bg-1: #f6f0e3;
+    --bg-2: #eddbc3;
+    
 }
 
 /* 🔎 BUSCADOR */
@@ -17,7 +20,7 @@ body {
     padding: 14px 20px;
     border-radius: 40px;
     border: 1px solid rgba(36,23,5,0.20);
-    background: rgba(255,255,255,0.85);
+    background: rgba(255, 255, 255, 0.85);
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 .buscador-input:focus {

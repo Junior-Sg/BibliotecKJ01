@@ -20,10 +20,14 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
         --cafe-claro:  #9A7B4F;   /* Tortilla */
         --caramel:     #65350F;
         --bg-suave:    #f4ede3;
+        
       }
 
       body {
         background: var(--bg-suave);
+         --bg-1: #f6f0e3;
+        --bg-2: #eddbc3;
+       
       }
 
       /* SECCIÓN CATÁLOGO */
