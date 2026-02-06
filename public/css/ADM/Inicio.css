@@ -1,0 +1,191 @@
+
+/* ===== Reset básico para altura completa ===== */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Fondo general: crema -> beige -> café claro (sin rosa) ===== */
+body {
+  background:
+    /* Profundidad sutil en café (no rojizo) */
+    radial-gradient(1000px 600px at 85% 12%, rgba(90, 60, 40, 0.12), transparent 60%),
+    /* Degradado principal crema a beige/café claro */
+    linear-gradient(180deg, #FFFEFC 0%, #F4EDE6 22%, #E9DBCA 48%, #DCC7B1 78%, #CDB59D 100%);
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Evita cortes al hacer scroll */
+  background-size: cover;       /* Cubre todo el viewport */
+  min-height: 100vh;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  color: #241705; /* texto café oscuro neutro */
+}
+
+/* ===== Sidebar (café profundo, sin rojos) ===== */
+.sidebar {
+  background: linear-gradient(180deg, #3B2416 0%, #2F1D12 100%);
+  color: #fff;
+  backdrop-filter: blur(8px);
+  border-right: 1px solid rgba(165, 84, 26, 0.25); /* borde cálido oscuro (ámbar tostado) */
+  width: 240px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 1020;
+  padding-top: 24px;
+  box-shadow: 6px 0 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Marca y logo */
+.sidebar-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0 18px 0;
+}
+.sidebar-brand h4 {
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  margin-top: 8px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+}
+.logo-sidebar {
+  width: 80px;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto;
+  border: 2px solid rgba(255,255,255,0.28);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+}
+
+/* ===== Enlaces del sidebar ===== */
+.sidebar .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  border-radius: 10px;
+  color: #f5f3f0;
+  font-weight: 600;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.18s ease;
+  position: relative;
+}
+.sidebar .nav-link i {
+  font-size: 1.15rem;
+  color: #f0e9e2;
+}
+
+/* Hover y activo (ámbar tostado, sin saturar) */
+.sidebar .nav-link:hover {
+  background: rgba(212, 132, 28, 0.25); /* #D4841C translúcido */
+  color: #fff;
+  transform: translateX(3px);
+}
+.sidebar .nav-link.active {
+  background: rgba(212, 132, 28, 0.35);
+  color: #fff;
+  font-weight: 700;
+}
+.sidebar .nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 2px;
+  background: #A9541A; /* indicador cálido oscuro */
+  box-shadow: 0 0 8px rgba(169, 84, 26, 0.55);
+}
+
+/* Scrollbar personalizada */
+.sidebar::-webkit-scrollbar { width: 7px; }
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.22);
+  border-radius: 4px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.32); }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+
+/* ===== Contenedor principal ===== */
+.main-content {
+  margin-left: 240px;
+  padding: 24px;
+  min-height: calc(100vh - 0px);
+  background: transparent; /* clave para no tapar el degradado */
+}
+
+/* ===== KPIs ===== */
+.tarjeta-dashboard {
+  background: rgba(255, 255, 255, 0.88); /* un poco más opaco para zonas café */
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(36, 23, 5, 0.12);
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.tarjeta-dashboard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(36, 23, 5, 0.18);
+}
+.tarjeta-dashboard i {
+  color: #D4841C;  /* acento cálido desaturado */
+  font-size: 2.6rem;
+}
+.tarjeta-dashboard h3 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+.tarjeta-dashboard small {
+  color: #4A3325; /* texto secundario en café oscuro */
+}
+
+/* ===== Tabla ===== */
+.tabla-prestamos {
+  background: #FFFFFF;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(36, 23, 5, 0.08);
+}
+.tabla-prestamos thead {
+  background: rgba(212, 132, 28, 0.14); /* coherente con el nuevo acento */
+  color: #241705;
+  font-weight: 600;
+}
+.tabla-prestamos tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* ===== Tarjeta retrasados ===== */
+.retrasados-card {
+  background: linear-gradient(180deg, #FFFDF8 0%, #F6EBDD 100%); /* crema cálido, sin rosa */
+  border-radius: 18px;
+  border: 1px solid rgba(212, 132, 28, 0.28);
+  box-shadow: 0 6px 18px rgba(36, 23, 5, 0.12);
+  padding: 16px;
+}
+.retrasados-count {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #D4841C;
+}
+.retrasados-card .btn-outline-light {
+  background: #D4841C;
+  color: #fff;
+  border: none;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.retrasados-card .btn-outline-light:hover {
+  background: #A9541A;
+  transform: scale(1.05);
+}
+
+/* ===== Responsivo ===== */
+@media (max-width: 991px) {
+  .retrasados-card { margin-top: 16px; }
+}

@@ -1,0 +1,227 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #bca87a, #a8915e);
+  background-image: url(../img/Fondos/F3.png);
+  background-size: cover;
+  background-position: center;  
+  background-repeat: no-repeat;
+}
+
+/* CONTENEDOR CENTRAL DEL LIBRO */
+.book-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* LIBRO */
+.book {
+  position: relative;
+  width: 50%;
+  max-width: 550px;
+  aspect-ratio: 1/1;
+  perspective: 1800px;
+}
+
+/* PORTADA */
+.cover {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, #6b4949, #4b2e2e);
+  border-radius: 12px;
+  color: #fff;
+  transform-origin: left;
+  transform: rotateY(0deg);
+  transition: transform 1.2s ease;
+  z-index: 3;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 30px;
+}
+
+/* LOGO EN LA PORTADA */
+.cover .logo {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cover .logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.35);
+  border: 3px solid rgba(255,255,255,0.12);
+}
+/* PÁGINAS INTERNAS */
+.page {
+  position: absolute;
+  inset: 0;
+  background: #fdf8f0;
+  border-radius: 12px;
+  padding: 40px 50px;
+  backface-visibility: hidden;
+  box-shadow: 0 15px 45px rgba(0,0,0,0.25);
+  transform-origin: left;
+  transition: transform 1.2s ease;
+  overflow-y: auto;
+}
+
+.page-login { z-index: 2; }
+.page-register { transform: rotateY(180deg); }
+
+/* EFECTOS DEL LIBRO */
+.book.open .cover { transform: rotateY(-160deg); }
+.book.flip .page-login { transform: rotateY(-180deg); }
+.book.flip .page-register { transform: rotateY(0deg); }
+
+/* FORMULARIOS */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  border-radius: 20px;
+}
+
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-radius: 15px;
+  background: #fdf8f0; 
+  padding: 10px;       
+  border: 1px solid #ccc;
+}
+
+
+button {
+  padding: 10px 15px;
+  cursor: pointer;
+  border: none;
+  background: #6b4949;
+  color: white;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* Hacer que el enlace 'Volver' tenga el mismo estilo que el botón 'Ver libro' */
+#backToHome,
+.cover #openBook {
+  display: inline-block;
+  padding: 10px 15px;
+  cursor: pointer;
+  border: none;
+  background: #6b4949;
+  color: white !important;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#backToHome:hover,
+.cover #openBook:hover {
+  background: #5a3b3b;
+}
+
+#backToHome:focus {
+  outline: 3px solid rgba(107,73,73,0.18);
+  outline-offset: 2px;
+}
+
+.extra, .back {
+  margin-top: 10px;
+}
+
+.extra a, .back a {
+  color: #6b4949;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* ALERTAS PERSONALIZADAS  */
+.alert-custom {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  min-width: 320px;
+  max-width: calc(100% - 40px);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  font-weight: 600;
+  color: #3b2b21;
+}
+.alert-success.alert-custom {
+  background: linear-gradient(90deg, #efe6dc, #e6d6c3);
+  border: 1px solid rgba(107,73,73,0.12);
+}
+.alert-info.alert-custom {
+  background: linear-gradient(90deg, #f7efe6, #efe1d0);
+  border: 1px solid rgba(107,73,73,0.06);
+}
+.alert-danger.alert-custom {
+  background: linear-gradient(90deg, #f3dfd9, #efd1c8);
+  border: 1px solid rgba(160,60,60,0.12);
+}
+
+@media (max-width: 600px) {
+  .alert-custom { top: 12px; left: 8px; transform: none; min-width: auto; max-width: calc(100% - 16px); border-radius: 8px; }
+}
+
+/* Animación y estructura del icono */
+.alert-custom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  transition: opacity .45s ease, transform .45s ease;
+}
+.alert-custom .alert-icon {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+}
+.alert-custom .alert-icon svg { display: block; }
+.alert-custom.fade-out { opacity: 0; transform: translateY(-8px); pointer-events: none; }
+
+/* Botón de cerrar (pequeño) */
+.alert-custom .close-small {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: #3b2b21;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .book { aspect-ratio: 4/3; }
+  .page { padding: 30px 25px; }
+  .cover h1 { font-size: 2rem; }
+}
+
+@media (max-width: 600px) {
+  .book { aspect-ratio: 4/4.8; }
+  .page { padding: 20px; }
+  button, input { font-size: 0.9rem; padding: 8px; }
+}
