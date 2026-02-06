@@ -98,8 +98,7 @@ $activeController = strtolower($_GET['controller'] ?? 'iniciopagina');
 <style>
 /* ====== Tokens de diseño (paleta) ====== */
 :root{
-  /* paleta del screenshot: usamos #F0D0C7 como fondo principal (2º color) */
-  --bg-1:#F0D0C7; --bg-2:#FEEAF0;
+
   --brand:#BC430D; --accent:#F09410; --ink:#241705; --surface:#FFFFFF;
   --dark-1:#2B1D17; --dark-2:#3A2822;
 
@@ -121,7 +120,7 @@ body{
 
 /* ====== HEADER STICKY ====== */
 .app-header{
-  position: sticky; top:0; z-index:1200;
+ /* position: sticky; top:0; z-index:1200; */
   background: linear-gradient(180deg, var(--dark-2), var(--dark-1));
   color:#fff;
   box-shadow: 0 1px 0 rgba(255,255,255,.06);
@@ -138,7 +137,7 @@ body{
 
 /* Marca */
 .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; }
-.brand__logo{ width:100px; height:100px; border-radius:10px; object-fit:cover; box-shadow: 0 0 0 2px rgba(255,255,255,.08);}
+.brand__logo{ width:200px; height:200px; border-radius:10px; object-fit:cover; box-shadow: 0 0 0 2px rgba(255,255,255,.08);}
 .brand__name{
   font-family:'Merriweather', serif; font-weight:800; letter-spacing:.08em;
   text-transform:uppercase; color:#fff; font-size: clamp(18px, 3vw, 24px);

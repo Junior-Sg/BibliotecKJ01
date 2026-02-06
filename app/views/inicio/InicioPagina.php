@@ -9,15 +9,13 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - Biblioteca</title>
+    
     <link rel="stylesheet" href="<?= BASE_URL ?>public/css/libros/Iniciopagina.css">
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
-
-   
-
 
 </head>
 
@@ -70,7 +68,15 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
             <div class="row row-cols-1 row-cols-md-3 g-4" id="lista-reservados">
                 <?php foreach ($masreservados as $index => $l): ?>
                     <div class="col libro-item <?= $index >= 3 ? 'hidden' : '' ?>">
-                        <div class="mini-card mx-auto">
+                        <div class="mini-card mx-auto" 
+                            data-id="<?= $l['id_libro'] ?>" 
+                            data-genero="<?= $l['id_genero'] ?? '' ?>"
+                            style="cursor: pointer;"
+                            data-bs-toggle="popover" 
+                            data-bs-title="<?= htmlspecialchars($l['titulo']) ?>" 
+                            data-bs-content="<?= htmlspecialchars($l['sinopsis'] ?? 'Sin sinopsis disponible') ?>"
+                            data-bs-trigger="click"
+                            data-bs-container="body">
                             <img src="<?= BASE_URL ?>/public/img/Libros/<?= $l['Imagen'] ?>" alt="<?= htmlspecialchars($l['titulo']) ?>">
                             <p class="mt-2 small fw-bold"><?= htmlspecialchars($l['titulo']) ?></p>
                         </div>
@@ -83,7 +89,56 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
             </div>
             <?php endif; ?>
         </div>
-        <!-- Aquí irían los otros tab-pane para Semanal y Mensual -->
+        <div class="tab-pane fade" id="semanal" role="tabpanel">
+            <div class="row row-cols-1 row-cols-md-3 g-4" id="lista-semanal">
+                <?php foreach ($semanal as $index => $l): ?>
+                    <div class="col libro-item <?= $index >= 3 ? 'hidden' : '' ?>">
+                        <div class="mini-card mx-auto" 
+                            data-id="<?= $l['id_libro'] ?>" 
+                            data-genero="<?= $l['id_genero'] ?? '' ?>"
+                            style="cursor: pointer;"
+                            data-bs-toggle="popover" 
+                            data-bs-title="<?= htmlspecialchars($l['titulo']) ?>" 
+                            data-bs-content="<?= htmlspecialchars($l['sinopsis'] ?? 'Sin sinopsis disponible') ?>"
+                            data-bs-trigger="click"
+                            data-bs-container="body">
+                            <img src="<?= BASE_URL ?>/public/img/Libros/<?= $l['Imagen'] ?>" alt="<?= htmlspecialchars($l['titulo']) ?>">
+                            <p class="mt-2 small fw-bold"><?= htmlspecialchars($l['titulo']) ?></p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <?php if (count($semanal) > 3): ?>
+            <div class="text-center mt-4">
+                <button id="ver-mas-semanal" class="btn btn-outline-light">Ver más</button>
+            </div>
+            <?php endif; ?>
+        </div>
+        <div class="tab-pane fade" id="mensual" role="tabpanel">
+            <div class="row row-cols-1 row-cols-md-3 g-4" id="lista-mensual">
+                <?php foreach ($mensual as $index => $l): ?>
+                    <div class="col libro-item <?= $index >= 3 ? 'hidden' : '' ?>">
+                        <div class="mini-card mx-auto" 
+                            data-id="<?= $l['id_libro'] ?>" 
+                            data-genero="<?= $l['id_genero'] ?? '' ?>"
+                            style="cursor: pointer;"
+                            data-bs-toggle="popover" 
+                            data-bs-title="<?= htmlspecialchars($l['titulo']) ?>" 
+                            data-bs-content="<?= htmlspecialchars($l['sinopsis'] ?? 'Sin sinopsis disponible') ?>"
+                            data-bs-trigger="click"
+                            data-bs-container="body">
+                            <img src="<?= BASE_URL ?>/public/img/Libros/<?= $l['Imagen'] ?>" alt="<?= htmlspecialchars($l['titulo']) ?>">
+                            <p class="mt-2 small fw-bold"><?= htmlspecialchars($l['titulo']) ?></p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <?php if (count($mensual) > 3): ?>
+            <div class="text-center mt-4">
+                <button id="ver-mas-mensual" class="btn btn-outline-light">Ver más</button>
+            </div>
+            <?php endif; ?>
+        </div>
     </div>
 
     <!-- SECCIÓN: LIBROS FAVORITOS -->
@@ -94,7 +149,15 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     <div class="row row-cols-1 row-cols-md-4 g-4 mb-5" id="lista-favoritos">
          <?php foreach ($favoritos as $index => $l): ?>
             <div class="col libro-item <?= $index >= 4 ? 'hidden' : '' ?>">
-                <div class="mini-card mx-auto">
+                <div class="mini-card mx-auto" 
+                    data-id="<?= $l['id_libro'] ?>" 
+                    data-genero="<?= $l['id_genero'] ?? '' ?>"
+                    style="cursor: pointer;"
+                    data-bs-toggle="popover" 
+                    data-bs-title="<?= htmlspecialchars($l['titulo']) ?>" 
+                    data-bs-content="<?= htmlspecialchars($l['sinopsis'] ?? 'Sin sinopsis disponible') ?>"
+                    data-bs-trigger="click"
+                    data-bs-container="body">
                     <img src="<?= BASE_URL ?>/public/img/Libros/<?= $l['Imagen'] ?>" alt="<?= htmlspecialchars($l['titulo']) ?>">
                     <p class="mt-2 small fw-bold"><?= htmlspecialchars($l['titulo']) ?></p>
                 </div>
@@ -107,7 +170,37 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     </div>
     <?php endif; ?>
 
+    <!-- SECCIÓN: LIBROS NUEVOS -->
+    <div class="text-center mt-5">
+        <h2 class="section-title">LIBROS NUEVOS AÑADIDOS</h2>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-4 g-4 mb-5" id="lista-nuevos">
+        <?php foreach ($nuevos as $index => $l): ?>
+            <div class="col libro-item <?= $index >= 4 ? 'hidden' : '' ?>">
+                <div class="mini-card mx-auto" 
+                    data-id="<?= $l['id_libro'] ?>" 
+                    data-genero="<?= $l['id_genero'] ?? '' ?>"
+                    style="cursor: pointer;"
+                    data-bs-toggle="popover" 
+                    data-bs-title="<?= htmlspecialchars($l['titulo']) ?>" 
+                    data-bs-content="<?= htmlspecialchars($l['sinopsis'] ?? 'Sin sinopsis disponible') ?>"
+                    data-bs-trigger="click"
+                    data-bs-container="body">
+                    <img src="<?= BASE_URL ?>/public/img/Libros/<?= $l['Imagen'] ?>" alt="<?= htmlspecialchars($l['titulo']) ?>">
+                    <p class="mt-2 small fw-bold"><?= htmlspecialchars($l['titulo']) ?></p>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+    <?php if (count($nuevos) > 4): ?>
+    <div class="text-center mt-2 mb-5">
+        <button id="ver-mas-nuevos" class="btn btn-outline-light">Ver más</button>
+    </div>
+    <?php endif; ?>
+
 </div>
+
 
 <!-- FOOTER -->
 <?php include __DIR__ . '../../layouts/footer.php'; ?>
@@ -177,6 +270,36 @@ if (btnVerMasReservados) {
     });
 }
 
+// Para semanal
+const btnVerMasSemanal = document.getElementById('ver-mas-semanal');
+if (btnVerMasSemanal) {
+    btnVerMasSemanal.addEventListener('click', function() {
+        const itemsOcultos = document.querySelectorAll('#lista-semanal .libro-item.hidden');
+        const itemsAMostrar = Array.from(itemsOcultos).slice(0, 3);
+        
+        itemsAMostrar.forEach(item => item.classList.remove('hidden'));
+
+        if (document.querySelectorAll('#lista-semanal .libro-item.hidden').length === 0) {
+            this.style.display = 'none';
+        }
+    });
+}
+
+// Para mensual
+const btnVerMasMensual = document.getElementById('ver-mas-mensual');
+if (btnVerMasMensual) {
+    btnVerMasMensual.addEventListener('click', function() {
+        const itemsOcultos = document.querySelectorAll('#lista-mensual .libro-item.hidden');
+        const itemsAMostrar = Array.from(itemsOcultos).slice(0, 3);
+        
+        itemsAMostrar.forEach(item => item.classList.remove('hidden'));
+
+        if (document.querySelectorAll('#lista-mensual .libro-item.hidden').length === 0) {
+            this.style.display = 'none';
+        }
+    });
+}
+
 // Para libros favoritos
 const btnVerMasFavoritos = document.getElementById('ver-mas-favoritos');
 if (btnVerMasFavoritos) {
@@ -191,6 +314,72 @@ if (btnVerMasFavoritos) {
         }
     });
 }
+
+// Para libros nuevos
+const btnVerMasNuevos = document.getElementById('ver-mas-nuevos');
+if (btnVerMasNuevos) {
+    btnVerMasNuevos.addEventListener('click', function() {
+        const itemsOcultos = document.querySelectorAll('#lista-nuevos .libro-item.hidden');
+        const itemsAMostrar = Array.from(itemsOcultos).slice(0, 4);
+        
+        itemsAMostrar.forEach(item => item.classList.remove('hidden'));
+
+        if (document.querySelectorAll('#lista-nuevos .libro-item.hidden').length === 0) {
+            this.style.display = 'none';
+        }
+    });
+}
+
+// ---- POPOVER PARA LIBROS (BOOTSTRAP) ----
+document.addEventListener('DOMContentLoaded', () => {
+    const baseUrl = "<?= rtrim(BASE_URL, '/') ?>";
+
+    // Inicializar popovers
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+
+    // Cerrar otros popovers al abrir uno
+    popoverTriggerList.forEach(el => {
+        el.addEventListener('show.bs.popover', () => {
+            popoverList.forEach(p => {
+                if (p._element !== el) p.hide();
+            });
+        });
+
+        // Agregar evento click al contenido del popover una vez mostrado
+        el.addEventListener('shown.bs.popover', () => {
+            const libroId = el.getAttribute('data-id');
+            const generoId = el.getAttribute('data-genero');
+            const popoverId = el.getAttribute('aria-describedby');
+            const popoverEl = document.getElementById(popoverId);
+            
+            if (popoverEl) {
+                const body = popoverEl.querySelector('.popover-body');
+                if (body) {
+                    body.style.cursor = 'pointer';
+                    body.title = 'Click para ir al catálogo de este género';
+                    body.onclick = () => {
+                        // Cerrar popover
+                        const popover = bootstrap.Popover.getInstance(el);
+                        if (popover) popover.hide();
+                        
+                        // Redirigir a catalogoGenero con parámetros
+                        if (generoId) {
+                            window.location.href = `${baseUrl}/index.php?controller=Libro&action=catalogoGenero&id=${generoId}`;
+                        }
+                    };
+                }
+            }
+        });
+    });
+
+    // Cerrar al hacer click fuera
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('[data-bs-toggle="popover"]') && !e.target.closest('.popover')) {
+            popoverList.forEach(p => p.hide());
+        }
+    });
+});
 </script>
 
 </body>

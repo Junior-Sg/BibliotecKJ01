@@ -1,6 +1,3 @@
-<?php
-// partial: detalle.php (modal detalle con diseño de libro abierto)
-?>
 <style>
   /* Estilos para el modal de libro abierto */
   #modalDetalle {

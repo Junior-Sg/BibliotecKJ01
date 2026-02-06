@@ -21,12 +21,24 @@ class InicioPaginaController
         // Obtener libros más reservados
         $masreservados = $this->libroModel->obtenerLibrosMasReservados(8);
 
+        // Obtener libros más reservados semanal
+        $semanal = $this->libroModel->obtenerLibrosMasReservadosSemanal(8);
+
+        // Obtener libros más reservados mensual
+        $mensual = $this->libroModel->obtenerLibrosMasReservadosMensual(8);
+
         // Obtener libros favoritos
         $favoritos = $this->libroModel->obtenerLibrosFavoritos(8);
 
+        // Obtener libros nuevos
+        $nuevos = $this->libroModel->obtenerLibrosNuevos(8);
+
         render_view('inicio/InicioPagina', [
             'masreservados' => $masreservados,
-            'favoritos' => $favoritos
+            'semanal' => $semanal,
+            'mensual' => $mensual,
+            'favoritos' => $favoritos,
+            'nuevos' => $nuevos
         ]);
     }
 }

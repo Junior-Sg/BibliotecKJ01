@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const confirmModalEl = document.getElementById('confirmReservaModal');
   const confirmModal = confirmModalEl ? new bootstrap.Modal(confirmModalEl) : null;
 
+  // Crear instancia global del modal de error para reutilizarla
+  const errorModalEl = document.getElementById('errorReservaModal');
+  const errorModal = errorModalEl ? new bootstrap.Modal(errorModalEl, { backdrop: true, keyboard: true }) : null;
+
   // Botón para intentar reservar
   const btnReservar = document.getElementById('btnReservar');
   btnReservar.addEventListener('click', () => {
@@ -67,12 +71,26 @@ document.addEventListener('DOMContentLoaded', () => {
         // Redireccionar a confirmación
         window.location.href = `${baseUrl}/index.php?controller=Reserva&action=confirmacion`;
       } else {
-        alert('No se pudo reservar: ' + (j.error || 'Error desconocido'));
+        // Ocultar modal de confirmación y mostrar error
+        if (confirmModal) confirmModal.hide();
+        
+        // Mostrar modal de error en lugar de alert
+        if (errorModal) {
+          document.getElementById('errorReservaMessage').textContent = j.error || 'Error desconocido';
+          errorModal.show();
+        }
       }
 
     } catch (e) {
       console.error(e);
-      alert('Error al reservar. Inténtalo de nuevo.');
+      // Ocultar modal de confirmación y mostrar error
+      if (confirmModal) confirmModal.hide();
+      
+      // Mostrar modal de error en lugar de alert
+      if (errorModal) {
+        document.getElementById('errorReservaMessage').textContent = 'Error al reservar. Inténtalo de nuevo.';
+        errorModal.show();
+      }
     } finally {
       confirmBtn.disabled = false;
       confirmBtn.textContent = 'Confirmar reserva';

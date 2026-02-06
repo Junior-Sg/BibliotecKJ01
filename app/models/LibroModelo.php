@@ -14,6 +14,7 @@ class LibroModelo {
             SELECT 
                 l.id_libro,
                 l.titulo,
+                l.sipnosis AS sinopsis,
                 l.año_publicacion,
                 e.nombre AS editorial,
                 l.Estante,       -- Assuming 'Estante' is a column in the 'libro' table
@@ -52,6 +53,7 @@ class LibroModelo {
             SELECT 
                 l.id_libro,
                 l.titulo,
+                l.sipnosis AS sinopsis,
                 l.año_publicacion,
                 e.nombre AS editorial,
                 l.Imagen,
@@ -89,15 +91,20 @@ class LibroModelo {
             SELECT 
                 l.id_libro,
                 l.titulo,
+                l.sipnosis AS sinopsis,
                 l.año_publicacion,
                 e.nombre AS editorial,
                 l.Estante,
                 l.Imagen,
+                g.id_genero,
                 COUNT(r.id_reserva) AS total_reservas
             FROM libro l
             LEFT JOIN editorial e ON e.id_editorial = l.id_editorial
-            LEFT JOIN reserva r ON r.id_libro = l.id_libro AND r.estado != 'cancelado'
-            GROUP BY l.id_libro, l.titulo, l.año_publicacion, e.nombre, l.Estante, l.Imagen
+            LEFT JOIN libro_genero lg ON l.id_libro = lg.id_libro
+            LEFT JOIN genero g ON g.id_genero = lg.id_genero
+            LEFT JOIN reserva r ON r.id_libro = l.id_libro AND r.estado != 'cancelado' AND DATE(r.fecha_reserva) = CURDATE()
+            GROUP BY l.id_libro, l.titulo, l.año_publicacion, e.nombre, l.Estante, l.Imagen, g.id_genero
+            HAVING total_reservas > 0
             ORDER BY total_reservas DESC, l.titulo ASC
             LIMIT " . intval($limite) . "
         ";
@@ -116,21 +123,99 @@ class LibroModelo {
         return $libros;
     }
 
+    public function obtenerLibrosMasReservadosSemanal($limite = 8) {
+        $sql = "
+            SELECT 
+                l.id_libro,
+                l.titulo,
+                l.sipnosis AS sinopsis,
+                l.año_publicacion,
+                e.nombre AS editorial,
+                l.Estante,
+                l.Imagen,
+                g.id_genero,
+                COUNT(r.id_reserva) AS total_reservas
+            FROM libro l
+            LEFT JOIN editorial e ON e.id_editorial = l.id_editorial
+            LEFT JOIN libro_genero lg ON l.id_libro = lg.id_libro
+            LEFT JOIN genero g ON g.id_genero = lg.id_genero
+            LEFT JOIN reserva r ON r.id_libro = l.id_libro AND r.estado != 'cancelado' AND r.fecha_reserva >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
+            GROUP BY l.id_libro, l.titulo, l.año_publicacion, e.nombre, l.Estante, l.Imagen, g.id_genero
+            HAVING total_reservas > 0
+            ORDER BY total_reservas DESC, l.titulo ASC
+            LIMIT " . intval($limite) . "
+        ";
+        
+        $res = $this->db->query($sql);
+        
+        $libros = [];
+        if ($res) {
+            while ($fila = $res->fetch_assoc()) {
+                $libros[] = $fila;
+            }
+        } else {
+            error_log("Error en obtenerLibrosMasReservadosSemanal: " . $this->db->error);
+        }
+        
+        return $libros;
+    }
+
+    public function obtenerLibrosMasReservadosMensual($limite = 8) {
+        $sql = "
+            SELECT 
+                l.id_libro,
+                l.titulo,
+                l.sipnosis AS sinopsis,
+                l.año_publicacion,
+                e.nombre AS editorial,
+                l.Estante,
+                l.Imagen,
+                g.id_genero,
+                COUNT(r.id_reserva) AS total_reservas
+            FROM libro l
+            LEFT JOIN editorial e ON e.id_editorial = l.id_editorial
+            LEFT JOIN libro_genero lg ON l.id_libro = lg.id_libro
+            LEFT JOIN genero g ON g.id_genero = lg.id_genero
+            LEFT JOIN reserva r ON r.id_libro = l.id_libro AND r.estado != 'cancelado' AND r.fecha_reserva >= DATE_SUB(NOW(), INTERVAL 1 MONTH)
+            GROUP BY l.id_libro, l.titulo, l.año_publicacion, e.nombre, l.Estante, l.Imagen, g.id_genero
+            HAVING total_reservas > 0
+            ORDER BY total_reservas DESC, l.titulo ASC
+            LIMIT " . intval($limite) . "
+        ";
+        
+        $res = $this->db->query($sql);
+        
+        $libros = [];
+        if ($res) {
+            while ($fila = $res->fetch_assoc()) {
+                $libros[] = $fila;
+            }
+        } else {
+            error_log("Error en obtenerLibrosMasReservadosMensual: " . $this->db->error);
+        }
+        
+        return $libros;
+    }
+
     // Obtener libros favoritos (más añadidos a favoritos)
     public function obtenerLibrosFavoritos($limite = 8) {
         $sql = "
             SELECT 
                 l.id_libro,
                 l.titulo,
+                l.sipnosis AS sinopsis,
                 l.año_publicacion,
                 e.nombre AS editorial,
                 l.Estante,
                 l.Imagen,
+                g.id_genero,
                 COUNT(f.id_favorito) AS total_favoritos
             FROM libro l
             LEFT JOIN editorial e ON e.id_editorial = l.id_editorial
+            LEFT JOIN libro_genero lg ON l.id_libro = lg.id_libro
+            LEFT JOIN genero g ON g.id_genero = lg.id_genero
             LEFT JOIN favorito f ON f.id_libro = l.id_libro
-            GROUP BY l.id_libro, l.titulo, l.año_publicacion, e.nombre, l.Estante, l.Imagen
+            GROUP BY l.id_libro, l.titulo, l.año_publicacion, e.nombre, l.Estante, l.Imagen, g.id_genero
             HAVING COUNT(f.id_favorito) > 0
             ORDER BY total_favoritos DESC, l.titulo ASC
             LIMIT " . intval($limite) . "
@@ -150,6 +235,62 @@ class LibroModelo {
         return $libros;
     }
 
+    public function obtenerLibrosNuevos($limite = 8) {
+        $sql = "
+            SELECT 
+                l.id_libro,
+                l.titulo,
+                l.sipnosis AS sinopsis,
+                l.Imagen,
+                g.id_genero
+            FROM libro l
+            LEFT JOIN libro_genero lg ON l.id_libro = lg.id_libro
+            LEFT JOIN genero g ON g.id_genero = lg.id_genero
+            ORDER BY l.id_libro DESC
+            LIMIT ?
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $limite);
+        $stmt->execute();
+        $res = $stmt->get_result();
+
+        $libros = [];
+        if ($res) {
+            while ($fila = $res->fetch_assoc()) {
+                $libros[] = $fila;
+            }
+        } else {
+            error_log("Error en obtenerLibrosNuevos: " . $this->db->error);
+        }
+
+        return $libros;
+    }
+
+    // Obtener un solo libro por ID con todos sus detalles
+    public function obtenerLibro($id) {
+        $sql = "
+            SELECT 
+                l.id_libro,
+                l.titulo,
+                l.sipnosis AS sinopsis,
+                l.año_publicacion,
+                e.nombre AS editorial,
+                l.Estante,
+                l.Imagen,
+                d.cantidad_disponible
+            FROM libro l
+            LEFT JOIN editorial e ON e.id_editorial = l.id_editorial
+            LEFT JOIN disponibilidad d ON d.id_libro = l.id_libro
+            WHERE l.id_libro = ?
+        ";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        
+        return $res->fetch_assoc();
+    }
+
 }
 ?>
-
