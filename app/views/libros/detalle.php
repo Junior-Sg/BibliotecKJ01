@@ -1,6 +1,3 @@
-<?php
-// partial: detalle.php (modal detalle con diseño de libro abierto)
-?>
 <style>
   /* Estilos para el modal de libro abierto */
   #modalDetalle {
@@ -208,7 +205,7 @@
 </style>
 
 <!-- Modal Detalle -->
-<div class="modal fade" id="modalDetalle" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalDetalle" tabindex="-1" aria-hidden="true" data-bs-focus="false">
   <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-body">

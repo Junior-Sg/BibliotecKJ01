@@ -6,7 +6,6 @@ body {
     color: #241705;
     --bg-1: #f6f0e3;
     --bg-2: #eddbc3;
-    
 }
 
 /* 🔎 BUSCADOR */
@@ -24,7 +23,7 @@ body {
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 }
 .buscador-input:focus {
-    border-color: #F09410;
+    border-color: #706f6d;
     outline: none;
     box-shadow: 0 0 6px rgba(240,148,16,0.4);
 }

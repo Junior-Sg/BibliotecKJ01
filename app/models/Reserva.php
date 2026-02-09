@@ -1,5 +1,5 @@
-
 <?php
+require_once __DIR__ . '/NotificacionModelo.php';
 
 class Reserva
 {
@@ -23,7 +23,23 @@ class Reserva
         }
 
         $stmt->bind_param("ii", $idUsuario, $idLibro);
-        return $stmt->execute();
+        $resultado = $stmt->execute();
+
+        if ($resultado) {
+            // 1. Obtener el título del libro para personalizar el mensaje
+            $sqlTitulo = "SELECT titulo FROM libro WHERE id_libro = ?";
+            $stmtTitulo = $this->conexion->prepare($sqlTitulo);
+            $stmtTitulo->bind_param("i", $idLibro);
+            $stmtTitulo->execute();
+            $tituloLibro = $stmtTitulo->get_result()->fetch_assoc()['titulo'] ?? 'Desconocido';
+
+            // 2. Crear la notificación usando NotificacionModelo
+            $notificacionModelo = new NotificacionModelo($this->conexion);
+            $mensaje = "📚 Tu reserva del libro «{$tituloLibro}» ha sido confirmada.";
+            $notificacionModelo->crearNotificacion($idUsuario, $mensaje);
+        }
+
+        return $resultado;
     }
 
     public function obtenerReservasActivas() {
@@ -81,12 +97,49 @@ class Reserva
     }
 
     public function eliminarReserva($idReserva) {
-        $sql = "DELETE FROM reserva WHERE id_reserva = ?";
-        $stmt = $this->conexion->prepare($sql);
-        if ($stmt === false) {
+        $this->conexion->begin_transaction();
+
+        try {
+            // 1. Obtener datos de la reserva antes de eliminar (para la notificación)
+            $sqlSel = "SELECT r.id_usuario, l.titulo 
+                       FROM reserva r
+                       JOIN libro l ON r.id_libro = l.id_libro
+                       WHERE r.id_reserva = ?";
+            
+            $stmtSel = $this->conexion->prepare($sqlSel);
+            $stmtSel->bind_param("i", $idReserva);
+            $stmtSel->execute();
+            $res = $stmtSel->get_result();
+
+            if ($res->num_rows === 0) {
+                throw new Exception("Reserva no encontrada");
+            }
+
+            $data = $res->fetch_assoc();
+            $idUsuario = $data['id_usuario'];
+            $tituloLibro = $data['titulo'];
+
+            // 2. Eliminar la reserva
+            $sqlDel = "DELETE FROM reserva WHERE id_reserva = ?";
+            $stmtDel = $this->conexion->prepare($sqlDel);
+            $stmtDel->bind_param("i", $idReserva);
+            
+            if (!$stmtDel->execute()) {
+                throw new Exception("Error al eliminar la reserva");
+            }
+
+            // 3. Crear notificación
+            $notificacionModelo = new NotificacionModelo($this->conexion);
+            $mensaje = "❌ Tu reserva del libro «{$tituloLibro}» ha sido eliminada por el administrador.";
+            $notificacionModelo->crearNotificacion($idUsuario, $mensaje);
+
+            $this->conexion->commit();
+            return true;
+
+        } catch (Exception $e) {
+            $this->conexion->rollback();
+            error_log("Error en eliminarReserva: " . $e->getMessage());
             return false;
         }
-        $stmt->bind_param("i", $idReserva);
-        return $stmt->execute();
     }
 }

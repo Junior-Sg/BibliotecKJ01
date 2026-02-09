@@ -13,8 +13,23 @@ class LibroController
         $this->Libro = new Libro((new Conexion())->conectar());
     }
 
+// Convierte mysqli_result o objetos en arrays asociativos
+function to_array_list($res) {
+    if (is_object($res) && method_exists($res, 'fetch_all')) {
+        return $res->fetch_all(MYSQLI_ASSOC);
+    } elseif (is_array($res)) {
+        return $res;
+    } elseif (is_object($res) && method_exists($res, 'fetch_assoc')) {
+        $out = [];
+        while ($row = $res->fetch_assoc()) { $out[] = $row; }
+        return $out;
+    }
+    return [];
+}
+
+
     /* ============================================================
-       CATALOGO DE LIBRERIA
+    CATALOGO DE LIBRERIA
     ============================================================ */
     public function catalogo()
     {
@@ -23,7 +38,26 @@ class LibroController
     }
 
     /* ============================================================
-       CATALOGO PRINCIPAL
+    CATALOGO POR GENERO
+    ============================================================ */
+    public function catalogoGenero($id)
+    {
+        $id = $id ?? $_GET['id'] ?? 0;
+        $generoRes = $this->Libro->obtenerGeneroPorId($id);
+        $generoNombre = $generoRes ? $generoRes['nombre'] : 'Género desconocido';
+        $librosRes = $this->Libro->obtenerPorGeneroId($id);
+        $librosDelGenero = [];
+        if ($librosRes && $librosRes->num_rows > 0) {
+            while ($row = $librosRes->fetch_assoc()) {
+                $librosDelGenero[] = $row;
+            }
+        }
+        
+        require __DIR__ . "/../views/libros/catalogoGenero.php";
+    }
+
+    /* ============================================================
+    CATALOGO PRINCIPAL
     ============================================================ */
     public function index()
     {
@@ -56,46 +90,78 @@ class LibroController
         $libros = null;
         $topByGenero = [];
         $totalLibros = 0;
+        $generosList = $generos;
+        $autoresList = $autores;
 
+        // Active filters for checkboxes
+        $activeGeneros = isset($_GET['generos']) && $_GET['generos'] ? explode(',', $_GET['generos']) : [];
+        $activeAutores = isset($_GET['autores']) && $_GET['autores'] ? explode(',', $_GET['autores']) : [];
+        $singleGenreId = !empty($_GET['id']) ? (int)$_GET['id'] : 0;
+
+        $generosMap = array_column($generosList, 'nombre', 'id_genero');
+        $autoresMap = array_column($autoresList, 'nombre', 'id_autor');
+
+        $results = [];
+    
         if ($is_filtered) {
             if (!empty($filterGeneros) || !empty($filterAutores)) {
-                $libros = $this->Libro->filtrarLibros($filterGeneros, $filterAutores);
-                if ($libros && $libros->num_rows > 0) {
-                    $totalLibros = $libros->num_rows;
+                $librosRes = $this->Libro->filtrarLibros($filterGeneros, $filterAutores);
+                if ($librosRes && $librosRes->num_rows > 0) {
+                    while ($r = $librosRes->fetch_assoc()) {
+                        $results[] = $r;
+                    }
+                    $totalLibros = count($results);
                 }
             } elseif ($filterGenero > 0) {
-                $libros = $this->Libro->obtenerPorGeneroId($filterGenero);
-                if ($libros && $libros->num_rows > 0) {
-                    $totalLibros = $libros->num_rows;
+                $librosRes = $this->Libro->obtenerPorGeneroId($filterGenero);
+                if ($librosRes && $librosRes->num_rows > 0) {
+                    while ($r = $librosRes->fetch_assoc()) {
+                        $results[] = $r;
+                    }
+                    $totalLibros = count($results);
                 }
             } elseif ($filterAutor > 0) {
-                $libros = $this->Libro->obtenerPorAutor($filterAutor);
-                if ($libros && $libros->num_rows > 0) {
-                    $totalLibros = $libros->num_rows;
+                $librosRes = $this->Libro->obtenerPorAutor($filterAutor);
+                if ($librosRes && $librosRes->num_rows > 0) {
+                    while ($r = $librosRes->fetch_assoc()) {
+                        $results[] = $r;
+                    }
+                    $totalLibros = count($results);
                 }
             } elseif ($q !== '') {
-                $libros = $this->Libro->buscarGeneral($q);
-                if ($libros && $libros->num_rows > 0) {
-                    $totalLibros = $libros->num_rows;
+                $librosRes = $this->Libro->buscarGeneral($q);
+                if ($librosRes && $librosRes->num_rows > 0) {
+                    while ($r = $librosRes->fetch_assoc()) {
+                        $results[] = $r;
+                    }
+                    $totalLibros = count($results);
                 }
             }
+
         } else {
             // Showcase por género (hasta 4), solo si no hay filtros activos
             foreach ($generos as $g) {
+                $librosRes = $this->Libro->obtenerPorGeneroLimit((int)$g['id_genero'], 4);
+                $librosArray = [];
+                if ($librosRes && $librosRes->num_rows > 0) {
+                    while ($row = $librosRes->fetch_assoc()) {
+                        $librosArray[] = $row;
+                    }
+                }
                 $topByGenero[$g['id_genero']] = [
                     'nombre' => $g['nombre'],
-                    'libros' => $this->Libro->obtenerPorGeneroLimit((int)$g['id_genero'], 4)
+                    'libros' => $librosArray
                 ];
             }
             $totalLibros = $this->Libro->contarTotalLibros();
         }
-
+        
         // Pasar a la vista variables con nombres consistentes
         require __DIR__ . "/../views/libros/libros.php";
     }
 
     /* ============================================================
-       DETALLE HTML (NO JSON)
+    DETALLE HTML (NO JSON)
     ============================================================ */
     public function detalle($id)
     {
@@ -103,12 +169,28 @@ class LibroController
         $autores = $this->Libro->obtenerAutores($id);
         $generos = $this->Libro->obtenerGeneros($id);
         $disponibilidad = $this->Libro->obtenerDisponibilidad($id);
+        
 
+        if (isset($_GET['id'])) {
+            $id = $_GET['id'];
+            $libro = $this->Libro->obtenerPorId($id); 
+            $generos = $this->Libro->obtenerGeneros($id);
+            $autores = $this->Libro->obtenerAutores($id);
+            $disponibilidad = $this->Libro->obtenerDisponibilidad($id);
+        }
+
+        if ($libro) {
+            $libro['autores'] = $autores;
+            $libro['generos'] = $generos;
+            $libro['disponibilidad'] = $disponibilidad;
+            echo json_encode($libro);
+        }
+        
         require __DIR__ . "/../views/libros/detalle.php";
     }
 
     /* ============================================================
-       BUSQUEDA (TITULO O AUTOR)
+    BUSQUEDA (TITULO O AUTOR)
     ============================================================ */
     public function buscar()
     {
@@ -118,6 +200,18 @@ class LibroController
         $generos = $this->Libro->obtenerGenerosTodos();
         $autores = $this->Libro->obtenerAutoresTodos();
         $totalLibros = $libros ? $libros->num_rows : 0;
+
+        // Variables para la vista libros.php
+        $results = $this->to_array_list($libros);
+        $is_filtered = true;
+        $topByGenero = [];
+        $generosList = $this->to_array_list($generos);
+        $autoresList = $this->to_array_list($autores);
+        $activeGeneros = [];
+        $activeAutores = [];
+        $singleGenreId = 0;
+        $generosMap = array_column($generosList, 'nombre', 'id_genero');
+        $autoresMap = array_column($autoresList, 'nombre', 'id_autor');
 
         require __DIR__ . "/../views/libros/libros.php";
     }
@@ -192,9 +286,32 @@ class LibroController
     public function cargarMas()
     {
         $offset = (int)($_GET["offset"] ?? 0);
-
-        // Método correcto con OFFSET y LIMIT
-        $masLibros = $this->Libro->obtenerTodos($offset);
+        
+        // Recibir filtros desde la solicitud AJAX
+        $filterGeneros = isset($_GET['generos']) && $_GET['generos'] ? array_filter(array_map('intval', explode(',', $_GET['generos']))) : [];
+        $filterAutores = isset($_GET['autores']) && $_GET['autores'] ? array_filter(array_map('intval', explode(',', $_GET['autores']))) : [];
+        $q = trim($_GET['q'] ?? '');
+        
+        // Determinar qué datos cargar según los filtros
+        if (!empty($filterGeneros) || !empty($filterAutores)) {
+            // Filtrar por géneros y/o autores
+            $masLibros = $this->Libro->filtrarLibros($filterGeneros, $filterAutores, $offset);
+        } elseif ($q !== '') {
+            // Búsqueda de texto
+            $masLibros = $this->Libro->buscarGeneral($q, $offset);
+        } else {
+            // Obtener todos sin filtros
+            $masLibros = $this->Libro->obtenerTodos($offset);
+        }
+        
+        // Convertir a array si es necesario
+        if (is_object($masLibros) && method_exists($masLibros, 'fetch_assoc')) {
+            $masLibros_array = [];
+            while ($row = $masLibros->fetch_assoc()) {
+                $masLibros_array[] = $row;
+            }
+            $masLibros = $masLibros_array;
+        }
 
         require __DIR__ . "/../views/libros/masLibros.php";
     }

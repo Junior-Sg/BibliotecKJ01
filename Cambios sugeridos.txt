@@ -24,14 +24,3 @@ Agregar que en admin no se pueda prestar o reservar el mismo libro si ya lo tien
 enero---arreglar el apartado de informes permitir escoger el mes para realizar la descarga 
 --- arreglar el boton de volver en el loguin---- hecho
 --- arreglar cuando  se cierra sesión que nos envie al apartado de inicio----hecho
-
-
-
-
-
-cambios sugeridos por hernan :c
-
-1. revisar si los correos de retrazo se envian automaticamente 
-2. en lugar dee eliminar una reserva que al darle en ese boton se muestre un historial del usuario, que libros ha devuelto cuantos a prestado, si tiene o tuvo demoras en libros. y abajo del historial ahi si colocar el boton de eliminar que en este caso se va a llamar "cancelar reserva", si mal no estoy para este historial se debe conectar con el perfil 
-3. en informes se debe mostrar el reporte de usuarios morosos. 
-4. agregar responsive a todas las paginas. 

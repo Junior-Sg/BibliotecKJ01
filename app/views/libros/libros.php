@@ -9,167 +9,25 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo</title>
 
+    <link rel="stylesheet" href="<?= BASE_URL ?>public/css/libros/index.css">
+
+<!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
 
-    <style>
-      /* PALETA CAFÉS */
-      :root {
-        --cafe-oscuro: #3C2B0D;   /* Mocha */
-        --cafe-medio:  #795C34;   /* Peanut */
-        --cafe-claro:  #9A7B4F;   /* Tortilla */
-        --caramel:     #65350F;
-        --bg-suave:    #f4ede3;
-        
-      }
-
-      body {
-        background: var(--bg-suave);
-         --bg-1: #f6f0e3;
-        --bg-2: #eddbc3;
-       
-      }
-
-      /* SECCIÓN CATÁLOGO */
-      .catalogo-wrapper{
-        max-width: 1200px;
-        margin: auto;
-        padding: 25px 15px 60px;
-      }
-
-      h1{
-        font-family:'Merriweather', serif;
-        color: var(--caramel);
-        font-weight: 700;
-      }
-
-      /* FILTROS */
-      .filtros-container{
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        flex-wrap: wrap;
-        margin-bottom: 25px;
-      }
-
-      .filtro-box{
-        background: #fff;
-        padding: 12px 20px;
-        border-radius: 14px;
-        box-shadow: 0 4px 10px rgba(0,0,0,.12);
-      }
-
-      .filtro-box h5{
-        font-size: 16px;
-        margin-bottom: 10px;
-        color: var(--cafe-oscuro);
-      }
-
-      .filtro-box label{
-        font-size: 14px;
-        margin-right: 10px;
-      }
-
-      /* CATÁLOGO GRID */
-      .catalogo-grid{
-        display: grid;
-        grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
-        gap: 22px;
-      }
-
-      /* TARJETA DE LIBRO */
-      .book-card{
-        background: var(--cafe-claro);
-        color: #fff;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 6px 12px rgba(0,0,0,.2);
-        transition: transform .2s;
-      }
-
-      .book-card:hover{
-        transform: scale(1.03);
-      }
-
-      .book-cover{
-        width: 100%;
-        height: 280px;
-        object-fit: cover;
-      }
-
-      .book-info{
-        padding: 12px 14px;
-        text-align: center;
-      }
-
-      .book-info h5{
-        font-size: 17px;
-        font-weight: 700;
-        margin-bottom: 5px;
-      }
-
-      .book-info small{
-        opacity: .8;
-      }
-
-      /* BOTÓN VER MÁS */
-      #btnVerMas{
-        display: block;
-        margin: 35px auto;
-        background: var(--caramel);
-        border: none;
-        padding: 12px 26px;
-        border-radius: 10px;
-        font-size: 16px;
-        color: #fff;
-        box-shadow: 0 4px 10px rgba(0,0,0,.25);
-      }
-    </style>
 </head>
+
 <body>
 
 <?php include __DIR__ . '/../layouts/navbar.php'; ?>
 
 <?php include __DIR__ . '/busqueda.php'; ?>
 
-<?php
-// Defensive defaults: variables que el controlador debería pasar
-$generos = $generos ?? null;
-$autores = $autores ?? null;
-$primeros12 = $primeros12 ?? [];
-$totalLibros = $totalLibros ?? null;
-
-// Convierte mysqli_result o objetos en arrays asociativos
-function to_array_list($res) {
-    if (is_object($res) && method_exists($res, 'fetch_all')) {
-        return $res->fetch_all(MYSQLI_ASSOC);
-    } elseif (is_array($res)) {
-        return $res;
-    } elseif (is_object($res) && method_exists($res, 'fetch_assoc')) {
-        $out = [];
-        while ($row = $res->fetch_assoc()) { $out[] = $row; }
-        return $out;
-    }
-    return [];
-}
-
-// Normalizar listas para la vista
-$generosList = to_array_list($generos);
-$autoresList = to_array_list($autores);
-?>
-
 <div class="catalogo-wrapper">
     <h1 class="text-center mb-4">Catálogo de Libros</h1>
 
-    <?php
-// Active filters for checkboxes
-$activeGeneros = isset($_GET['generos']) && $_GET['generos'] ? explode(',', $_GET['generos']) : [];
-$activeAutores = isset($_GET['autores']) && $_GET['autores'] ? explode(',', $_GET['autores']) : [];
-$singleGenreId = !empty($_GET['id']) ? (int)$_GET['id'] : 0;
-
-$generosMap = array_column($generosList, 'nombre', 'id_genero');
-$autoresMap = array_column($autoresList, 'nombre', 'id_autor');
-?>
 <!-- FILTROS (botones dropdown) -->
 <div class="container mb-4">
     <!-- Contenedor para mensajes de alerta de filtros -->
@@ -240,20 +98,7 @@ $autoresMap = array_column($autoresList, 'nombre', 'id_autor');
 </div>
 
 <div class="container mt-4">
-    <?php
-    // Logica de renderizado:
-    // 1. Si hay $libros (resultado de un filtro), se muestran.
-    // 2. Si no, se muestra el showcase $topByGenero.
-    // 3. Si no hay nada, un mensaje.
-
-    $is_filtered = isset($libros);
-    $results = [];
-    if ($is_filtered && $libros && $libros->num_rows > 0) {
-        while($r = $libros->fetch_assoc()) $results[] = $r;
-    }
-    
-    if (!empty($results)):
-    ?>
+    <?php if (!empty($results)):?>
         <?php if ($singleGenreId > 0 && isset($generosMap[$singleGenreId])): ?>
             <h3 class="mt-4 mb-3">Género: <?= htmlspecialchars($generosMap[$singleGenreId]) ?></h3>
         <?php elseif (!empty($_GET['q'])): ?>
@@ -286,12 +131,12 @@ $autoresMap = array_column($autoresList, 'nombre', 'id_autor');
         <?php foreach ($topByGenero as $idGenero => $gdata): ?>
             <?php
                 $gNombre = $gdata['nombre'] ?? ('Género ' . (int)$idGenero);
-                $rs = $gdata['libros'];
+                $librosArray = $gdata['libros'] ?? [];
             ?>
             <h3 class="mt-4"><?= htmlspecialchars($gNombre) ?></h3>
             <div class="catalogo-grid">
-                <?php if ($rs && is_object($rs) && $rs->num_rows > 0): ?>
-                    <?php while ($book = $rs->fetch_assoc()): ?>
+                <?php if (!empty($librosArray)): ?>
+                    <?php foreach ($librosArray as $book): ?>
                         <div class="book-card">
                             <?php $img = !empty($book['Imagen']) ? rtrim(BASE_URL, '/') . '/public/img/Libros/' . $book['Imagen'] : rtrim(BASE_URL, '/') . '/public/img/Libros/default.jpg'; ?>
                             <img src="<?= htmlspecialchars($img) ?>" class="book-cover" alt="<?= htmlspecialchars($book['titulo']) ?>">
@@ -300,12 +145,12 @@ $autoresMap = array_column($autoresList, 'nombre', 'id_autor');
                                 <button class="btn btn-light btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#modalDetalle" data-id="<?= (int)$book['id_libro'] ?>">Ver detalle</button>
                             </div>
                         </div>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 <?php else: ?>
                     <div class="col-12"><p class="text-muted">No hay libros en esta sección.</p></div>
                 <?php endif; ?>
             </div>
-            <div><a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Libro&action=index&id=<?= (int)$idGenero ?>" class="btn btn-outline-dark mt-2">Ver más de este género</a></div>
+            <div><a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Libro&action=catalogoGenero&id=<?= (int)$idGenero ?>" class="btn btn-outline-dark mt-2">Ver más de este género</a></div>
         <?php endforeach; ?>
     <?php else: // No hay nada que mostrar ?>
     <div class="text-center py-5">
@@ -320,11 +165,16 @@ $autoresMap = array_column($autoresList, 'nombre', 'id_autor');
 <?php if (file_exists(__DIR__ . '/../reservas/reserva.php')) include __DIR__ . '/../reservas/reserva.php'; ?>
 <?php if (file_exists(__DIR__ . '/../layouts/footer.php')) include __DIR__ . '/../layouts/footer.php'; ?>
 
-<script>
-  window.BASE_URL = "<?= rtrim(BASE_URL, '/') ?>";
-  window.USER_LOGGED = <?= isset($_SESSION['id_usuario']) ? 'true' : 'false' ?>;
 
-  (function(){
+<script src="<?= rtrim(BASE_URL, '/') ?>/public/js/detalle.js"></script>
+<script src="<?= rtrim(BASE_URL, '/') ?>/public/js/reserva.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+window.BASE_URL = "<?= rtrim(BASE_URL, '/') ?>";
+window.USER_LOGGED = <?= isset($_SESSION['id_usuario']) ? 'true' : 'false' ?>;
+
+    (function(){
     const mensajeContainer = document.getElementById("filtro-mensaje");
     const mensajeTexto = document.getElementById("filtro-mensaje-texto");
     const btn = document.getElementById("btnAplicarFiltros");
@@ -351,24 +201,64 @@ $autoresMap = array_column($autoresList, 'nombre', 'id_autor');
 
     // Limitar checkboxes a 5 por grupo
     function limitarCheckbox(clase) {
-      const items = document.querySelectorAll(clase);
-      items.forEach(chk => {
+        const items = document.querySelectorAll(clase);
+        items.forEach(chk => {
         chk.addEventListener('change', () => {
-          const seleccionados = [...items].filter(c => c.checked).length;
-          if (seleccionados > 5) {
+            const seleccionados = [...items].filter(c => c.checked).length;
+            if (seleccionados > 5) {
             chk.checked = false;
             mostrarMensaje("No puedes seleccionar más de 5 filtros por categoría.");
-          }
+        }
         });
       });
     }
     limitarCheckbox(".filtro-genero");
     limitarCheckbox(".filtro-autor");
-  })();
-</script>
+})();
 
-<script src="<?= rtrim(BASE_URL, '/') ?>/public/js/detalle.js"></script>
-<script src="<?= rtrim(BASE_URL, '/') ?>/public/js/reserva.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Leer el ID de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    // CORRECCIÓN: Priorizar 'openModal' si existe (para redirección desde inicio)
+    let idLibro = urlParams.get('openModal');
+    // Si no hay openModal, usar 'id' solo si NO es la acción catalogoGenero (donde id es el género)
+    if (!idLibro && urlParams.get('action') !== 'catalogoGenero') {
+        idLibro = urlParams.get('id');
+    }
+
+    if (idLibro) {
+        // Buscar el botón o tarjeta de ese libro en el catálogo
+        // Asumiendo que tus libros en el catálogo tienen un atributo data-id
+        // CORRECCIÓN: Usamos el selector exacto que tienen tus botones
+        const libroElemento = document.querySelector(`button[data-bs-target="#modalDetalle"][data-id="${idLibro}"]`);
+        
+        if (libroElemento) {
+            // Simular click para abrir el modal
+            libroElemento.click();
+        } else {
+            // Si el libro no está visible (filtrado o sin stock), intentamos forzar la apertura
+            console.log("El libro no está en la lista visual. Intentando abrir modal manualmente...");
+            
+            // Creamos un botón temporal invisible para disparar el evento que detalle.js escucha
+            // Esto funcionará si detalle.js usa delegación de eventos (document.addEventListener)
+            // Si no, necesitarás una función específica para cargar datos.
+            const tempBtn = document.createElement('button');
+            tempBtn.setAttribute('data-bs-toggle', 'modal');
+            tempBtn.setAttribute('data-bs-target', '#modalDetalle');
+            tempBtn.className = 'btn btn-light btn-sm mt-2'; // Agregamos las clases que usa detalle.js
+            tempBtn.setAttribute('data-id', idLibro);
+            tempBtn.style.display = 'none';
+            document.body.appendChild(tempBtn);
+            
+            // Disparamos el click
+            tempBtn.click();
+            
+            // Limpiamos
+            setTimeout(() => tempBtn.remove(), 1000);
+        }
+    }
+});
+
+</script>
 </body>
 </html>

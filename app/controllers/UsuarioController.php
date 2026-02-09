@@ -2,7 +2,8 @@
 require_once __DIR__ . '/../core/BaseController.php';
 require_once __DIR__ . '/../../config/Conexion.php';
 require_once __DIR__ . '/../models/Usuario.php';
-require_once __DIR__ . '/../models/PrestamoModelo.php'; // Incluir PrestamoModelo
+require_once __DIR__ . '/../models/PrestamoModelo.php';
+require_once __DIR__ . '/../models/NotificacionModelo.php';
 require_once __DIR__ . '/../core/helpers.php';
 
 class UsuarioController extends BaseController {
@@ -22,33 +23,36 @@ class UsuarioController extends BaseController {
     public function perfil() {
         $id = (int)$_SESSION['id_usuario'];
 
-        // Instanciar PrestamoModelo para el historial
-        $prestamoModelo = new PrestamoModelo($this->db);
+        $prestamoModelo   = new PrestamoModelo($this->db);
         $historialLectura = $prestamoModelo->obtenerHistorialDeLectura($id);
 
-        // Obtener datos necesarios para la vista
-        $usuario   = $this->model->obtenerPorId($id);
-        $favoritos = $this->model->obtenerFavoritos($id);   // mysqli_result o false
-        $reservas  = $this->model->obtenerReservas($id);    // mysqli_result o false
-        $favoritosIds = $this->model->obtenerFavoritosIds($id);
+        $usuario         = $this->model->obtenerPorId($id);
+        $favoritos       = $this->model->obtenerFavoritos($id);
+        $reservas        = $this->model->obtenerReservas($id);
+        $favoritosIds    = $this->model->obtenerFavoritosIds($id);
+        
+        $notificacionModelo = new NotificacionModelo($this->db);
+        $notificaciones     = $notificacionModelo->obtenerPorUsuario($id);
+        $totalSinLeer       = $notificacionModelo->contarNoLeidas($id);
 
         render_view('usuario/perfil', [
-            'usuario'   => $usuario,
-            'favoritos' => $favoritos,
-            'favoritos_ids' => $favoritosIds,
-            'reservas'  => $reservas,
-            'historialLectura' => $historialLectura // Pasar historial a la vista
+            'usuario'           => $usuario,
+            'favoritos'         => $favoritos,
+            'favoritos_ids'     => $favoritosIds,
+            'reservas'          => $reservas,
+            'historialLectura'  => $historialLectura,
+            'notificaciones'    => $notificaciones,
+            'totalSinLeer'      => $totalSinLeer
         ]);
     }
 
     public function actualizar()
     {
-        $id = (int)$_SESSION['id_usuario'];
-        $nombre = trim($_POST['nombre'] ?? '');
-        $correo = trim($_POST['correo'] ?? '');
+        $id       = (int)$_SESSION['id_usuario'];
+        $nombre   = trim($_POST['nombre'] ?? '');
+        $correo   = trim($_POST['correo'] ?? '');
         $telefono = trim($_POST['telefono'] ?? '');
 
-        // validaciones básicas
         if (empty($nombre) || empty($correo)) {
             $_SESSION['flash_error'] = "Nombre y correo son requeridos.";
             header("Location: " . (defined('BASE_URL') ? rtrim(BASE_URL, '/') : '') . "/index.php?controller=Usuario&action=perfil");
@@ -74,7 +78,8 @@ class UsuarioController extends BaseController {
         header('Content-Type: application/json; charset=utf-8');
         
         $emoji = $_POST['emoji'] ?? '';
-        $id = (int)$_SESSION['id_usuario'];
+        $id    = (int)$_SESSION['id_usuario'];
+
         if (empty($emoji)) {
             echo json_encode(['ok'=>false,'error'=>'Emoji inválido']);
             exit;
@@ -84,14 +89,12 @@ class UsuarioController extends BaseController {
         if ($ok) {
             $_SESSION['avatar_emoji'] = $emoji;
             echo json_encode(['ok'=>true, 'emoji'=>$emoji]);
-            exit;
         } else {
             echo json_encode(['ok'=>false, 'error'=>'No se pudo guardar']);
-            exit;
         }
+        exit;
     }
 
-    // ruta AJAX para cancelar reserva desde perfil
     public function cancelarReservaAjax()
     {
         header('Content-Type: application/json; charset=utf-8');
@@ -110,21 +113,72 @@ class UsuarioController extends BaseController {
     public function agregarFavoritoAjax()
     {
         header('Content-Type: application/json; charset=utf-8');
-        
-        $idLibro = (int)($_POST['id_libro'] ?? 0);
-        if ($idLibro <= 0) {
-            echo json_encode(['ok' => false, 'error' => 'Libro inválido']);
+
+        try {
+            if (!isset($_SESSION['id_usuario'])) {
+                echo json_encode(['ok' => false, 'error' => 'Sesión no válida']);
+                exit;
+            }
+
+            $idLibro = (int)($_POST['id_libro'] ?? 0);
+            if ($idLibro <= 0) {
+                echo json_encode(['ok' => false, 'error' => 'ID de libro inválido']);
+                exit;
+            }
+
+            $idUsuario = (int)$_SESSION['id_usuario'];
+            $ok = $this->model->agregarFavorito($idUsuario, $idLibro);
+
+            echo json_encode(['ok' => (bool)$ok]);
+            exit;
+        } catch (\Throwable $e) {
+            error_log("agregarFavoritoAjax: " . $e->getMessage());
+            echo json_encode(['ok' => false, 'error' => 'Error interno']);
             exit;
         }
+    }
+    
+    public function eliminarFavoritoAjax() {
+        header('Content-Type: application/json; charset=utf-8');
         
+        if (!isset($_SESSION['id_usuario'])) {
+            echo json_encode(['ok' => false, 'error' => 'Sesión no iniciada']);
+            exit;
+        }
+            
+        $idLibro = (int)($_POST['id_libro'] ?? 0);
         $idUsuario = (int)$_SESSION['id_usuario'];
-        $ok = $this->model->agregarFavorito($idUsuario, $idLibro);
         
-        if ($ok) {
-            echo json_encode(['ok' => true]);
+        if ($idLibro > 0) {
+            $ok = $this->model->eliminarFavorito($idUsuario, $idLibro);
+            echo json_encode(['ok' => (bool)$ok]);
         } else {
-            echo json_encode(['ok' => false, 'error' => 'No se pudo agregar a favoritos']);
+            echo json_encode(['ok' => false, 'error' => 'ID de libro inválido']);
         }
         exit;
     }
+                
+    public function marcarLeidaAjax() {
+        header('Content-Type: application/json; charset=utf-8');
+        $idNotif = (int)($_POST['id_notificacion'] ?? 0);
+        $idUser  = (int)$_SESSION['id_usuario'];
+
+        $notificacionModelo = new NotificacionModelo($this->db);
+        $ok = $notificacionModelo->marcarComoLeida($idNotif, $idUser);
+        echo json_encode(['ok' => (bool)$ok]);
+        exit;
+    }
+
+    public function eliminarNotificacionAjax() {
+        header('Content-Type: application/json; charset=utf-8');
+        $idNotif = (int)($_POST['id_notificacion'] ?? 0);
+        $idUser  = (int)$_SESSION['id_usuario'];
+
+        $notificacionModelo = new NotificacionModelo($this->db);
+        $ok = $notificacionModelo->eliminarNotificacion($idNotif, $idUser);
+        echo json_encode(['ok' => (bool)$ok]);
+        exit;
+    }
 }
+
+?>

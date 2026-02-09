@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config/Conexion.php';
+require_once __DIR__ . '/NotificacionModelo.php';
+
 
 class PrestamoModelo {
 
@@ -41,6 +43,13 @@ class PrestamoModelo {
                 throw new Exception("No hay unidades disponibles");
             }
 
+            // Obtener título del libro para la notificación
+            $sqlLibro = "SELECT titulo FROM libro WHERE id_libro = ?";
+            $stmtLibro = $this->db->prepare($sqlLibro);
+            $stmtLibro->bind_param("i", $idLibro);
+            $stmtLibro->execute();
+            $tituloLibro = $stmtLibro->get_result()->fetch_assoc()['titulo'] ?? 'el libro';
+
             // 2. Insertar préstamo
             $sqlPrestamo = "INSERT INTO prestamo 
                            (id_usuario, id_libro, fecha_prestamo, fecha_devolucion, estado)
@@ -52,6 +61,12 @@ class PrestamoModelo {
             if (!$stmtPre->execute()) {
                 throw new Exception("Error al registrar el préstamo: " . $stmtPre->error);
             }
+
+            // 🔔 Crear notificación de préstamo creado
+            $notificacionModelo = new NotificacionModelo($this->db);
+            $mensaje = "📖 Tu préstamo del libro «{$tituloLibro}» fue registrado con éxito. "
+                     . "Fecha de devolución: {$fechaDevolucion}.";
+            $notificacionModelo->crearNotificacion($idUsuario, $mensaje);
 
             // 3. Actualizar disponibilidad
             $nuevoValor = $cantidad - 1;
@@ -89,9 +104,10 @@ class PrestamoModelo {
         try {
 
             // 1. Buscar préstamo
-            $sqlSel = "SELECT id_libro, estado 
-                       FROM prestamo 
-                       WHERE id_prestamo = ? FOR UPDATE";
+            $sqlSel = "SELECT p.id_libro, p.estado, p.id_usuario, l.titulo
+                    FROM prestamo p
+                    JOIN libro l ON p.id_libro = l.id_libro
+                    WHERE p.id_prestamo = ? FOR UPDATE";
 
             $stmt = $this->db->prepare($sqlSel);
             $stmt->bind_param("i", $idPrestamo);
@@ -103,6 +119,7 @@ class PrestamoModelo {
             }
 
             $prestamo = $data->fetch_assoc();
+            $idUsuario = (int) $prestamo['id_usuario'];
 
             if ($prestamo["estado"] === "devuelto") {
                 $this->db->commit();
@@ -116,6 +133,12 @@ class PrestamoModelo {
             $stmtUpd = $this->db->prepare($sqlUpdPrestamo);
             $stmtUpd->bind_param("i", $idPrestamo);
             $stmtUpd->execute();
+
+            // 3. Crear notificación
+            $mensaje = "📘 Has devuelto el libro «{$prestamo['titulo']}». Gracias por devolverlo.";
+            
+            $notificacionModelo = new NotificacionModelo($this->db);
+            $notificacionModelo->crearNotificacion($idUsuario, $mensaje);
 
             // 3. Actualizar disponibilidad
             $sqlDisp = "SELECT cantidad_disponible FROM disponibilidad WHERE id_libro = ? FOR UPDATE";
@@ -200,7 +223,7 @@ class PrestamoModelo {
             FROM libro l
             INNER JOIN disponibilidad d ON d.id_libro = l.id_libro
             WHERE l.id_libro = ?";
-      $stmt = $this->conn->prepare($sql);
+      $stmt = $this->db->prepare($sql);
       $stmt->bind_param("i", $id_libro);
       $stmt->execute();
       return $stmt->get_result()->fetch_assoc();
@@ -209,7 +232,7 @@ class PrestamoModelo {
        public function obtenerDisponibilidad($id_libro)
  {
     $sql = "SELECT cantidad_disponible FROM disponibilidad WHERE id_libro = ?";
-    $stmt = $this->conn->prepare($sql);
+    $stmt = $this->db->prepare($sql);
     $stmt->bind_param("i", $id_libro);
     $stmt->execute();
     return $stmt->get_result()->fetch_assoc();
@@ -219,7 +242,7 @@ class PrestamoModelo {
     $sql = "UPDATE disponibilidad 
             SET cantidad_disponible = cantidad_disponible - 1
             WHERE id_libro = ? AND cantidad_disponible > 0";
-    $stmt = $this->conn->prepare($sql);
+    $stmt = $this->db->prepare($sql);
     $stmt->bind_param("i", $id_libro);
     return $stmt->execute();
 }
@@ -372,5 +395,39 @@ class PrestamoModelo {
         $resultado = $this->db->query($sql);
         return $resultado->fetch_all(MYSQLI_ASSOC);
     }
-}
 
+    public function notificarPrestamosVencenEn3Dias() {
+
+        require_once __DIR__ . '/NotificacionModelo.php';
+        $notificacionModelo = new NotificacionModelo($this->db);
+    
+        $sql = "SELECT p.id_prestamo, p.id_usuario, p.fecha_devolucion,
+                       l.titulo
+                FROM prestamo p
+                JOIN libro l ON p.id_libro = l.id_libro
+                WHERE p.estado = 'activo'
+                AND p.notificado_3dias = 0
+                AND DATE(p.fecha_devolucion) = DATE_ADD(CURDATE(), INTERVAL 3 DAY)";
+    
+        $resultado = $this->db->query($sql);
+
+        if ($resultado) {
+            while ($row = $resultado->fetch_assoc()) {
+        
+                $mensaje = "⏰ Recordatorio: el libro «{$row['titulo']}» vence en 3 días. "
+                         . "Fecha límite: {$row['fecha_devolucion']}.";
+        
+                $notificacionModelo->crearNotificacion(
+                    (int)$row['id_usuario'],
+                    $mensaje
+                );
+        
+                // Marcar como notificado
+                $sqlUpd = "UPDATE prestamo SET notificado_3dias = 1 WHERE id_prestamo = ?";
+                $stmt = $this->db->prepare($sqlUpd);
+                $stmt->bind_param("i", $row['id_prestamo']);
+                $stmt->execute();
+            }
+        }
+    }
+}

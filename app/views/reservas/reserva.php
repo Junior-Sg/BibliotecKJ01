@@ -1,6 +1,3 @@
-<?php
-// partial: reserva.php (modal confirmación + toast login)
-?>
 <style>
   /* Asegurar que el modal de confirmación esté por encima del modal de detalles */
   #confirmReservaModal {
@@ -9,6 +6,15 @@
 
   #confirmReservaModal .modal-backdrop {
     z-index: 2049 !important;
+  }
+
+  /* Asegurar que el modal de error esté por encima de todos */
+  #errorReservaModal {
+    z-index: 2060 !important;
+  }
+
+  #errorReservaModal .modal-backdrop {
+    z-index: 2059 !important;
   }
 </style>
 
@@ -51,6 +57,27 @@
       <div class="d-flex gap-2" style="margin-top: 16px;">
         <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=LoginUsuario&action=index" class="btn btn-sm text-white flex-grow-1" style="background-color: #60A5FA; border: none; font-weight: 500; transition: background-color 0.2s;">Iniciar sesión</a>
         <button type="button" class="btn btn-sm text-white flex-grow-1" data-bs-dismiss="toast" style="background-color: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.25); font-weight: 500;">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Error de Reserva -->
+<div class="modal fade" id="errorReservaModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0" style="background: linear-gradient(135deg, #FEE2E2 0%, #FCA5A5 100%); box-shadow: 0 12px 32px rgba(220, 38, 38, 0.25);">
+      <div class="modal-header border-0 pb-0">
+        <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+          <i class="bi bi-exclamation-circle-fill" style="font-size: 1.75rem; color: #DC2626; flex-shrink: 0;"></i>
+          <h5 class="modal-title" id="errorReservaTitle" style="color: #991B1B; font-weight: 600;">Error en la reserva</h5>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body pt-2">
+        <p id="errorReservaMessage" style="color: #7F1D1D; font-size: 1rem; margin: 0;">Ha ocurrido un error. Inténtalo de nuevo más tarde.</p>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" style="background-color: #DC2626; border: none; font-weight: 500;">Aceptar</button>
       </div>
     </div>
   </div>

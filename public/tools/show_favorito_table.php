@@ -6,7 +6,7 @@
 require_once __DIR__ . '/../../config/Conexion.php';
 
 header('Content-Type: text/plain; charset=utf-8');
-
+ 
 try {
     $db = (new Conexion())->conectar();
 } catch (Exception $e) {

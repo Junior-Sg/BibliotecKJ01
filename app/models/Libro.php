@@ -95,6 +95,19 @@ class Libro
     }
 
     /* ============================================================
+       OBTENER GÉNERO POR ID
+    ============================================================ */
+    public function obtenerGeneroPorId($idGenero)
+    {
+        $sql = "SELECT * FROM genero WHERE id_genero = ?";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("i", $idGenero);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
+    /* ============================================================
        OBTENER DISPONIBILIDAD DE UN LIBRO
     ============================================================ */
     public function obtenerDisponibilidad(int $idLibro) {
@@ -107,10 +120,10 @@ class Libro
     /* ============================================================
        BÚSQUEDA GENERAL
     ============================================================ */
-    public function buscarGeneral(string $texto) {
+    public function buscarGeneral(string $texto, int $offset = 0, int $limit = 20) {
         $q = "%{$texto}%";
-        $stmt = $this->conexion->prepare("SELECT DISTINCT l.id_libro, l.titulo, l.sipnosis AS sinopsis, l.Imagen, e.nombre AS editorial FROM libro l LEFT JOIN editorial e ON l.id_editorial = e.id_editorial LEFT JOIN libro_autor la ON la.id_libro = l.id_libro LEFT JOIN autor a ON a.id_autor = la.id_autor WHERE l.titulo LIKE ? OR a.nombre LIKE ? OR l.sipnosis LIKE ? ORDER BY l.titulo ASC");
-        $stmt->bind_param("sss", $q, $q, $q);
+        $stmt = $this->conexion->prepare("SELECT DISTINCT l.id_libro, l.titulo, l.sipnosis AS sinopsis, l.Imagen, e.nombre AS editorial FROM libro l LEFT JOIN editorial e ON l.id_editorial = e.id_editorial LEFT JOIN libro_autor la ON la.id_libro = l.id_libro LEFT JOIN autor a ON a.id_autor = la.id_autor WHERE l.titulo LIKE ? OR a.nombre LIKE ? OR l.sipnosis LIKE ? ORDER BY l.titulo ASC LIMIT ? OFFSET ?");
+        $stmt->bind_param("sssii", $q, $q, $q, $limit, $offset);
         $stmt->execute();
         return $stmt->get_result();
     }
@@ -137,7 +150,7 @@ class Libro
 
     /*METODO FILTRAR*/
 
-    public function filtrarLibros($generos = [], $autores = []) {
+    public function filtrarLibros($generos = [], $autores = [], int $offset = 0, int $limit = 20) {
 
     $sql = "SELECT DISTINCT l.*
             FROM libro l
@@ -155,7 +168,7 @@ class Libro
         $sql .= " AND la.id_autor IN (" . implode(',', $autores) . ")";
     }
 
-    $sql .= " ORDER BY l.titulo ASC";
+    $sql .= " ORDER BY l.titulo ASC LIMIT " . intval($limit) . " OFFSET " . intval($offset);
 
     return $this->conexion->query($sql);
 }

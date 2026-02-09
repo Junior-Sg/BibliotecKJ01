@@ -312,6 +312,7 @@ class Usuario
         $res = $stmt->get_result();
         return $res;
     }
+    
 
     public function agregarFavorito(int $idUsuario, int $idLibro)
     {
@@ -356,6 +357,14 @@ class Usuario
         }
         return $ids;
     }
+    
+    public function eliminarFavorito($id_usuario, $id_libro) {
+        $sql = "DELETE FROM favorito WHERE id_usuario = ? AND id_libro = ?";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("ii", $id_usuario, $id_libro);
+        return $stmt->execute();
+        
+        }
 
     // Historial reservas: asume tabla reserva (id_reserva, id_usuario, id_libro, fecha_reserva, estado)
     public function obtenerReservas(int $idUsuario)
@@ -378,16 +387,47 @@ class Usuario
 
     public function cancelarReserva(int $idReserva, int $idUsuario)
     {
-        $sql = "UPDATE reserva SET estado = 'cancelada' WHERE id_reserva = ? AND id_usuario = ? AND estado = 'pendiente'";
-        $stmt = $this->conexion->prepare($sql);
-        if (!$stmt) {
-            error_log("Error preparar cancelarReserva: " . $this->conexion->error);
+        $this->conexion->begin_transaction();
+
+        try {
+            // 1. Obtener datos de la reserva (título del libro) para la notificación
+            $sqlSel = "SELECT r.id_libro, l.titulo
+                       FROM reserva r
+                       JOIN libro l ON r.id_libro = l.id_libro
+                       WHERE r.id_reserva = ? AND r.id_usuario = ?";
+            
+            $stmtSel = $this->conexion->prepare($sqlSel);
+            $stmtSel->bind_param("ii", $idReserva, $idUsuario);
+            $stmtSel->execute();
+            $res = $stmtSel->get_result();
+
+            if ($res->num_rows === 0) {
+                throw new Exception("Reserva no encontrada");
+            }
+
+            $data = $res->fetch_assoc();
+            $tituloLibro = $data['titulo'];
+
+            // 2. Cancelar la reserva (Actualizar estado para mantener historial)
+            $sqlUpd = "UPDATE reserva SET estado = 'cancelada' WHERE id_reserva = ? AND id_usuario = ? AND estado = 'pendiente'";
+            $stmtUpd = $this->conexion->prepare($sqlUpd);
+            $stmtUpd->bind_param("ii", $idReserva, $idUsuario);
+            $stmtUpd->execute();
+
+            // 3. Crear notificación
+            require_once __DIR__ . '/NotificacionModelo.php';
+            $notificacionModelo = new NotificacionModelo($this->conexion);
+            $mensaje = "❌ Tu reserva del libro «{$tituloLibro}» ha sido cancelada correctamente.";
+            $notificacionModelo->crearNotificacion($idUsuario, $mensaje);
+
+            $this->conexion->commit();
+            return true;
+
+        } catch (Exception $e) {
+            $this->conexion->rollback();
+            error_log("Error al cancelar reserva: " . $e->getMessage());
             return false;
         }
-        $stmt->bind_param("ii", $idReserva, $idUsuario);
-        $res = $stmt->execute();
-        $stmt->close();
-        return $res;
     }
 
     // =================================
@@ -476,4 +516,42 @@ class Usuario
         $stmt->bind_param("s", $token);
         return $stmt->execute();
     }
+
+
+        // =================================
+    // NOTIFICACIONES
+    // =================================
+
+    // Obtener todas las notificaciones de un usuario
+
+    public function obtenerNotificaciones($id_usuario) {
+        $sql = "SELECT * FROM notificaciones WHERE id_usuario = ? ORDER BY fecha_creacion DESC";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("i", $id_usuario);
+        $stmt->execute();
+        return $stmt->get_result();
+        
+        }
+        
+    // Contar notificaciones sin leer para el badge de la campana
+        
+    public function contarNotificacionesSinLeer($id_usuario) {
+        $sql = "SELECT COUNT(*) as total FROM notificaciones WHERE id_usuario = ? AND leido = 0";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("i", $id_usuario);
+        $stmt->execute();
+        $res = $stmt->get_result()->fetch_assoc();
+        return $res['total'] ?? 0;
+        }
+            
+    // Marcar como leída
+    public function marcarNotificacionLeida($id_notificacion, $id_usuario) {
+        $sql = "UPDATE notificaciones SET leido = 1 WHERE id_notificacion = ? AND id_usuario = ?";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("ii", $id_notificacion, $id_usuario);
+        return $stmt->execute();
+        
+        }
 }
+
+?>
