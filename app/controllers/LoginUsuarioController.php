@@ -57,6 +57,15 @@ class LoginUsuarioController extends BaseController {
         $_SESSION["correo"]     = $data["correo"];
         $_SESSION["avatar_emoji"] = $data["avatar_emoji"];
 
+        // Verificar préstamos próximos a vencer (3 días) y notificar
+        try {
+            require_once __DIR__ . '/../models/PrestamoModelo.php';
+            $prestamoModelo = new PrestamoModelo($this->db);
+            $prestamoModelo->notificarPrestamosVencenEn3Dias();
+        } catch (Exception $e) {
+            error_log("Error al notificar préstamos por vencer: " . $e->getMessage());
+        }
+
         $rol = $this->model->obtenerRol($data["id_usuario"]);
         $_SESSION["rol"] = $rol;
 

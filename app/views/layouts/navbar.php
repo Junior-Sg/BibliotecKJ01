@@ -1,14 +1,21 @@
 <?php
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
+
+if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+
+require_once __DIR__ . '/../../../config/Conexion.php';
+require_once __DIR__ . '/../../models/Usuario.php';
 
 $usuarioAutenticado = isset($_SESSION['id_usuario']);
 $nombreUsuario = $_SESSION['nombre'] ?? '';
 $correoUsuario = $_SESSION['correo'] ?? '';
+$avatarEmoji = $_SESSION['avatar_emoji'] ?? '😊';
+$totalSinLeer = 0;
 
-
-$avatarEmoji = $_SESSION['avatar_emoji'] ?? '👤';
+if ($usuarioAutenticado) {
+    $db_nav = (new Conexion())->conectar();
+    $userModel_nav = new Usuario($db_nav);
+    $totalSinLeer = $userModel_nav->contarNotificacionesSinLeer((int)$_SESSION['id_usuario']);
+}
 
 $avatarFilePath = $usuarioAutenticado ? __DIR__ . '/../../../public/img/avatars/avatar_' . intval($_SESSION['id_usuario']) . '.jpg' : null;
 $avatarFileUrl  = ($usuarioAutenticado && file_exists($avatarFilePath))
@@ -18,6 +25,9 @@ $avatarFileUrl  = ($usuarioAutenticado && file_exists($avatarFilePath))
 // Para estado activo del menú (opcional)
 $activeController = strtolower($_GET['controller'] ?? 'iniciopagina');
 ?>
+
+<!-- Bootstrap Icons: Necesario para que se vea la campanilla (bi-bell) en todas las vistas -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <!-- ====== HEADER IMPACTANTE ====== -->
 <header class="app-header" role="banner">
@@ -39,15 +49,15 @@ $activeController = strtolower($_GET['controller'] ?? 'iniciopagina');
       <ul id="mainMenu" class="menu">
         <li>
           <a class="menu__link <?= ($activeController === 'iniciopagina' ? 'is-active' : '') ?>"
-             href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=InicioPagina&action=index">Inicio</a>
+            href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=InicioPagina&action=index">Inicio</a>
         </li>
         <li>
           <a class="menu__link <?= ($activeController === 'libro' && ($_GET['action'] ?? '') === 'index' ? 'is-active' : '') ?>"
-             href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Libro&action=index">Género</a>
+            href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Libro&action=index">Género</a>
         </li>
         <li>
           <a class="menu__link <?= ($activeController === 'libro' && ($_GET['action'] ?? '') === 'catalogo' ? 'is-active' : '') ?>"
-             href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Libro&action=catalogo">Librería</a>
+            href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Libro&action=catalogo">Librería</a>
         </li>
       </ul>
     </nav>
@@ -62,6 +72,12 @@ $activeController = strtolower($_GET['controller'] ?? 'iniciopagina');
             <span class="avatar-emoji"><?= htmlspecialchars($avatarEmoji) ?></span>
           <?php endif; ?>
           <span class="user-name"><?= htmlspecialchars($nombreUsuario ?: 'Usuario') ?></span>
+        </a>
+        <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Usuario&action=perfil#notificaciones" class="notification-bell" aria-label="Notificaciones">
+            <i class="bi bi-bell"></i>
+            <?php if ($totalSinLeer > 0): ?>
+                <span class="notification-badge" title="Tienes notificaciones nuevas">!</span>
+            <?php endif; ?>
         </a>
         <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Logout&action=index" class="btn btn--ghost">Cerrar sesión</a>
       <?php else: ?>
@@ -85,8 +101,6 @@ $activeController = strtolower($_GET['controller'] ?? 'iniciopagina');
   </div>
 </header>
 
-
-
 <!-- ====== Botón volver arriba ====== -->
 <a href="#" id="scrollToTopBtn" title="Volver arriba" aria-label="Volver arriba">
   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -96,6 +110,11 @@ $activeController = strtolower($_GET['controller'] ?? 'iniciopagina');
 </a>
 
 <style>
+
+  .header-wave {
+  pointer-events: none;
+}
+
 /* ====== Tokens de diseño (paleta) ====== */
 :root{
 
@@ -213,6 +232,32 @@ body{
   .brand__name{ display:none; } /* compacta marca en móviles */
   .user-name{ display:none; }
 }
+
+.notification-bell{
+  position: relative;
+  color: #fff;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  z-index: 1300;
+}
+
+.notification-bell .bi-bell{ 
+  color:#fff; font-size:1.1rem;
+}
+
+.notification-badge{
+  position:absolute;
+  top:-4px; right:-6px;
+  background:#d40000;
+  color:#fff;
+  border:1px solid #fff;
+  border-radius:999px;
+  padding:0 5px;
+  font-size:0.65rem;
+  line-height:1.1rem;
+}
 </style>
 
 <script>
@@ -255,5 +300,22 @@ body{
       e.preventDefault();
       window.scrollTo({ top:0, behavior:'smooth' });
     });
+
+    // Manejar navegación directa a pestañas/secciones (ej: #notificaciones)
+    window.addEventListener('load', () => {
+      if (window.location.hash) {
+        const target = document.querySelector(window.location.hash);
+        const tabTrigger = document.querySelector(`[data-bs-target="${window.location.hash}"], [href="${window.location.hash}"]`);
+        
+        if (tabTrigger && window.bootstrap) {
+          bootstrap.Tab.getOrCreateInstance(tabTrigger).show();
+        }
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
   })();
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

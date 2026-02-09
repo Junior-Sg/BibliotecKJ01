@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   const modal = document.getElementById('modalDetalle');
-  const baseUrl = window.BASE_URL; 
+  const baseUrl = window.AppConfig ? window.AppConfig.baseUrl : window.BASE_URL;
 
   let libroActual = null;
 

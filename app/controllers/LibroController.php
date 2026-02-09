@@ -42,10 +42,9 @@ function to_array_list($res) {
     ============================================================ */
     public function catalogoGenero($id)
     {
+        $id = $id ?? $_GET['id'] ?? 0;
         $generoRes = $this->Libro->obtenerGeneroPorId($id);
         $generoNombre = $generoRes ? $generoRes['nombre'] : 'Género desconocido';
-        
-        // Convertir a array en el controlador
         $librosRes = $this->Libro->obtenerPorGeneroId($id);
         $librosDelGenero = [];
         if ($librosRes && $librosRes->num_rows > 0) {
@@ -101,11 +100,6 @@ function to_array_list($res) {
 
         $generosMap = array_column($generosList, 'nombre', 'id_genero');
         $autoresMap = array_column($autoresList, 'nombre', 'id_autor');
-    
-        // Logica de renderizado:
-        // 1. Si hay $libros (resultado de un filtro), se muestran.
-        // 2. Si no, se muestra el showcase $topByGenero.
-        // 3. Si no hay nada, un mensaje.
 
         $results = [];
     
@@ -179,7 +173,16 @@ function to_array_list($res) {
 
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
-            $libro = $this->Libro->obtenerPorId($id); // Usa la función que acabamos de crear
+            $libro = $this->Libro->obtenerPorId($id); 
+            $generos = $this->Libro->obtenerGeneros($id);
+            $autores = $this->Libro->obtenerAutores($id);
+            $disponibilidad = $this->Libro->obtenerDisponibilidad($id);
+        }
+
+        if ($libro) {
+            $libro['autores'] = $autores;
+            $libro['generos'] = $generos;
+            $libro['disponibilidad'] = $disponibilidad;
             echo json_encode($libro);
         }
         

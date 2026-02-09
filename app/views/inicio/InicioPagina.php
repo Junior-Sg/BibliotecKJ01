@@ -150,8 +150,8 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
          <?php foreach ($favoritos as $index => $l): ?>
             <div class="col libro-item <?= $index >= 4 ? 'hidden' : '' ?>">
                 <div class="mini-card mx-auto" 
-                    data-id="<?= $l['id_libro'] ?>" 
-                    data-genero="<?= $l['id_genero'] ?? '' ?>"
+                    data-id="<?= $l['id_libro'] ?>"
+                    data-genero="<?= $l['id_genero'] ?? '' ?>" 
                     style="cursor: pointer;"
                     data-bs-toggle="popover" 
                     data-bs-title="<?= htmlspecialchars($l['titulo']) ?>" 
@@ -179,15 +179,15 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
         <?php foreach ($nuevos as $index => $l): ?>
             <div class="col libro-item <?= $index >= 4 ? 'hidden' : '' ?>">
                 <div class="mini-card mx-auto" 
-                    data-id="<?= $l['id_libro'] ?>" 
-                    data-genero="<?= $l['id_genero'] ?? '' ?>"
+                    data-id="<?= $l['id_libro'] ?>"
+                    data-genero="<?= $l['id_genero'] ?? '' ?>" 
                     style="cursor: pointer;"
                     data-bs-toggle="popover" 
                     data-bs-title="<?= htmlspecialchars($l['titulo']) ?>" 
                     data-bs-content="<?= htmlspecialchars($l['sinopsis'] ?? 'Sin sinopsis disponible') ?>"
                     data-bs-trigger="click"
                     data-bs-container="body">
-                    <img src="<?= BASE_URL ?>/public/img/Libros/<?= $l['Imagen'] ?>" alt="<?= htmlspecialchars($l['titulo']) ?>">
+                    <img src="<?= BASE_URL ?>/public/img/libros/<?= $l['Imagen'] ?>" alt="<?= htmlspecialchars($l['titulo']) ?>">
                     <p class="mt-2 small fw-bold"><?= htmlspecialchars($l['titulo']) ?></p>
                 </div>
             </div>
@@ -332,22 +332,23 @@ if (btnVerMasNuevos) {
 
 // ---- POPOVER PARA LIBROS (BOOTSTRAP) ----
 document.addEventListener('DOMContentLoaded', () => {
-    const baseUrl = "<?= rtrim(BASE_URL, '/') ?>";
+    // Definimos la configuración global si no existe
+    window.AppConfig = {
+        baseUrl: "<?= rtrim(BASE_URL, '/') ?>"
+    };
 
-    // Inicializar popovers
     const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
-    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+    const popoverList = [...popoverTriggerList].map(el => new bootstrap.Popover(el));
 
-    // Cerrar otros popovers al abrir uno
     popoverTriggerList.forEach(el => {
-        el.addEventListener('show.bs.popover', () => {
+        // UNIFICADO: Un solo listener para manejar todo lo que pasa al abrir
+        el.addEventListener('shown.bs.popover', () => {
+            // 1. Cerrar otros popovers
             popoverList.forEach(p => {
                 if (p._element !== el) p.hide();
             });
-        });
 
-        // Agregar evento click al contenido del popover una vez mostrado
-        el.addEventListener('shown.bs.popover', () => {
+            // 2. Configurar el click de redirección
             const libroId = el.getAttribute('data-id');
             const generoId = el.getAttribute('data-genero');
             const popoverId = el.getAttribute('aria-describedby');
@@ -357,17 +358,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 const body = popoverEl.querySelector('.popover-body');
                 if (body) {
                     body.style.cursor = 'pointer';
-                    body.title = 'Click para ir al catálogo de este género';
-                    body.onclick = () => {
-                        // Cerrar popover
-                        const popover = bootstrap.Popover.getInstance(el);
-                        if (popover) popover.hide();
-                        
-                        // Redirigir a catalogoGenero con parámetros
-                        if (generoId) {
-                            window.location.href = `${baseUrl}/index.php?controller=Libro&action=catalogoGenero&id=${generoId}`;
+                    body.title = 'Click para ver detalles en el catálogo';
+                    
+                    // Usamos addEventListener en lugar de .onclick para evitar conflictos
+                    body.addEventListener('click', () => {
+                        // VALIDACIÓN CRÍTICA
+                        if (!generoId || generoId === "") {
+                            alert("Error: Este libro no tiene un ID de género asignado. Revisa tu consulta SQL.");
+                            return;
                         }
-                    };
+
+                        const urlDestino = `${window.AppConfig.baseUrl}/index.php?controller=Libro&action=catalogoGenero&id=${generoId}&openModal=${libroId}`;
+                        console.log("Redirigiendo a:", urlDestino);
+                        window.location.href = urlDestino;
+                    }, { once: true }); // 'once' evita que se disparen múltiples clics
                 }
             }
         });
@@ -381,6 +385,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
-
 </body>
 </html>

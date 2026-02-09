@@ -165,6 +165,11 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 <?php if (file_exists(__DIR__ . '/../reservas/reserva.php')) include __DIR__ . '/../reservas/reserva.php'; ?>
 <?php if (file_exists(__DIR__ . '/../layouts/footer.php')) include __DIR__ . '/../layouts/footer.php'; ?>
 
+
+<script src="<?= rtrim(BASE_URL, '/') ?>/public/js/detalle.js"></script>
+<script src="<?= rtrim(BASE_URL, '/') ?>/public/js/reserva.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
 window.BASE_URL = "<?= rtrim(BASE_URL, '/') ?>";
 window.USER_LOGGED = <?= isset($_SESSION['id_usuario']) ? 'true' : 'false' ?>;
@@ -255,9 +260,5 @@ window.USER_LOGGED = <?= isset($_SESSION['id_usuario']) ? 'true' : 'false' ?>;
 });
 
 </script>
-
-<script src="<?= rtrim(BASE_URL, '/') ?>/public/js/detalle.js"></script>
-<script src="<?= rtrim(BASE_URL, '/') ?>/public/js/reserva.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

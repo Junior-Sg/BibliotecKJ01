@@ -36,7 +36,23 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('confirm_author').textContent = (libroActual.autores || []).join(', ') || '';
     document.getElementById('confirm_editorial').textContent = libroActual.editorial || '';
 
-    if (confirmModal) confirmModal.show();
+    // Si el modal de detalle está abierto, ciérralo primero para evitar solapar aria-hidden
+    const detalleEl = document.getElementById('modalDetalle');
+    const detalleModal = detalleEl ? bootstrap.Modal.getInstance(detalleEl) : null;
+
+    if (detalleModal && detalleEl.classList.contains('show')) {
+      // Espera a que se cierre y luego muestra confirmación
+      const handler = () => {
+        detalleEl.removeEventListener('hidden.bs.modal', handler);
+        document.activeElement?.blur(); // libera foco antes de nuevo modal
+        if (confirmModal) confirmModal.show();
+      };
+      detalleEl.addEventListener('hidden.bs.modal', handler);
+      detalleModal.hide();
+    } else {
+      document.activeElement?.blur();
+      if (confirmModal) confirmModal.show();
+    }
   });
 
   // Botón de confirmar reserva
@@ -55,11 +71,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const resp = await fetch(`${baseUrl}/index.php?controller=Reserva&action=guardarAjax`, {
         method: 'POST',
+        credentials: 'same-origin',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: form.toString()
       });
 
-      const j = await resp.json();
+      const txt = await resp.text();
+      let j;
+      try {
+        j = JSON.parse(txt);
+      } catch (parseErr) {
+        throw new Error('Respuesta no JSON del servidor: ' + txt.slice(0, 200));
+      }
 
       if (j.ok) {
         if (confirmModal) confirmModal.hide();
@@ -88,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Mostrar modal de error en lugar de alert
       if (errorModal) {
-        document.getElementById('errorReservaMessage').textContent = 'Error al reservar. Inténtalo de nuevo.';
+        document.getElementById('errorReservaMessage').textContent = e.message || 'Error al reservar. Inténtalo de nuevo.';
         errorModal.show();
       }
     } finally {
