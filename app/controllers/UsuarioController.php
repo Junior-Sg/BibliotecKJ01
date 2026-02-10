@@ -25,6 +25,7 @@ class UsuarioController extends BaseController {
 
         $prestamoModelo   = new PrestamoModelo($this->db);
         $historialLectura = $prestamoModelo->obtenerHistorialDeLectura($id);
+        $prestamosActivos = $prestamoModelo->obtenerPrestamosActivosPorUsuario($id);
 
         $usuario         = $this->model->obtenerPorId($id);
         $favoritos       = $this->model->obtenerFavoritos($id);
@@ -41,6 +42,7 @@ class UsuarioController extends BaseController {
             'favoritos_ids'     => $favoritosIds,
             'reservas'          => $reservas,
             'historialLectura'  => $historialLectura,
+            'prestamosActivos'  => $prestamosActivos,
             'notificaciones'    => $notificaciones,
             'totalSinLeer'      => $totalSinLeer
         ]);

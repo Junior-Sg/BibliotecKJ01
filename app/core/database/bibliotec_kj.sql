@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-02-2026 a las 19:05:43
+-- Tiempo de generación: 09-02-2026 a las 21:48:14
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -287,7 +287,7 @@ CREATE TABLE `disponibilidad` (
 --
 
 INSERT INTO `disponibilidad` (`id_disponibilidad`, `id_libro`, `cantidad_disponible`, `id_estado`) VALUES
-(5, 20, 7, 1),
+(5, 20, 8, 1),
 (7, 22, 7, 1),
 (9, 24, 6, 1),
 (10, 25, 4, 1),
@@ -342,7 +342,7 @@ INSERT INTO `disponibilidad` (`id_disponibilidad`, `id_libro`, `cantidad_disponi
 (59, 74, 6, 1),
 (60, 75, 6, 1),
 (61, 76, 6, 1),
-(62, 77, 7, 1),
+(62, 77, 6, 1),
 (63, 78, 7, 1),
 (64, 79, 7, 1),
 (65, 80, 5, 1),
@@ -352,7 +352,7 @@ INSERT INTO `disponibilidad` (`id_disponibilidad`, `id_libro`, `cantidad_disponi
 (69, 84, 7, 1),
 (70, 85, 6, 1),
 (71, 86, 7, 1),
-(72, 87, 7, 1),
+(72, 87, 8, 1),
 (73, 88, 7, 1),
 (74, 89, 7, 1),
 (75, 90, 6, 1),
@@ -367,7 +367,7 @@ INSERT INTO `disponibilidad` (`id_disponibilidad`, `id_libro`, `cantidad_disponi
 (84, 99, 7, 1),
 (85, 100, 9, 1),
 (86, 101, 8, 1),
-(87, 102, 8, 1),
+(87, 102, 9, 1),
 (88, 103, 9, 1),
 (89, 104, 8, 1),
 (90, 105, 8, 1),
@@ -2126,6 +2126,24 @@ CREATE TABLE `notificaciones` (
   `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `notificaciones`
+--
+
+INSERT INTO `notificaciones` (`id_notificacion`, `id_usuario`, `mensaje`, `leido`, `fecha_creacion`) VALUES
+(1, 13, '📘 Has devuelto el libro «2001: Una odisea espacial». Gracias por devolverlo.', 0, '2026-02-09 18:24:53'),
+(2, 14, '📘 Has devuelto el libro «Antes de diciembre». Gracias por devolverlo.', 0, '2026-02-09 18:24:59'),
+(3, 14, '📖 Tu préstamo del libro «Cuentos completos» fue registrado con éxito. Fecha de devolución: 2026-02-16.', 0, '2026-02-09 18:27:54'),
+(4, 14, '📘 Has devuelto el libro «Cuentos completos». Gracias por devolverlo.', 0, '2026-02-09 18:38:47'),
+(5, 14, '📘 Has devuelto el libro «1984». Gracias por devolverlo.', 0, '2026-02-09 18:38:55'),
+(6, 25, '📘 Has devuelto el libro «The Girl with the Dragon Tattoo». Gracias por devolverlo.', 0, '2026-02-09 18:39:07'),
+(7, 14, '📖 Tu préstamo del libro «23 otoños antes de ti» fue registrado con éxito. Fecha de devolución: 2026-02-16.', 0, '2026-02-09 19:52:40'),
+(8, 25, '📖 Tu préstamo del libro «Antes de diciembre» fue registrado con éxito. Fecha de devolución: 2026-02-16.', 0, '2026-02-09 19:54:00'),
+(9, 25, '✅ Tu solicitud de aplazamiento fue aprobada. La nueva fecha de devolución es: 2026-02-22.', 0, '2026-02-09 20:14:56'),
+(10, 1, '📋 Nueva solicitud de aplazamiento:\nUsuario: Junior Santamaria\nLibro: Antes de diciembre\nDías solicitados: 7\nFecha devolución actual: 2026-02-22\nMotivo: vsvwv', 0, '2026-02-09 20:16:13'),
+(11, 25, '✅ Tu solicitud de aplazamiento fue aprobada. La nueva fecha de devolución es: 2026-03-01.', 0, '2026-02-09 20:16:38'),
+(12, 25, '📖 Tu préstamo del libro «23 otoños antes de ti» fue registrado con éxito. Fecha de devolución: 2026-02-16.', 0, '2026-02-09 20:38:50');
+
 -- --------------------------------------------------------
 
 --
@@ -2163,15 +2181,18 @@ INSERT INTO `prestamo` (`id_prestamo`, `id_usuario`, `id_libro`, `fecha_prestamo
 (4, 24, 64, '2026-01-27', '2026-02-03', 'devuelto', 0),
 (5, 14, 180, '2026-01-27', '2026-02-03', 'devuelto', 0),
 (6, 14, 78, '2026-01-27', '2026-02-03', 'devuelto', 0),
-(7, 13, 87, '2026-01-27', '2026-02-03', 'retrasado', 0),
-(8, 14, 64, '2026-01-27', '2026-02-03', 'retrasado', 0),
+(7, 13, 87, '2026-01-27', '2026-02-03', 'devuelto', 0),
+(8, 14, 64, '2026-01-27', '2026-02-03', 'devuelto', 0),
 (9, 25, 115, '2026-01-27', '2026-02-03', 'devuelto', 0),
 (10, 13, 247, '2026-01-27', '2026-02-03', 'retrasado', 0),
 (11, 13, 78, '2026-01-30', '2026-02-06', 'devuelto', 0),
 (12, 25, 87, '2026-01-30', '2026-02-06', 'devuelto', 0),
-(13, 25, 20, '2026-02-02', '2026-02-09', 'activo', 0),
-(14, 14, 102, '2026-02-03', '2026-02-10', 'activo', 0),
-(15, 13, 64, '2026-02-08', '2026-02-15', 'activo', 0);
+(13, 25, 20, '2026-02-02', '2026-02-09', 'devuelto', 0),
+(14, 14, 102, '2026-02-03', '2026-02-10', 'devuelto', 0),
+(15, 13, 64, '2026-02-08', '2026-02-02', 'retrasado', 0),
+(16, 14, 203, '2026-02-09', '2026-02-16', 'devuelto', 0),
+(18, 25, 64, '2026-02-09', '2026-03-01', 'activo', 0),
+(19, 25, 77, '2026-02-09', '2026-02-16', 'activo', 0);
 
 -- --------------------------------------------------------
 
@@ -2200,7 +2221,7 @@ INSERT INTO `reserva` (`id_reserva`, `id_usuario`, `id_libro`, `fecha_reserva`, 
 (8, 25, 87, '2026-01-30', 'prestado'),
 (9, 25, 20, '2026-01-30', 'prestado'),
 (11, 13, 64, '2026-02-05', 'prestado'),
-(12, 14, 203, '2026-02-05', 'pendiente');
+(12, 14, 203, '2026-02-05', 'prestado');
 
 -- --------------------------------------------------------
 
@@ -2244,11 +2265,33 @@ INSERT INTO `rol_user` (`id_usuario`, `id_rol`) VALUES
 (14, 2),
 (15, 2),
 (17, 2),
-(18, 2),
-(21, 2),
 (22, 2),
-(25, 2),
-(26, 2);
+(25, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `solicitud_aplazamiento`
+--
+
+CREATE TABLE `solicitud_aplazamiento` (
+  `id_solicitud` int(11) NOT NULL,
+  `id_prestamo` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `dias_solicitados` int(11) NOT NULL DEFAULT 7,
+  `motivo` text DEFAULT NULL,
+  `estado` enum('pendiente','aprobado','rechazado') DEFAULT 'pendiente',
+  `fecha_solicitud` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_respuesta` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `solicitud_aplazamiento`
+--
+
+INSERT INTO `solicitud_aplazamiento` (`id_solicitud`, `id_prestamo`, `id_usuario`, `dias_solicitados`, `motivo`, `estado`, `fecha_solicitud`, `fecha_respuesta`) VALUES
+(1, 18, 25, 6, '', 'aprobado', '2026-02-09 19:57:40', '2026-02-09 15:14:56'),
+(2, 18, 25, 7, 'vsvwv', 'aprobado', '2026-02-09 20:16:13', '2026-02-09 15:16:38');
 
 -- --------------------------------------------------------
 
@@ -2277,15 +2320,12 @@ INSERT INTO `usuario` (`id_usuario`, `nombre`, `correo`, `contraseña`, `telefon
 (11, 'Eulices Santamaria', 'eulises@gmail.com', '$2y$10$3vhHFdmOLLrKwrxQQCgYZe79DKn4zHCd8ANgfzQ.s56JlSe65hSw.', '3135224574', 'CC', '6708977', '2025-12-10 14:47:44', NULL),
 (12, 'Daniel Suarez', 'daniel@gmail.com', '$2y$10$rw3k/leScaaVhwhZH0lnWucu3naPPF9OUWQ3F1UEqU12XTpEeNTL.', '3124225212', 'CC', '00000000', '2025-12-10 14:47:44', NULL),
 (13, 'Dana Cifuentes', 'Danacici04@gmail.com', '$2y$10$.qFF/QJwrhs8I./1Pu52f.JP6zvW.wTVTCxxbxCw8g0J5hfUOSjZK', '3124750781', 'CC', '1056768630', '2025-12-10 14:47:44', NULL),
-(14, 'junior', 'santamaria@gmail.com', '$2y$10$34mB90rdFzZujUrhdn73W..w9V2HR2JX9uSuMObaEMOaulIOu2UOq', '3152417443', 'CC', '1056769689', '2025-12-10 14:47:44', NULL),
+(14, 'junior', 'santamaria@gmail.com', '$2y$10$34mB90rdFzZujUrhdn73W..w9V2HR2JX9uSuMObaEMOaulIOu2UOq', '3152417443', 'CC', '1', '2025-12-10 14:47:44', NULL),
 (15, 'Daniela Caicedo', 'daniela@gmail.com', '$2y$10$zqElRzVdBsy10oWaMZKCa.htd4o3CBdcwierwl1hddTbytZS66Qxa', '1325255432', 'CC', '123124514154', '2025-12-10 14:47:44', NULL),
 (17, 'Cataliana Gonzales', 'cata@gmail.com', '$2y$10$9xd1TGjTI9yNqK5.E57zHO7Iu8yzYS7cJvupgKxlXy8JGozqsJVSO', '12335469678', 'CC', '12435554862', '2025-12-10 14:47:44', NULL),
-(18, 'Kasandra', '12345@gmail.com', '$2y$10$DRLi09k9JEJVhUL96UYT0Oo9aushFoqxsy7d5Z6KYqf1WU4P62Fju', '3124750781', 'CC', '123456789', '2025-12-10 14:47:44', '😁'),
-(21, 'Kass', 'Kass@gmail.com', '$2y$10$O/2uITXYFSj6.yI3fDd21O7D6ncHFJzGD.RWXy5CVuIXbirwhdnly', '3124750781', 'CC', '1056768630', '2025-12-11 20:29:59', '👩‍🏫'),
 (22, 'Kass', 'kasscifuentes@gmail.com', '$2y$10$5L.T.oBVttAaU28fdCNlNurVi/.GfPC41Y6RWlWmq4RkTDYmCtfZ2', '3124750123', 'CC', '1056768630', '2025-12-11 23:39:11', '🥳'),
-(24, 'Junior Santamaria', 'santamariajunior561@gmail.com\r\n', '$2y$10$jSZRBnWvO7wRzY5hV.6ck.eoQagq71MC2TWdR2VCzIgZ40zNvyQ9G', '3152417443', 'CC', '1056769689', '2026-01-21 20:06:50', '🥳'),
-(25, 'Junior Santamaria', 'santamariajunior561@gmail.com', '$2y$10$.wMK..RRQehaBf.H6WoQA.CpDnfEsrA4yE3Qy9opoOL/scxp7HIQ2', '3152417443', 'CC', '1056769689', '2026-01-27 23:03:42', '😆'),
-(26, 'dsfsdfs', 'admid1@gmail.com', '$2y$10$RLq24EV8T5lEiuEd14uiC.cihhRoaLEarXBsmVTCTtZPcuWePFxB.', '0114000000', 'CC', '00001', '2026-02-02 17:30:07', NULL);
+(24, '', 'santamariajunior561@gmail.com\r\n', '$2y$10$jSZRBnWvO7wRzY5hV.6ck.eoQagq71MC2TWdR2VCzIgZ40zNvyQ9G', '3152417443', 'CC', '10567696', '2026-01-21 20:06:50', '🥳'),
+(25, 'Junior Santamaria', 'santamariajunior561@gmail.com', '$2y$10$.wMK..RRQehaBf.H6WoQA.CpDnfEsrA4yE3Qy9opoOL/scxp7HIQ2', '3152417443', 'CC', '1056769689', '2026-01-27 23:03:42', '😆');
 
 --
 -- Índices para tablas volcadas
@@ -2396,6 +2436,14 @@ ALTER TABLE `rol_user`
   ADD KEY `id_rol` (`id_rol`);
 
 --
+-- Indices de la tabla `solicitud_aplazamiento`
+--
+ALTER TABLE `solicitud_aplazamiento`
+  ADD PRIMARY KEY (`id_solicitud`),
+  ADD KEY `id_prestamo` (`id_prestamo`),
+  ADD KEY `id_usuario` (`id_usuario`);
+
+--
 -- Indices de la tabla `usuario`
 --
 ALTER TABLE `usuario`
@@ -2452,7 +2500,7 @@ ALTER TABLE `libro`
 -- AUTO_INCREMENT de la tabla `notificaciones`
 --
 ALTER TABLE `notificaciones`
-  MODIFY `id_notificacion` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_notificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `permiso`
@@ -2464,7 +2512,7 @@ ALTER TABLE `permiso`
 -- AUTO_INCREMENT de la tabla `prestamo`
 --
 ALTER TABLE `prestamo`
-  MODIFY `id_prestamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id_prestamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `reserva`
@@ -2477,6 +2525,12 @@ ALTER TABLE `reserva`
 --
 ALTER TABLE `rol`
   MODIFY `id_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `solicitud_aplazamiento`
+--
+ALTER TABLE `solicitud_aplazamiento`
+  MODIFY `id_solicitud` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
@@ -2548,6 +2602,13 @@ ALTER TABLE `reserva`
 ALTER TABLE `rol_user`
   ADD CONSTRAINT `rol_user_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`),
   ADD CONSTRAINT `rol_user_ibfk_2` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`);
+
+--
+-- Filtros para la tabla `solicitud_aplazamiento`
+--
+ALTER TABLE `solicitud_aplazamiento`
+  ADD CONSTRAINT `solicitud_aplazamiento_ibfk_1` FOREIGN KEY (`id_prestamo`) REFERENCES `prestamo` (`id_prestamo`),
+  ADD CONSTRAINT `solicitud_aplazamiento_ibfk_2` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

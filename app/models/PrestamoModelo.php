@@ -6,6 +6,7 @@ require_once __DIR__ . '/NotificacionModelo.php';
 class PrestamoModelo {
 
     private $db;
+    private $lastError = '';
 
     public function __construct($db = null) {
         if ($db instanceof mysqli) {
@@ -429,5 +430,236 @@ class PrestamoModelo {
                 $stmt->execute();
             }
         }
+    }
+
+    // ========== MÉTODOS PARA APLAZAMIENTO DE PRÉSTAMOS ==========
+    
+    /**
+     * Registra una solicitud de aplazamiento de entrega
+     */
+    public function registrarSolicitudAplazamiento($idPrestamo, $idUsuario, $diasSolicitados, $motivo = null) {
+        $sql = "INSERT INTO solicitud_aplazamiento (id_prestamo, id_usuario, dias_solicitados, motivo) 
+                VALUES (?, ?, ?, ?)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("iiis", $idPrestamo, $idUsuario, $diasSolicitados, $motivo);
+        return $stmt->execute();
+    }
+
+    /**
+     * Verifica si ya existe una solicitud de aplazamiento pendiente
+     */
+    public function tieneSolicitudPendiente($idPrestamo) {
+        $sql = "SELECT id_solicitud FROM solicitud_aplazamiento 
+                WHERE id_prestamo = ? AND estado = 'pendiente'";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $idPrestamo);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        return $resultado->num_rows > 0;
+    }
+
+    /**
+     * Obtiene todas las solicitudes de aplazamiento pendientes
+     */
+    public function obtenerSolicitudesAplazamientoPendientes() {
+        $sql = "SELECT 
+                    sa.id_solicitud,
+                    sa.id_prestamo,
+                    sa.id_usuario,
+                    u.nombre as nombre_usuario,
+                    u.correo,
+                    l.titulo as titulo_libro,
+                    p.fecha_devolucion,
+                    p.estado as estado_prestamo,
+                    sa.dias_solicitados,
+                    sa.motivo,
+                    sa.fecha_solicitud
+                FROM solicitud_aplazamiento sa
+                JOIN usuario u ON sa.id_usuario = u.id_usuario
+                JOIN prestamo p ON sa.id_prestamo = p.id_prestamo
+                JOIN libro l ON p.id_libro = l.id_libro
+                WHERE sa.estado = 'pendiente'
+                ORDER BY sa.fecha_solicitud DESC";
+        $resultado = $this->db->query($sql);
+        return $resultado->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Aprueba una solicitud de aplazamiento y extiende la fecha de devolución
+     */
+    public function aprobarAplazamiento($idSolicitud, $notaAdmin = null) {
+        $this->db->begin_transaction();
+        
+        try {
+            // 1. Obtener datos de la solicitud
+            $sql = "SELECT id_prestamo, dias_solicitados FROM solicitud_aplazamiento WHERE id_solicitud = ?";
+            $stmt = $this->db->prepare($sql);
+            if ($stmt === false) {
+                throw new Exception('Error prepare solicitud_aplazamiento: ' . $this->db->error);
+            }
+            $stmt->bind_param("i", $idSolicitud);
+            if (!$stmt->execute()) {
+                throw new Exception('Error ejecutando consulta solicitud_aplazamiento: ' . $stmt->error);
+            }
+            $resultado = $stmt->get_result();
+
+            if (!$resultado || $resultado->num_rows === 0) {
+                throw new Exception("Solicitud no encontrada");
+            }
+
+            $solicitud = $resultado->fetch_assoc();
+            $idPrestamo = (int) $solicitud['id_prestamo'];
+            $diasSolicitados = (int) $solicitud['dias_solicitados'];
+            
+            // 2. Obtener la fecha actual de devolución del préstamo
+            $sqlPrestamo = "SELECT fecha_devolucion, id_usuario, id_libro FROM prestamo WHERE id_prestamo = ? FOR UPDATE";
+            $stmtPrestamo = $this->db->prepare($sqlPrestamo);
+            if ($stmtPrestamo === false) {
+                throw new Exception('Error prepare prestamo: ' . $this->db->error);
+            }
+            $stmtPrestamo->bind_param("i", $idPrestamo);
+            if (!$stmtPrestamo->execute()) {
+                throw new Exception('Error ejecutando consulta prestamo: ' . $stmtPrestamo->error);
+            }
+            $resPrestamo = $stmtPrestamo->get_result();
+            if (!$resPrestamo || $resPrestamo->num_rows === 0) {
+                throw new Exception("Préstamo no encontrado");
+            }
+            $prestamo = $resPrestamo->fetch_assoc();
+
+            // 3. Calcular nueva fecha de devolución usando DateTime (más robusto)
+            $fechaActualDevolucion = $prestamo['fecha_devolucion'] ?? null;
+            try {
+                $dt = new DateTime($fechaActualDevolucion ?: 'now');
+            } catch (Exception $e) {
+                $dt = new DateTime('now');
+            }
+            $dt->modify('+' . $diasSolicitados . ' days');
+            $nuevaFecha = $dt->format('Y-m-d');
+            
+            // 4. Actualizar la fecha de devolución del préstamo
+            $sqlUpdate = "UPDATE prestamo SET fecha_devolucion = ? WHERE id_prestamo = ?";
+            $stmtUpdate = $this->db->prepare($sqlUpdate);
+            if ($stmtUpdate === false) {
+                throw new Exception('Error prepare update prestamo: ' . $this->db->error);
+            }
+            $stmtUpdate->bind_param("si", $nuevaFecha, $idPrestamo);
+
+            if (!$stmtUpdate->execute()) {
+                throw new Exception("Error al actualizar el préstamo: " . $stmtUpdate->error);
+            }
+            
+            // 5. Actualizar la solicitud como aprobada
+            $ahora = date('Y-m-d H:i:s');
+            $sqlAprobada = "UPDATE solicitud_aplazamiento SET estado = 'aprobado', fecha_respuesta = ? WHERE id_solicitud = ?";
+            $stmtAprobada = $this->db->prepare($sqlAprobada);
+            if ($stmtAprobada === false) {
+                throw new Exception('Error prepare solicitud_aplazamiento update: ' . $this->db->error);
+            }
+            $stmtAprobada->bind_param("si", $ahora, $idSolicitud);
+
+            if (!$stmtAprobada->execute()) {
+                throw new Exception("Error al actualizar la solicitud: " . $stmtAprobada->error);
+            }
+            
+            // 6. Crear notificación para el usuario
+            $notificacionModelo = new NotificacionModelo($this->db);
+            $mensaje = "✅ Tu solicitud de aplazamiento ha sido APROBADA. "
+                     . "Nueva fecha de devolución: {$nuevaFecha}.";
+            // Intentar crear notificación; si falla, registrarlo pero no romper la transacción
+            try {
+                $notificacionModelo->crearNotificacion((int)$prestamo['id_usuario'], $mensaje);
+            } catch (Exception $e) {
+                error_log('Error creando notificación: ' . $e->getMessage());
+            }
+            
+            $this->db->commit();
+            return true;
+            
+        } catch (Exception $e) {
+            $this->db->rollback();
+            $this->lastError = $e->getMessage();
+            error_log("Error en aprobarAplazamiento: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Retorna el último mensaje de error ocurrido en el modelo
+     */
+    public function getLastError() {
+        return $this->lastError;
+    }
+
+    /**
+     * Rechaza una solicitud de aplazamiento
+     */
+    public function rechazarAplazamiento($idSolicitud, $notaAdmin = null) {
+        $this->db->begin_transaction();
+        
+        try {
+            // 1. Obtener datos de la solicitud
+            $sql = "SELECT id_usuario FROM solicitud_aplazamiento WHERE id_solicitud = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param("i", $idSolicitud);
+            $stmt->execute();
+            $resultado = $stmt->get_result();
+            
+            if ($resultado->num_rows === 0) {
+                throw new Exception("Solicitud no encontrada");
+            }
+            
+            $solicitud = $resultado->fetch_assoc();
+            
+            // 2. Actualizar la solicitud como rechazada
+            $ahora = date('Y-m-d H:i:s');
+            $sqlRechazada = "UPDATE solicitud_aplazamiento SET estado = 'rechazado', fecha_respuesta = ? WHERE id_solicitud = ?";
+            $stmtRechazada = $this->db->prepare($sqlRechazada);
+            $stmtRechazada->bind_param("si", $ahora, $idSolicitud);
+            
+            if (!$stmtRechazada->execute()) {
+                throw new Exception("Error al rechazar la solicitud");
+            }
+            
+            // 3. Crear notificación para el usuario
+            $notificacionModelo = new NotificacionModelo($this->db);
+            $mensaje = "❌ Tu solicitud de aplazamiento ha sido RECHAZADA.";
+            if ($notaAdmin) {
+                $mensaje .= " Motivo: {$notaAdmin}";
+            }
+            $notificacionModelo->crearNotificacion($solicitud['id_usuario'], $mensaje);
+            
+            $this->db->commit();
+            return true;
+            
+        } catch (Exception $e) {
+            $this->db->rollback();
+            error_log("Error en rechazarAplazamiento: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Obtiene los préstamos activos/retrasados de un usuario (para el historial)
+     */
+    public function obtenerPrestamosActivosPorUsuario($idUsuario) {
+        $sql = "SELECT 
+                    p.id_prestamo,
+                    p.fecha_prestamo,
+                    p.fecha_devolucion,
+                    p.estado,
+                    l.id_libro,
+                    l.titulo,
+                    l.Imagen
+                FROM prestamo p
+                JOIN libro l ON p.id_libro = l.id_libro
+                WHERE p.id_usuario = ? AND p.estado IN ('activo', 'retrasado')
+                ORDER BY p.fecha_devolucion ASC";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $idUsuario);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        return $resultado->fetch_all(MYSQLI_ASSOC);
     }
 }
