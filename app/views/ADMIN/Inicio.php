@@ -310,7 +310,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
       document.getElementById('solicitudDias').textContent = '+' + solicitud.dias_solicitados + ' días';
       document.getElementById('solicitudMotivo').textContent = solicitud.motivo || '(Sin especificar)';
       document.getElementById('solicitudFechaSolicitud').textContent = new Date(solicitud.fecha_solicitud).toLocaleString('es-ES');
-      document.getElementById('notaAdmin').value = '';
       document.getElementById('solicitudError').classList.add('d-none');
 
       const modalElement = document.getElementById('modalSolicitudAplazamiento');

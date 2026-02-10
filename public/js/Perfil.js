@@ -306,13 +306,25 @@ function enviarSolicitudAplazamiento(idPrestamo) {
         method: 'POST',
         body: formData
     })
-    .then(r => {
+    .then(async r => {
         const contentType = r.headers.get('content-type');
+        console.log('Response status:', r.status, 'Content-Type:', contentType);
+        
         if (!contentType || !contentType.includes('application/json')) {
-            throw new Error('La respuesta no es JSON. Recibido: ' + contentType);
+            const text = await r.text().catch(() => 'No body');
+            throw new Error('La respuesta no es JSON. Recibido: ' + contentType + ' - ' + text);
         }
-        if (!r.ok) throw new Error('HTTP ' + r.status + ': ' + r.statusText);
-        return r.json();
+        
+        // Parsear JSON sin depender de r.ok
+        const data = await r.json();
+        
+        // Ahora checar el status
+        if (!r.ok) {
+            const msg = data.message || ('HTTP ' + r.status);
+            throw new Error(msg);
+        }
+        
+        return data;
     })
     .then(data => {
         if (data.success) {

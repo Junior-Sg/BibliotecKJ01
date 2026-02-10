@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config/Conexion.php';
 require_once __DIR__ . '/NotificacionModelo.php';
+require_once __DIR__ . '/../helpers/Mailer.php';
 
 
 class PrestamoModelo {
@@ -511,8 +512,12 @@ class PrestamoModelo {
             $idPrestamo = (int) $solicitud['id_prestamo'];
             $diasSolicitados = (int) $solicitud['dias_solicitados'];
             
-            // 2. Obtener la fecha actual de devolución del préstamo
-            $sqlPrestamo = "SELECT fecha_devolucion, id_usuario, id_libro FROM prestamo WHERE id_prestamo = ? FOR UPDATE";
+            // 2. Obtener la fecha actual de devolución del préstamo Y EMAIL DEL USUARIO
+            $sqlPrestamo = "SELECT p.fecha_devolucion, p.id_usuario, p.id_libro, l.titulo, u.correo, u.nombre 
+                           FROM prestamo p
+                           JOIN libro l ON p.id_libro = l.id_libro
+                           JOIN usuario u ON p.id_usuario = u.id_usuario
+                           WHERE p.id_prestamo = ? FOR UPDATE";
             $stmtPrestamo = $this->db->prepare($sqlPrestamo);
             if ($stmtPrestamo === false) {
                 throw new Exception('Error prepare prestamo: ' . $this->db->error);
@@ -548,6 +553,17 @@ class PrestamoModelo {
             if (!$stmtUpdate->execute()) {
                 throw new Exception("Error al actualizar el préstamo: " . $stmtUpdate->error);
             }
+
+                // Si el préstamo estaba retrasado, cambiar a activo
+                $sqlEstado = "UPDATE prestamo SET estado = 'activo' WHERE id_prestamo = ? AND estado = 'retrasado'";
+                $stmtEstado = $this->db->prepare($sqlEstado);
+                if ($stmtEstado === false) {
+                    throw new Exception('Error prepare update estado prestamo: ' . $this->db->error);
+                }
+                $stmtEstado->bind_param("i", $idPrestamo);
+                if (!$stmtEstado->execute()) {
+                    throw new Exception("Error al actualizar estado del préstamo: " . $stmtEstado->error);
+                }
             
             // 5. Actualizar la solicitud como aprobada
             $ahora = date('Y-m-d H:i:s');
@@ -562,7 +578,7 @@ class PrestamoModelo {
                 throw new Exception("Error al actualizar la solicitud: " . $stmtAprobada->error);
             }
             
-            // 6. Crear notificación para el usuario
+            // 6. Crear notificación para el usuario y enviar email
             $notificacionModelo = new NotificacionModelo($this->db);
             $mensaje = "✅ Tu solicitud de aplazamiento ha sido APROBADA. "
                      . "Nueva fecha de devolución: {$nuevaFecha}.";
@@ -571,6 +587,28 @@ class PrestamoModelo {
                 $notificacionModelo->crearNotificacion((int)$prestamo['id_usuario'], $mensaje);
             } catch (Exception $e) {
                 error_log('Error creando notificación: ' . $e->getMessage());
+            }
+            
+            // Enviar email si tenemos correo disponible
+            if (!empty($prestamo['correo'])) {
+                try {
+                    $emailEnviado = $this->enviarEmailAplazamientoAprobado(
+                        $prestamo['correo'],
+                        $prestamo['nombre'],
+                        $prestamo['titulo'],
+                        $nuevaFecha,
+                        $diasSolicitados
+                    );
+                    if ($emailEnviado) {
+                        error_log('✓ Email de aplazamiento enviado a: ' . $prestamo['correo']);
+                    } else {
+                        error_log('✗ Fallo al enviar email de aplazamiento a: ' . $prestamo['correo']);
+                    }
+                } catch (Exception $e) {
+                    error_log('✗ Exception enviando email de aplazamiento: ' . $e->getMessage());
+                }
+            } else {
+                error_log('⚠ No hay correo disponible para usuario ID: ' . $prestamo['id_usuario']);
             }
             
             $this->db->commit();
@@ -662,4 +700,46 @@ class PrestamoModelo {
         $resultado = $stmt->get_result();
         return $resultado->fetch_all(MYSQLI_ASSOC);
     }
+
+    /**
+     * Envía email al usuario cuando se aprueba su solicitud de aplazamiento
+     */
+    private function enviarEmailAplazamientoAprobado($email, $nombre, $tituloLibro, $nuevaFecha, $diasSolicitados) {
+        try {
+            error_log('🔍 Iniciando envío de email de aplazamiento a: ' . $email);
+            $mailer = new Mailer();
+            $asunto = "📚 Tu aplazamiento de entrega ha sido aprobado";
+            
+            $contenido = "
+                <h2>¡Buenas noticias, $nombre!</h2>
+                <p>Tu solicitud de aplazamiento para la devolución del libro <strong>«$tituloLibro»</strong> ha sido <strong style='color: green;'>✅ APROBADA</strong>.</p>
+                
+                <div style='background-color: #f0f8ff; padding: 15px; border-left: 4px solid #4CAF50; margin: 20px 0;'>
+                    <p><strong>📖 Detalles del aplazamiento:</strong></p>
+                    <ul>
+                        <li><strong>Libro:</strong> $tituloLibro</li>
+                        <li><strong>Días adicionales:</strong> $diasSolicitados días</li>
+                        <li><strong>Nueva fecha de devolución:</strong> " . date('d/m/Y', strtotime($nuevaFecha)) . "</li>
+                    </ul>
+                </div>
+                
+                <p>Por favor, recuerda devolver el libro antes de la nueva fecha. Si tienes problemas o necesitas otra prórroga, contáctanos.</p>
+                <p>¡Gracias por usar BibliotecKJ!</p>
+            ";
+            
+            $resultado = $mailer->send($email, $asunto, $contenido, true);
+            
+            if ($resultado) {
+                error_log('✅ Email ENVIADO exitosamente a: ' . $email);
+            } else {
+                error_log('❌ Mailer reportó fallo al enviar email a: ' . $email);
+            }
+            
+            return $resultado;
+        } catch (Exception $e) {
+            error_log('❌ Exception en enviarEmailAplazamientoAprobado: ' . $e->getMessage());
+            return false;
+        }
+    }
 }
+
