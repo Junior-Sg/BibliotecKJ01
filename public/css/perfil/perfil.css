@@ -1,16 +1,16 @@
 :root {
   /* Paleta de colores "Moderno Amaderado" */
-  --bg-light: #f7f5f2;         /* Un blanco roto, como papel antiguo o abedul claro */
-  --bg-secondary: #e8dcd0;     /* Tono arena/madera clara, para fondos sutiles */
-  --primary-brown: #6B4F4B;    /* Marrón nogal, para elementos principales */
-  --accent-gold: #c89c5d;      /* Un toque dorado/latón para acentos y botones */
-  --dark-wood: #3d2817;        /* Marrón muy oscuro, casi negro, para texto y detalles */
+  --bg-light: #f7f5f2;
+  --bg-secondary: #e8dcd0;
+  --primary-brown: #6B4F4B;
+  --accent-gold: #c89c5d;
+  --dark-wood: #3d2817;
   --text-dark: #3d2817;
   --text-muted: #6b4a3a;
   --white: #ffffff;
-  --border-color: #d4c4b0;     /* Color para bordes sutiles */
-  --danger-color: #a9541a;     /* Un rojo terroso para acciones de eliminación */
-  --success-color: #44696a;    /* Un verde azulado apagado para éxito */
+  --border-color: #d4c4b0;
+  --danger-color: #a9541a;
+  --success-color: #44696a;
 }
 
 body {
@@ -18,6 +18,7 @@ body {
   font-family: 'Poppins', sans-serif;
   color: var(--text-dark);
   line-height: 1.6;
+  min-height: 100vh;
 }
 
 .profile-content {
@@ -26,10 +27,15 @@ body {
   border: 1px solid var(--border-color);
   border-top: none;
   box-shadow: 0 8px 20px rgba(61, 40, 23, 0.08);
+  padding: 20px;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .custom-tabs {
   border-bottom: none;
+  flex-wrap: wrap;
+  gap: 5px;
 }
 
 .custom-tabs .nav-link {
@@ -37,11 +43,13 @@ body {
   font-weight: 600;
   border: none;
   padding: 12px 18px;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, background 0.2s ease;
+  border-radius: 8px;
 }
 
 .custom-tabs .nav-link:hover {
   color: var(--accent-gold);
+  background: rgba(200, 156, 93, 0.1);
 }
 
 .custom-tabs .nav-link.active {
@@ -50,11 +58,21 @@ body {
   border-radius: 12px 12px 0 0;
 }
 
+@media (max-width: 576px) {
+  .custom-tabs .nav-link.active {
+    border-radius: 8px;
+  }
+}
+
 .card {
   border-radius: 16px;
   border: 1px solid var(--border-color);
   background: var(--white);
   box-shadow: 0 6px 18px rgba(61, 40, 23, 0.07);
+}
+
+.card-body {
+  padding: 20px;
 }
 
 #perfilAvatarEmoji {
@@ -68,16 +86,23 @@ body {
   background: var(--accent-gold);
   border: none;
   font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .btn-primary:hover {
-  background: #b48b51; /* Un dorado más oscuro */
+  background: #b48b51;
+  transform: translateY(-2px);
 }
 
 .btn-outline-secondary {
   border-color: var(--primary-brown);
   color: var(--primary-brown);
   font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
 .btn-outline-secondary:hover {
@@ -89,6 +114,11 @@ body {
   background: var(--white);
   border-radius: 16px;
   padding: 20px;
+  overflow-x: auto;
+}
+
+.list-group {
+  overflow-x: auto;
 }
 
 .list-group-item {
@@ -112,6 +142,8 @@ body {
   border-color: var(--accent-gold);
   color: var(--accent-gold);
   font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px;
 }
 
 .btn-outline-primary:hover {
@@ -123,6 +155,8 @@ body {
   border-color: var(--danger-color);
   color: var(--danger-color);
   font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px;
 }
 
 .btn-outline-danger:hover {
@@ -134,6 +168,8 @@ body {
   border-color: var(--success-color);
   color: var(--success-color);
   font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px;
 }
 
 .btn-outline-success:hover {
@@ -155,16 +191,22 @@ body {
 .btn-eliminar-fav {
   background: var(--danger-color);
   border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
 }
 
 .btn-eliminar-fav:hover {
-  background: #8c4515; /* Rojo terroso más oscuro */
+  background: #8c4515;
 }
 
 .table {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(61, 40, 23, 0.08);
+  width: 100%;
+  min-width: 600px;
 }
 
 .table thead {
@@ -176,10 +218,19 @@ body {
   background-color: #faf6f1;
 }
 
+.table td,
+.table th {
+  padding: 12px 15px;
+  vertical-align: middle;
+}
+
 .btn-add-favorito {
   background: var(--accent-gold);
   border: none;
   color: var(--white);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
 }
 
 .btn-add-favorito:hover {
@@ -192,6 +243,7 @@ body {
   display: inline-block;
   padding: 4px;
   border-radius: 8px;
+  font-size: 1.5rem;
 }
 
 .emoji-choice:hover {
@@ -206,4 +258,307 @@ body {
 
 .emoji-choice.selected:hover {
   background: #b48b51;
+}
+
+/* 📱 RESPONSIVE */
+
+/* Tablets medianas */
+@media (max-width: 992px) {
+  .profile-content {
+    padding: 18px;
+    border-radius: 12px;
+  }
+  
+  .custom-tabs .nav-link {
+    padding: 10px 15px;
+    font-size: 15px;
+  }
+  
+  .card-body {
+    padding: 18px;
+  }
+  
+  .btn-primary,
+  .btn-outline-secondary {
+    padding: 8px 18px;
+    font-size: 14px;
+  }
+  
+  .table td,
+  .table th {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+}
+
+/* Tablets pequeñas */
+@media (max-width: 768px) {
+  .profile-content {
+    padding: 15px;
+    border-radius: 10px;
+    margin: 0 10px;
+  }
+  
+  .custom-tabs {
+    justify-content: center;
+  }
+  
+  .custom-tabs .nav-link {
+    padding: 8px 12px;
+    font-size: 14px;
+    flex: 1 1 auto;
+    text-align: center;
+    min-width: 100px;
+  }
+  
+  .card-body {
+    padding: 15px;
+  }
+  
+  #perfilAvatarEmoji {
+    font-size: 28px;
+  }
+  
+  .btn-primary,
+  .btn-outline-secondary {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  
+  .notificaciones-container {
+    padding: 15px;
+  }
+  
+  .table {
+    font-size: 14px;
+  }
+  
+  .table td,
+  .table th {
+    padding: 8px 10px;
+  }
+  
+  body {
+    font-size: 15px;
+  }
+}
+
+/* Phones */
+@media (max-width: 576px) {
+  .profile-content {
+    padding: 12px;
+    border-radius: 8px;
+    margin: 0 8px;
+  }
+  
+  .custom-tabs {
+    gap: 4px;
+  }
+  
+  .custom-tabs .nav-link {
+    padding: 8px 10px;
+    font-size: 12px;
+    min-width: auto;
+  }
+  
+  .card-body {
+    padding: 12px;
+  }
+  
+  #perfilAvatarEmoji {
+    font-size: 24px;
+  }
+  
+  .btn-primary,
+  .btn-outline-secondary {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+  
+  .notificaciones-container {
+    padding: 12px;
+    border-radius: 12px;
+  }
+  
+  .list-group-item {
+    padding: 12px;
+  }
+  
+  .btn-outline-primary,
+  .btn-outline-danger,
+  .btn-outline-success,
+  .btn-add-favorito,
+  .btn-eliminar-fav {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+  
+  body {
+    font-size: 14px;
+  }
+  
+  .favorito-card .card {
+    margin-bottom: 15px;
+  }
+}
+
+/* Phones pequeños */
+@media (max-width: 400px) {
+  .profile-content {
+    padding: 10px;
+    border-radius: 6px;
+    margin: 0 5px;
+  }
+  
+  .custom-tabs .nav-link {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+  
+  .card-body {
+    padding: 10px;
+  }
+  
+  #perfilAvatarEmoji {
+    font-size: 20px;
+  }
+  
+  .btn-primary,
+  .btn-outline-secondary {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+  
+  body {
+    font-size: 13px;
+  }
+  
+  .emoji-choice {
+    font-size: 1.2rem;
+    padding: 3px;
+  }
+}
+
+/* Ajuste para notch y safe areas */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  
+  .profile-content {
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  }
+}
+
+/* Landscape en phones */
+@media (max-height: 500px) and (orientation: landscape) {
+  .profile-content {
+    padding: 10px;
+  }
+  
+  .custom-tabs .nav-link {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  
+  .card-body {
+    padding: 10px;
+  }
+  
+  body {
+    font-size: 13px;
+  }
+  
+  .btn-primary,
+  .btn-outline-secondary {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+}
+
+/* Reducir animaciones */
+@media (prefers-reduced-motion: reduce) {
+  .list-group-item,
+  .btn-primary,
+  .btn-outline-secondary,
+  .btn-eliminar-fav,
+  .btn-add-favorito,
+  .favorito-card .card,
+  .emoji-choice {
+    transition: none;
+  }
+  
+  .list-group-item:hover,
+  .btn-primary:hover,
+  .btn-outline-secondary:hover {
+    transform: none;
+  }
+  
+  .favorito-card .card:hover {
+    transform: none;
+  }
+}
+
+/* Mejora de accesibilidad touch */
+@media (hover: none) {
+  .list-group-item:active {
+    transform: scale(0.98);
+  }
+  
+  .btn-primary:active,
+  .btn-outline-secondary:active {
+    transform: scale(0.95);
+  }
+  
+  .favorito-card .card:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Scroll horizontal para tablas en móviles */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+/* Ajuste de columnas Bootstrap para responsive */
+.row {
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+.row > * {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+@media (max-width: 576px) {
+  .row {
+    margin-left: -8px;
+    margin-right: -8px;
+  }
+  
+  .row > * {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
 }
