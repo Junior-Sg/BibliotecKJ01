@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-01-2026 a las 16:28:32
+-- Tiempo de generación: 09-02-2026 a las 21:48:14
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Versión de PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -189,7 +189,85 @@ INSERT INTO `autor` (`id_autor`, `nombre`) VALUES
 (159, 'Horacio Quiroga'),
 (160, 'Hans Christian Andersen'),
 (161, 'Jacob'),
-(162, 'Wilhelm Grimm');
+(162, 'Wilhelm Grimm'),
+(163, 'Ana Frank'),
+(164, 'Dale Carnegie'),
+(165, 'Stephen R. Covey'),
+(166, 'Eckhart Tolle'),
+(167, 'Marie Kondo'),
+(168, 'Jorge Bucay'),
+(169, 'Rafael Santandreu'),
+(170, 'Wayne Dyer'),
+(171, 'Joseph Murphy'),
+(172, 'Robert Kiyosaki'),
+(173, 'Timothy Ferriss'),
+(174, 'Napoleon Hill'),
+(175, 'Robin Sharma'),
+(176, 'Victor Hugo Manzanilla'),
+(177, 'Ichiro Kishimi & Fumitake Koga'),
+(178, 'Tal Ben-Shahar'),
+(179, 'Rhonda Byrne'),
+(180, 'Bessel van der Kolk'),
+(181, 'Daniel Goleman'),
+(182, 'Frank Suárez'),
+(183, 'Begoña Merino'),
+(184, 'Marcos Vázquez'),
+(185, 'Carlos Ríos'),
+(186, 'Héctor García'),
+(187, 'Francesc Miralles'),
+(188, 'Dave Asprey'),
+(189, 'Sun Tzu'),
+(190, 'Manuel Antonio Carreño'),
+(191, 'Inglés	Dale Carnegie'),
+(192, 'Gerda Wagner'),
+(193, 'Paulina Cocina'),
+(194, 'Carlos Ossés'),
+(195, 'Cruz Roja Internacional'),
+(196, 'Maria Àngels Anglada'),
+(197, 'varios autores'),
+(198, 'Jack Schwartz'),
+(199, 'José Manuel'),
+(200, 'Vázquez Díez'),
+(201, 'Vicente Marco'),
+(202, 'Marco Iudicello'),
+(203, 'Michelle Obama'),
+(204, 'Barack Obama'),
+(205, 'Nelson Mandela'),
+(206, 'Frida Kahlo'),
+(207, 'Walter Isaacson'),
+(208, 'Isabel Thomas'),
+(209, 'Katja Spitzer'),
+(210, 'Madre Teresa De Calcuta'),
+(211, 'Malala Yousafzai'),
+(212, 'Andre Agassi'),
+(213, 'John Carlin'),
+(214, 'Kobe Bryant'),
+(215, 'Roland Lazenby'),
+(216, 'Héctor Abad Faciolince'),
+(217, 'Franz Kafka'),
+(218, 'Isaac Newton'),
+(219, 'Charles Darwin'),
+(220, 'Alemán	Sigmund Freud'),
+(221, 'Albert Einstein'),
+(222, 'Richard Dawkins'),
+(223, 'Leo Corry'),
+(224, 'Stephen Hawking'),
+(225, 'Thomas S. Kuhn'),
+(226, 'Oliver Sacks'),
+(227, 'Antonio Damasio'),
+(228, 'Eric Kandel'),
+(229, 'Siddhartha Mukherjee'),
+(230, 'Simone de Beauvoir'),
+(231, 'Karl Marx'),
+(232, 'Adam Smith'),
+(233, 'Real Academia Española'),
+(234, 'Oxford University Press'),
+(235, 'VV.AA.'),
+(236, 'Pierre Larousse'),
+(237, 'Michael Kent'),
+(238, 'José Ferrater Mora'),
+(239, 'Juan Eduardo Cirlot'),
+(240, 'Pierre Grimal');
 
 -- --------------------------------------------------------
 
@@ -251,7 +329,7 @@ INSERT INTO `disponibilidad` (`id_disponibilidad`, `id_libro`, `cantidad_disponi
 (46, 61, 6, 1),
 (47, 62, 8, 1),
 (48, 63, 7, 1),
-(49, 64, 7, 1),
+(49, 64, 5, 1),
 (50, 65, 7, 1),
 (51, 66, 8, 1),
 (52, 67, 8, 1),
@@ -264,7 +342,7 @@ INSERT INTO `disponibilidad` (`id_disponibilidad`, `id_libro`, `cantidad_disponi
 (59, 74, 6, 1),
 (60, 75, 6, 1),
 (61, 76, 6, 1),
-(62, 77, 7, 1),
+(62, 77, 6, 1),
 (63, 78, 7, 1),
 (64, 79, 7, 1),
 (65, 80, 5, 1),
@@ -434,7 +512,7 @@ INSERT INTO `disponibilidad` (`id_disponibilidad`, `id_libro`, `cantidad_disponi
 (229, 244, 8, 1),
 (230, 245, 7, 1),
 (231, 246, 7, 1),
-(232, 247, 10, 1),
+(232, 247, 9, 1),
 (233, 248, 8, 1),
 (234, 249, 9, 1),
 (235, 250, 9, 1),
@@ -448,7 +526,95 @@ INSERT INTO `disponibilidad` (`id_disponibilidad`, `id_libro`, `cantidad_disponi
 (243, 258, 8, 1),
 (244, 259, 8, 1),
 (245, 260, 9, 1),
-(246, 261, 9, 1);
+(246, 261, 9, 1),
+(247, 262, 5, 1),
+(248, 263, 6, 1),
+(249, 264, 5, 1),
+(250, 265, 6, 1),
+(251, 266, 7, 1),
+(253, 268, 6, 1),
+(254, 269, 5, 1),
+(255, 270, 6, 1),
+(256, 271, 7, 1),
+(257, 272, 6, 1),
+(258, 273, 5, 1),
+(259, 274, 6, 1),
+(260, 275, 7, 1),
+(261, 276, 5, 1),
+(262, 277, 5, 1),
+(263, 278, 6, 1),
+(264, 279, 6, 1),
+(265, 280, 5, 1),
+(266, 281, 5, 1),
+(267, 282, 5, 1),
+(268, 283, 7, 1),
+(269, 284, 5, 1),
+(270, 285, 6, 1),
+(271, 286, 6, 1),
+(272, 287, 6, 1),
+(273, 288, 5, 1),
+(274, 289, 7, 1),
+(275, 290, 6, 1),
+(276, 291, 5, 1),
+(277, 292, 6, 1),
+(278, 293, 5, 1),
+(279, 294, 6, 1),
+(280, 295, 7, 1),
+(281, 296, 6, 1),
+(282, 297, 5, 1),
+(283, 298, 5, 1),
+(284, 299, 6, 1),
+(285, 300, 7, 1),
+(286, 301, 6, 1),
+(287, 302, 6, 1),
+(288, 303, 5, 1),
+(289, 304, 7, 1),
+(290, 305, 6, 1),
+(291, 306, 5, 1),
+(292, 307, 6, 1),
+(293, 308, 5, 1),
+(294, 309, 7, 1),
+(295, 310, 7, 1),
+(296, 311, 5, 1),
+(297, 312, 8, 1),
+(298, 313, 6, 1),
+(299, 314, 7, 1),
+(300, 315, 5, 1),
+(301, 316, 8, 1),
+(302, 317, 8, 1),
+(303, 318, 6, 1),
+(304, 319, 8, 1),
+(305, 320, 5, 1),
+(306, 321, 8, 1),
+(307, 322, 7, 1),
+(308, 323, 7, 1),
+(309, 324, 7, 1),
+(310, 325, 8, 1),
+(311, 326, 7, 1),
+(312, 327, 8, 1),
+(313, 328, 7, 1),
+(314, 329, 7, 1),
+(315, 330, 8, 1),
+(316, 331, 5, 1),
+(317, 332, 8, 1),
+(318, 333, 8, 1),
+(319, 334, 7, 1),
+(320, 335, 8, 1),
+(321, 336, 7, 1),
+(322, 337, 8, 1),
+(323, 338, 7, 1),
+(324, 339, 7, 1),
+(325, 340, 7, 1),
+(326, 341, 7, 1),
+(327, 342, 7, 1),
+(328, 343, 7, 1),
+(329, 344, 5, 1),
+(330, 345, 6, 1),
+(331, 346, 6, 1),
+(332, 347, 7, 1),
+(333, 348, 6, 1),
+(334, 349, 8, 1),
+(335, 350, 7, 1);
 
 -- --------------------------------------------------------
 
@@ -544,7 +710,53 @@ INSERT INTO `editorial` (`id_editorial`, `nombre`) VALUES
 (81, 'BEASCOA'),
 (82, 'Libsa'),
 (83, 'Loqueleo'),
-(84, 'Exodo');
+(84, 'Exodo'),
+(85, 'Paidós'),
+(86, 'Gaia'),
+(87, 'Aguila'),
+(88, 'Martínez Roca, Madrid'),
+(89, 'Aguilar'),
+(90, 'Grupo Nelson'),
+(91, 'Zenith'),
+(92, 'Diana'),
+(93, 'Urano'),
+(94, 'Eleftheria'),
+(95, 'Penguin'),
+(96, 'Metabolic press'),
+(97, 'Gaia Ediciones'),
+(98, 'Anaya Multimedia'),
+(99, 'Rodale Books'),
+(100, 'Editorial Blanco Y Negro'),
+(101, 'Skala'),
+(102, 'ndependently Published'),
+(103, 'ALTEA'),
+(104, 'Hermann Blume Ediciones'),
+(105, 'Libros Blume'),
+(106, 'Icb Editores'),
+(107, 'Martinez Roca'),
+(108, 'Berenice'),
+(109, 'De Vecchi Ediciones'),
+(110, 'Debate'),
+(111, 'Abacus'),
+(112, 'Cangrejo Editores'),
+(113, 'Blume'),
+(114, 'Duomo Ediciones'),
+(115, 'Indicios'),
+(116, 'Back Bay Books'),
+(117, 'Benediction Classics'),
+(118, 'Editorial Bruño'),
+(119, 'Estímulos matemáticos'),
+(120, 'Crítica'),
+(121, 'Fondo de Cultura Económica'),
+(122, 'Katz'),
+(123, 'Editorial Skla'),
+(124, 'Espasa'),
+(125, 'Oxford University Press'),
+(126, 'espasa calpe'),
+(127, 'Larousse'),
+(128, 'Kingkolor'),
+(129, 'Paidotribo'),
+(130, 'Varios');
 
 -- --------------------------------------------------------
 
@@ -585,7 +797,8 @@ CREATE TABLE `favorito` (
 --
 
 INSERT INTO `favorito` (`id_favorito`, `id_usuario`, `id_libro`, `created_at`) VALUES
-(2, 1, 87, '2026-01-18 04:44:02');
+(5, 25, 115, '2026-01-30 20:23:22'),
+(6, 25, 87, '2026-01-30 20:28:45');
 
 -- --------------------------------------------------------
 
@@ -616,7 +829,27 @@ INSERT INTO `genero` (`id_genero`, `nombre`) VALUES
 (23, 'Infantil'),
 (24, 'Memorias Biografías'),
 (25, 'Paranormal'),
-(26, 'Poesía');
+(26, 'Poesía'),
+(27, 'Autoayuda y superación personal'),
+(28, 'Libros prácticos'),
+(29, 'Espiritualidad'),
+(30, 'Psicología'),
+(31, 'Finanzas'),
+(32, 'Motivación'),
+(33, 'Filosofía'),
+(34, 'Salud y deporte'),
+(35, 'Autoayuda'),
+(36, 'Nutrición'),
+(37, 'Cocina'),
+(38, 'Estrategia'),
+(39, 'Arte'),
+(40, 'Salud'),
+(41, 'Deporte'),
+(42, 'política'),
+(43, 'Técnica'),
+(44, 'Religión'),
+(45, 'Libros técnicos y especializados'),
+(46, 'De consultas y referencias');
 
 -- --------------------------------------------------------
 
@@ -695,7 +928,7 @@ INSERT INTO `libro` (`id_libro`, `titulo`, `Estante`, `año_publicacion`, `id_ed
 (74, 'Dímelo con besos', 'C013', '2022', 32, 6, '1768605024_L53.png', 'El cierre de la trilogía muestra la evolución emocional de los protagonistas. Amor, compromiso y madurez emocional marcan el final.'),
 (75, 'Hasta que nos quedemos sin estrellas', 'C014', '2022', 12, 6, '1768605224_L54.png', 'Dos jóvenes marcados por el pasado encuentran refugio el uno en el otro. Una historia sensible sobre amor, pérdida y esperanza.'),
 (76, 'El arte de ser nosotros', 'C015', '2023', 12, 6, '1768605339_L55.png', 'Un romance construido a partir de la amistad y la comprensión mutua. La novela aborda el amor sano y el autodescubrimiento.'),
-(77, '23 otoños antes de ti', 'C016', '2017', 34, 7, '1768605453_L57.png', 'Una historia de amor que crece lentamente con el paso del tiempo. Emociones profundas, recuerdos y decisiones importantes.'),
+(77, '23 otoños antes de ti', 'C016', '2017', 34, 7, '1770607911_imagen_2026-02-08_223150034.png', ''),
 (78, 'Nosotros en la luna', 'C017', '2022', 12, 7, '1768605544_L57.png', 'Dos personas conectan a través de mensajes y encuentros inesperados. Un romance delicado sobre destino y segundas oportunidades.'),
 (79, 'El chico que dibujaba constelaciones', 'C018', '2018', 12, 7, '1768605642_L58.png', 'Una historia de amor marcada por la distancia y el tiempo. La novela explora la memoria, la pérdida y el amor eterno.'),
 (80, 'Seda', 'C019', '2011', 35, 5, '1768605739_L59.png', 'Un comerciante francés viaja a Japón y se enamora de una mujer misteriosa. Una historia breve y poética sobre deseo y silencio.'),
@@ -879,7 +1112,96 @@ INSERT INTO `libro` (`id_libro`, `titulo`, `Estante`, `año_publicacion`, `id_ed
 (258, 'James y el melocotón gigante', 'L017', '2022', 83, 8, '1768710681_L237.png', 'James vive una aventura fantástica dentro de un melocotón gigante junto a curiosos amigos. Imaginación desbordante.'),
 (259, 'Cuentos de la selva', 'L018', '2022', 37, 8, '1768710756_L238.png', 'Relatos protagonizados por animales de la selva con enseñanzas sobre respeto y convivencia. Clásico infantil latinoamericano.'),
 (260, 'Cuentos de Andersen', 'L019', '2008', 84, 9, '1768710886_L239.png', 'Colección de cuentos clásicos llenos de magia, tristeza y esperanza. Historias universales para niños.'),
-(261, 'Cuentos de los hermanos Grimm', 'L020', '2021', 53, 9, '1768710944_L240.png', 'Relatos tradicionales que mezclan fantasía, aventura y lecciones morales. La base de muchos cuentos populares.');
+(261, 'Cuentos de los hermanos Grimm', 'L020', '2021', 53, 9, '1768710944_L240.png', 'Relatos tradicionales que mezclan fantasía, aventura y lecciones morales. La base de muchos cuentos populares.'),
+(262, 'Diario de Ana Frank', 'O1500', '1947', 10, 5, '1770323607_imagen_2026-02-05_153325769.png', 'Testimonio íntimo de una adolescente judía escondida durante la Segunda Guerra Mundial. Una mirada conmovedora sobre la esperanza, el miedo y la vida bajo la persecución nazi.'),
+(263, 'Confieso que he vivido', 'O1500', '1974', 76, 6, '1770323750_imagen_2026-02-05_153548345.png', 'Autobiografía poética de Pablo Neruda donde el autor recorre su vida, sus viajes, el amor, la política y la creación literaria, mezclando memoria personal y sensibilidad artística.'),
+(264, 'Cómo ganar amigos e influir sobre las personas', 'M1200', '1936', 10, 5, '1770407858_imagen_2026-02-06_145735298.png', 'Un clásico del desarrollo personal que enseña principios prácticos para mejorar las relaciones humanas, la comunicación y la influencia positiva. Basado en empatía, respeto y comprensión del comportamiento humano.'),
+(265, 'Los 7 hábitos de la gente altamente efectiva', 'M1200', '1989', 85, 6, '1770407991_imagen_2026-02-06_145947942.png', 'Propone un enfoque estructurado para lograr la efectividad personal y profesional mediante hábitos basados en valores, responsabilidad, liderazgo personal y equilibrio entre la vida personal y laboral.'),
+(266, 'El poder del ahora', 'M1200', '1997', 86, 7, '1770408124_imagen_2026-02-06_150102219.png', 'Una guía espiritual que invita a vivir plenamente en el momento presente, liberándose del peso del pasado y la ansiedad del futuro. Enseña a encontrar paz interior a través de la conciencia plena.'),
+(268, 'La magia del orden', 'M1200', '2010', 87, 6, '1770408388_imagen_2026-02-06_150544150.png', 'Presenta el método KonMari para organizar espacios y objetos, promoviendo un estilo de vida más simple y consciente. El orden externo se convierte en una herramienta para el bienestar interior.');
+INSERT INTO `libro` (`id_libro`, `titulo`, `Estante`, `año_publicacion`, `id_editorial`, `cantidad_total`, `Imagen`, `sipnosis`) VALUES
+(269, 'La felicidad está en ti', 'M1200', '2012', 88, 5, '1770408618_imagen_2026-02-06_151000491.png', 'Reflexiones psicológicas y emocionales que invitan al lector a reconocer su capacidad interna para alcanzar la felicidad, comprendiendo sus emociones y decisiones personales.'),
+(270, 'Déjame que te cuente', 'M1200', '1994', 10, 6, '1770408743_imagen_2026-02-06_151128168.png', 'A través de cuentos y metáforas, el autor transmite enseñanzas psicológicas y de crecimiento personal, facilitando la comprensión emocional y el autoconocimiento.'),
+(271, 'El arte de no amargarse la vida', 'M1200', '2011', 29, 7, '1770409013_imagen_2026-02-06_151649747.png', 'Un libro práctico de psicología cognitiva que enseña a identificar pensamientos irracionales y transformarlos para lograr una vida emocionalmente más sana y equilibrada.'),
+(272, 'Ser feliz en Alaska', 'M1200', '2016', 29, 6, '1770409094_imagen_2026-02-06_151811637.png', 'Explora cómo aceptar la realidad, manejar la frustración y vivir con serenidad incluso en circunstancias adversas. Propone una actitud flexible ante la vida.'),
+(273, 'Tus zonas erróneas', 'M1200', '1976', 10, 5, '1770409177_imagen_2026-02-06_151935282.png', 'Analiza patrones mentales que generan culpa, miedo o inseguridad, ofreciendo herramientas para recuperar el control emocional y desarrollar una autoestima saludable.'),
+(274, 'El poder de la mente subconsciente', 'M1200', '1963', 69, 6, '1770409390_imagen_2026-02-06_152307204.png', 'Explica cómo los pensamientos influyen en la realidad personal, proponiendo el uso consciente de la mente para mejorar la salud, las relaciones y el éxito personal.'),
+(275, 'Padre rico, padre pobre', 'M1200', '1997', 89, 7, '1770409469_imagen_2026-02-06_152427104.png', 'Contrasta dos formas de pensar sobre el dinero y la educación financiera, promoviendo la independencia económica, la inversión y la mentalidad emprendedora.'),
+(276, 'La semana laboral de 4 horas', 'M1200', '2007', 89, 5, '1770409578_imagen_2026-02-06_152616221.png', 'Propone estrategias para optimizar el tiempo, automatizar ingresos y diseñar un estilo de vida más libre, cuestionando el modelo tradicional de trabajo.'),
+(277, 'Piense y hágase rico', 'M1200', '1937', 10, 5, '1770409677_imagen_2026-02-06_152755960.png', 'Basado en el estudio de personas exitosas, este libro expone principios mentales y hábitos que conducen al logro de metas financieras y personales.'),
+(278, 'El monje que vendió su Ferrari', 'M1200', '1997', 29, 6, '1770409778_imagen_2026-02-06_152937175.png', 'Una fábula espiritual sobre el éxito, el equilibrio y la felicidad interior. Enseña la importancia del propósito, la disciplina y el crecimiento personal.'),
+(279, 'El club de las 5 de la mañana', 'M1200', '2018', 29, 6, '1770409847_imagen_2026-02-06_153044535.png', 'Promueve el hábito de levantarse temprano como herramienta para el desarrollo personal, la productividad y el liderazgo, combinando disciplina y crecimiento interior.'),
+(280, 'Despierta tu héroe interior', 'M1200', '2015', 90, 5, '1770409951_imagen_2026-02-06_153219533.png', 'Invita a descubrir el potencial personal, superar miedos y asumir responsabilidad sobre la propia vida mediante decisiones conscientes y mentalidad positiva'),
+(281, 'Atrévete a no gustar', 'M1200', '2013', 91, 5, '1770410062_imagen_2026-02-06_153421142.png', 'Basado en la psicología adleriana, plantea la libertad personal como resultado de aceptar quiénes somos y dejar de vivir según las expectativas ajenas.'),
+(282, 'Sé más feliz', 'M1200', '2007', 92, 5, '1770410182_imagen_2026-02-06_153620727.png', 'Desde la psicología positiva, el autor ofrece estrategias prácticas para aumentar el bienestar emocional, el optimismo y la satisfacción con la vida.'),
+(283, 'El secreto', 'M1200', '2006', 93, 7, '1770410345_imagen_2026-02-06_153903696.png', 'Introduce la ley de la atracción, proponiendo que los pensamientos influyen directamente en la realidad. Motiva a enfocar la mente en deseos, gratitud y visualización positiva.'),
+(284, 'El cuerpo lleva la cuenta', 'N1300', '2014', 94, 5, '1770410767_imagen_2026-02-06_154546946.png', 'Explora cómo el trauma psicológico afecta al cuerpo y la mente. El autor combina neurociencia, psicología y testimonios clínicos para explicar procesos de sanación emocional.'),
+(285, 'Inteligencia emocional', 'N1300', '1995', 95, 6, '1770410893_imagen_2026-02-06_154804118.png', 'Analiza la importancia de reconocer y gestionar las emociones propias y ajenas. Propone que la inteligencia emocional es clave para el éxito personal, social y profesional.'),
+(286, 'El poder del metabolismo', 'N1300', '2005', 96, 6, '1770411023_imagen_2026-02-06_155012199.png', 'Ofrece estrategias prácticas para mejorar la salud metabólica, controlar el peso y aumentar la energía mediante cambios en la alimentación y el estilo de vida.'),
+(287, 'La dieta cetogénica', 'N1300', '2018', 97, 6, '1770411262_imagen_2026-02-06_155420738.png', 'Explica los fundamentos de la alimentación baja en carbohidratos y alta en grasas, enfocada en mejorar la salud, el rendimiento físico y la pérdida de grasa.'),
+(288, 'Fitness revolucionario', 'N1300', '2019', 98, 5, '1770411343_imagen_2026-02-06_155511207.png', 'Propone un enfoque integral del entrenamiento físico, la nutrición y el descanso, basándose en evidencia científica y hábitos sostenibles para la salud a largo plazo.'),
+(289, 'Come comida real', 'N1300', '2019', 85, 7, '1770411430_imagen_2026-02-06_155709102.png', 'Defiende una alimentación basada en productos naturales y mínimamente procesados. Enseña a identificar alimentos saludables y a evitar ultraprocesados.'),
+(290, 'Cocina real', 'N1300', '2020', 85, 6, '1770411512_imagen_2026-02-06_155831003.png', 'Un recetario práctico que complementa el movimiento de comida real, ofreciendo opciones sencillas, saludables y equilibradas para el día a día.'),
+(291, 'El método Ikigai', 'N1300', '2016', 10, 5, '1770411607_imagen_2026-02-06_155958879.png', 'Explora el concepto japonés del propósito de vida como clave para el bienestar físico y mental. Combina filosofía oriental con consejos prácticos para una vida plena.'),
+(292, 'The Bulletproof Diet', 'N1300', '2018', 99, 6, '1770411737_imagen_2026-02-06_160119955.png', 'Presenta un sistema de nutrición y biohacking orientado a mejorar la energía, la concentración y el rendimiento físico mediante hábitos saludables.'),
+(293, 'El arte de la guerra', 'Ñ1400', '2022', 100, 5, '1770412005_imagen_2026-02-06_160644041.png', 'Tratado clásico sobre estrategia y táctica militar aplicable a la política, los negocios y la vida personal. Enseña a vencer mediante la inteligencia, la planificación y el conocimiento del adversario.'),
+(294, 'Manual de urbanidad y buenas maneras', 'Ñ1400', '0000', 101, 6, '1770412136_imagen_2026-02-06_160853792.png', 'Guía clásica de comportamiento social que establece normas de cortesía, educación y convivencia, influyendo en la formación cívica durante generaciones.'),
+(295, 'Cómo ganar amigos e influir sobre las personas', 'Ñ1400', '1936', 10, 7, '1770412205_imagen_2026-02-06_161003823.png', 'Un manual práctico para mejorar las relaciones humanas, la comunicación efectiva y la persuasión positiva basada en el respeto y la empatía.'),
+(296, 'Los 7 hábitos de la gente altamente efectiva', 'Ñ1400', '1989', 85, 6, '1770412282_imagen_2026-02-06_161121162.png', 'Propone hábitos prácticos para desarrollar liderazgo personal, organización, responsabilidad y eficacia tanto en la vida personal como profesional.'),
+(297, 'El pequeño libro de la cocina', 'Ñ1400', '2005', 102, 5, '1770412491_imagen_2026-02-06_161450335.png', 'Recopila técnicas básicas, consejos y principios culinarios esenciales del reconocido chef, orientados a mejorar la creatividad y el disfrute en la cocina.'),
+(298, 'Manual de supervivencia', 'Ñ1400', '1999', 103, 5, '1770412640_imagen_2026-02-06_161717447.png', 'Ofrece instrucciones prácticas para enfrentar situaciones extremas en la naturaleza, enseñando técnicas de orientación, refugio, alimentación y primeros auxilios.'),
+(299, 'Manual de Fotografía Digital slr', 'Ñ1400', '2012', 104, 6, '1770412789_imagen_2026-02-06_161947298.png', 'Explica conceptos técnicos y creativos de la fotografía digital, desde el manejo de la cámara hasta la composición y edición de imágenes.'),
+(300, 'Manual de primeros auxilios', 'Ñ1400', '2000', 89, 7, '1770412943_imagen_2026-02-06_162216023.png', 'Guía esencial para actuar ante emergencias médicas, proporcionando procedimientos básicos para salvar vidas y prevenir complicaciones.'),
+(301, 'Manual Practico de Jardineria', 'Ñ1400', '1994', 105, 6, '1770413106_imagen_2026-02-06_162458342.png', 'Aporta conocimientos prácticos sobre el cuidado de plantas, diseño de jardines y mantenimiento de espacios verdes durante todo el año.'),
+(302, 'Manual de costura', 'Ñ1400', '2012', 106, 6, '1770602939_imagen_2026-02-08_210858427.png', 'Incluye técnicas básicas de costura, uso de patrones y manejo de telas, ideal para iniciarse en la confección y reparación de prendas.'),
+(303, 'Manual de meditación', 'Ñ1400', '2015', 107, 5, '1770603082_imagen_2026-02-08_211048405.png', 'Presenta métodos y ejercicios de meditación orientados a mejorar la concentración, reducir el estrés y fomentar el equilibrio interior.'),
+(304, 'Manual de Yoga Integral Para Occidentales: Una Introducción Para Urbanitas Inquietos', 'Ñ1400', '2018', 11, 7, '1770603210_imagen_2026-02-08_211329355.png', 'Expone principios, posturas y fundamentos del yoga como práctica integral para fortalecer el cuerpo, la mente y la salud general'),
+(305, 'Manual de Escritura Creativa y Premios Literarios', 'Ñ1400', '2015', 108, 6, '1770603346_imagen_2026-02-08_211545634.png', 'Ofrece herramientas y ejercicios para desarrollar la creatividad literaria, mejorar el estilo narrativo y estructurar textos de ficción y no ficción.'),
+(306, 'Manual Completo del Ajedrez', 'Ñ1400', '2017', 109, 5, '1770603451_imagen_2026-02-08_211705138.png', 'Guía completa para aprender y perfeccionar el ajedrez, abordando estrategias, aperturas y el pensamiento táctico del juego.'),
+(307, 'Vivir para contarla', 'O1500', '2002', 10, 6, '1770603572_imagen_2026-02-08_211826634.png', 'Memorias de Gabriel García Márquez en las que narra su infancia, juventud y formación como escritor, revelando el origen de su universo literario.'),
+(308, 'Mi historia', 'O1500', '2018', 23, 5, '1770603678_imagen_2026-02-08_212026521.png', 'Michelle Obama comparte su recorrido personal desde su infancia hasta su papel como primera dama de Estados Unidos. Un relato honesto sobre identidad, familia y compromiso social.'),
+(309, 'Sueños de mi padre', 'O1500', '1995', 110, 7, '1770603749_imagen_2026-02-08_212154362.png', 'Barack Obama reflexiona sobre sus raíces, su identidad y su camino hacia la vida pública. Una autobiografía introspectiva sobre pertenencia y vocación política.'),
+(310, 'Long Walk to Freedom', 'O1500', '1994', 111, 7, '1770603839_imagen_2026-02-08_212313387.png', 'Autobiografía de Nelson Mandela que narra su lucha contra el apartheid, sus años de prisión y su compromiso inquebrantable con la libertad y la justicia.'),
+(311, 'El diario de Frida Kahlo', 'O1500', '2025', 112, 5, '1770603942_imagen_2026-02-08_212449673.png', 'Cuaderno personal que reúne pensamientos, dibujos y reflexiones de la artista. Un retrato íntimo de su dolor, creatividad y visión del mundo.'),
+(312, 'Steve Jobs', 'O1500', '2011', 110, 8, '1770604028_imagen_2026-02-08_212631132.png', 'Biografía autorizada que explora la vida del fundador de Apple, su genio creativo, su personalidad compleja y su impacto en la tecnología y la cultura contemporánea.'),
+(313, 'Leonardo da Vinci: Pequeños Relatos de Grandes Historias', 'O1500', '2023', 113, 6, '1770604175_imagen_2026-02-08_212934666.png', '¿Por qué Leonardo da Vinci fue un genio?\r\nFue artista, inventor, arquitecto, ingeniero, matemático, escultor y científico, pintó algunas de las obras de arte más famosas y diseñó más de 400 máquinas increíblemente adelantadas a su tiempo.\r\nConoce a una de las mentes más brillantes de la historia en esta entretenida guía de su extraordinaria vida.\"'),
+(314, 'Einstein: Su vida y su universo', 'O1500', '2017', 10, 7, '1770604253_imagen_2026-02-08_213009642.png', 'Relato de la vida del científico que revolucionó la física moderna, combinando su pensamiento científico con su dimensión humana y personal.'),
+(315, 'Ven, se mi Luz: Las Cartas Privadas de la Santa de Calcuta', 'O1500', '2009', 26, 5, '1770604381_imagen_2026-02-08_213300019.png', 'Compilación de cartas personales que revelan la vida interior, las dudas y la fe profunda de la Madre Teresa de Calcuta.'),
+(316, 'Malala: Mi historia', 'O1500', '2015', 11, 8, '1770604471_imagen_2026-02-08_213355595.png', 'La joven activista relata su lucha por la educación y los derechos de las niñas tras sobrevivir a un atentado. Un testimonio de valentía y esperanza.'),
+(317, 'Open', 'O1500', '2016', 114, 8, '1770604580_imagen_2026-02-08_213521282.png', 'Memorias del tenista Andre Agassi donde expone sin filtros su carrera deportiva, sus conflictos personales y la presión del éxito.'),
+(318, 'Rafa, mi Historia', 'O1500', '2021', 115, 6, '1770604677_imagen_2026-02-08_213739421.png', 'Autobiografía de Rafael Nadal que recorre su vida personal y profesional, mostrando la disciplina, el esfuerzo y la pasión detrás de su carrera.'),
+(319, 'Mamba Mentality', 'O1500', '2018', 12, 8, '1770604741_imagen_2026-02-08_213829679.png', 'Kobe Bryant comparte su filosofía de trabajo, mentalidad competitiva y enfoque disciplinado que definieron su legado deportivo.'),
+(320, 'Michael Jordan: The Life', 'O1500', '2016', 116, 5, '1770604830_imagen_2026-02-08_213951134.png', 'Biografía completa del icónico jugador de baloncesto, explorando su ambición, talento y el impacto que tuvo dentro y fuera de la cancha.'),
+(321, 'El olvido que seremos', 'O1500', '2006', 31, 8, '1770604900_imagen_2026-02-08_214108080.png', 'Relato autobiográfico donde Héctor Abad Faciolince rinde homenaje a su padre, reflexionando sobre la memoria, la violencia y el amor familiar.'),
+(322, 'Cartas a Milena', 'O1500', '1952', 11, 7, '1770604966_imagen_2026-02-08_214206321.png', 'Correspondencia íntima de Franz Kafka que revela su sensibilidad, sus conflictos emocionales y su profunda manera de amar y pensar.'),
+(323, 'Philosophiae Naturalis Principia Mathematica (Latin,1687) (en Latin)', 'P1600', '2015', 117, 7, '1770605223_imagen_2026-02-08_214550084.png', 'A modern reproduction of perhaps the most important scientific text of all time-- Newton\'s original 1687 edition of \"Philosophiae Naturalis Principia Mathematica.\" (Latin)'),
+(324, 'El Origen de las Especies', 'P1600', '2000', 101, 7, '1770605355_imagen_2026-02-08_214816962.png', 'Texto clave de la biología que introduce la teoría de la evolución por selección natural.'),
+(325, 'La Interpretación de los Sueños, 2. Los Sueños', 'P1600', '2021', 11, 8, '1770605451_imagen_2026-02-08_215008928.png', ''),
+(326, 'La relatividad: teoría especial y general', 'P1600', '1916', 11, 7, '1770605555_imagen_2026-02-08_215203444.png', 'Explica de forma accesible las teorías que revolucionaron la comprensión del espacio, el tiempo y la gravedad'),
+(327, 'El gen egoísta', 'P1600', '1976', 118, 8, '1770605627_imagen_2026-02-08_215315600.png', 'Una visión innovadora de la evolución que coloca al gen como unidad central de la selección natural.'),
+(328, 'Breve Historia de los Numeros. El Pensamiento Matematico a lo Largo del Tiempo', 'P1600', '2021', 119, 7, '1770606297_imagen_2026-02-08_220444395.png', 'Una introducción divulgativa a los grandes misterios del universo, desde el Big Bang hasta los agujeros negros.'),
+(329, 'El universo en una cáscara de nuez', 'P1600', '2001', 120, 7, '1770606365_imagen_2026-02-08_220530138.png', 'Amplía conceptos cosmológicos complejos de manera clara, explorando teorías modernas del universo.'),
+(330, 'El cerebro y la inteligencia emocional', 'P1600', '2024', 44, 8, '1770606453_imagen_2026-02-08_220636925.png', 'Analiza la relación entre emociones, cerebro y comportamiento, destacando la importancia de la inteligencia emocional.'),
+(331, 'La estructura de las revoluciones científicas', 'P1600', '1962', 121, 5, '1770606616_imagen_2026-02-08_220936843.png', 'Un ensayo influyente sobre cómo avanza la ciencia mediante cambios de paradigma.'),
+(332, 'El hombre que confundió a su mujer con un sombrero', 'P1600', '2005', 35, 8, '1770606675_imagen_2026-02-08_221045947.png', 'Relatos clínicos que exploran trastornos neurológicos desde una perspectiva humana y científica.'),
+(333, 'Musicofilia', 'P1600', '2007', 35, 8, '1770606729_imagen_2026-02-08_221141047.png', 'Examina la relación entre música y cerebro a través de casos neurológicos y experiencias personales.'),
+(334, 'El error de Descartes', 'P1600', '1994', 6, 7, '1770606783_imagen_2026-02-08_221240919.png', 'eflexiona sobre la conexión entre razón, emoción y cuerpo desde la neurociencia y la filosofía.'),
+(335, 'En busca de la memoria', 'P1600', '2006', 122, 8, '1770606856_imagen_2026-02-08_221338041.png', 'Una autobiografía científica que recorre los descubrimientos sobre el funcionamiento de la memoria.'),
+(336, 'El gen', 'P1600', '2016', 10, 7, '1770606914_imagen_2026-02-08_221445326.png', 'Una historia científica y humana del gen, su descubrimiento y su impacto en la medicina moderna.'),
+(337, 'El emperador de todos los males', 'P1600', '2010', 110, 8, '1770606969_imagen_2026-02-08_221542638.png', 'Crónica profunda sobre la historia del cáncer, sus tratamientos y desafíos médicos'),
+(338, 'El segundo sexo', 'P1600', '1949', 10, 7, '1770607029_imagen_2026-02-08_221641292.png', 'Ensayo fundamental del pensamiento feminista que analiza la condición y el papel de la mujer en la sociedad.'),
+(339, 'El capital', 'P1600', '2019', 123, 7, '1770607098_imagen_2026-02-08_221745223.png', 'Obra clave de la economía política que analiza el sistema capitalista y sus dinámicas.'),
+(340, 'La riqueza de las naciones', 'P1600', '0000', 121, 7, '1770607166_imagen_2026-02-08_221851653.png', 'Texto fundacional de la economía moderna que estudia el mercado, el trabajo y la producción.'),
+(341, 'Diccionario de la lengua española', 'Q1700', '0000', 124, 7, '1770607277_imagen_2026-02-08_222010661.png', 'Obra normativa que recoge el vocabulario y el uso correcto del idioma español.'),
+(342, 'Oxford English Dictionary', 'Q1700', '0000', 125, 7, '1770607335_imagen_2026-02-08_222146599.png', 'El diccionario más completo del inglés, con definiciones históricas y etimológicas.'),
+(343, 'enciclopedia espasa pocket 2007', 'Q1700', '1908', 126, 7, '1770607669_imagen_2026-02-08_222701003.png', 'Una de las enciclopedias más importantes en lengua española, de amplio contenido cultural.'),
+(344, 'Larousse ilustrado', 'Q1700', '0000', 127, 5, '1770607735_imagen_2026-02-08_222820983.png', 'Enciclopedia visual que combina textos claros con abundantes ilustraciones educativas.'),
+(345, 'Atlas mundial', 'Q1700', '0000', 128, 6, '1770607808_imagen_2026-02-08_222929183.png', 'Recurso cartográfico que presenta mapas físicos, políticos y temáticos del mundo.'),
+(346, 'Diccionario Oxford de medicina', 'Q1700', '2003', 129, 6, '1770608167_imagen_2026-02-08_223501520.png', 'Compendio especializado de términos médicos con definiciones claras y precisas.'),
+(347, 'Diccionario de filosofía', 'Q1700', '1960', 11, 7, '1770608228_imagen_2026-02-08_223645092.png', 'Referencia esencial para comprender conceptos, corrientes y pensadores filosóficos.'),
+(348, 'Diccionario de símbolos', 'Q1700', '1989', 30, 6, '1770608298_imagen_2026-02-08_223804895.png', 'Explora el significado simbólico de imágenes, mitos y arquetipos en distintas culturas.'),
+(349, 'Diccionario de mitología griega y romana', 'Q1700', '1951', 85, 8, '1770608601_imagen_2026-02-08_224234081.png', 'Guía completa sobre dioses, héroes y mitos clásicos de la antigüedad.'),
+(350, 'DICCIONARIO DE PSICOLOGIA. 3ø EDICION', 'Q1700', '2021', 130, 7, '1770608750_imagen_2026-02-08_224500179.png', 'Define términos y teorías fundamentales del estudio de la mente y el comportamiento.');
 
 --
 -- Disparadores `libro`
@@ -1148,7 +1470,98 @@ INSERT INTO `libro_autor` (`id_libro`, `id_autor`) VALUES
 (259, 159),
 (260, 160),
 (261, 161),
-(261, 162);
+(261, 162),
+(262, 163),
+(263, 137),
+(264, 164),
+(265, 165),
+(266, 166),
+(268, 167),
+(269, 168),
+(270, 168),
+(271, 169),
+(272, 169),
+(273, 170),
+(274, 171),
+(275, 172),
+(276, 173),
+(277, 174),
+(278, 175),
+(279, 175),
+(280, 176),
+(281, 177),
+(282, 178),
+(283, 179),
+(284, 180),
+(285, 181),
+(286, 182),
+(287, 183),
+(288, 184),
+(289, 185),
+(290, 185),
+(291, 186),
+(291, 187),
+(292, 188),
+(293, 189),
+(294, 190),
+(295, 191),
+(296, 165),
+(297, 192),
+(298, 193),
+(299, 194),
+(300, 195),
+(301, 196),
+(302, 197),
+(303, 198),
+(304, 199),
+(304, 200),
+(305, 201),
+(306, 202),
+(307, 98),
+(308, 203),
+(309, 204),
+(310, 205),
+(311, 206),
+(312, 207),
+(313, 208),
+(313, 209),
+(314, 207),
+(315, 210),
+(316, 211),
+(317, 212),
+(318, 213),
+(319, 214),
+(320, 215),
+(321, 216),
+(322, 217),
+(323, 218),
+(324, 219),
+(325, 220),
+(326, 221),
+(327, 222),
+(328, 223),
+(329, 224),
+(330, 181),
+(331, 225),
+(332, 226),
+(333, 226),
+(334, 227),
+(335, 228),
+(336, 229),
+(337, 229),
+(338, 230),
+(339, 231),
+(340, 232),
+(341, 233),
+(342, 234),
+(343, 235),
+(344, 236),
+(345, 197),
+(346, 237),
+(347, 238),
+(348, 239),
+(349, 240),
+(350, 197);
 
 -- --------------------------------------------------------
 
@@ -1550,7 +1963,186 @@ INSERT INTO `libro_genero` (`id_libro`, `id_genero`) VALUES
 (260, 20),
 (260, 23),
 (261, 20),
-(261, 23);
+(261, 23),
+(262, 13),
+(262, 24),
+(263, 26),
+(264, 27),
+(264, 28),
+(265, 27),
+(265, 28),
+(266, 27),
+(266, 29),
+(268, 27),
+(268, 28),
+(269, 27),
+(269, 30),
+(270, 27),
+(270, 30),
+(271, 27),
+(271, 30),
+(272, 27),
+(272, 30),
+(273, 27),
+(273, 30),
+(274, 27),
+(274, 30),
+(275, 27),
+(275, 31),
+(276, 27),
+(276, 28),
+(277, 27),
+(277, 31),
+(278, 27),
+(278, 29),
+(279, 27),
+(279, 28),
+(280, 27),
+(280, 32),
+(281, 27),
+(281, 33),
+(282, 27),
+(282, 30),
+(283, 27),
+(283, 29),
+(284, 30),
+(284, 34),
+(285, 34),
+(285, 35),
+(286, 28),
+(286, 34),
+(287, 28),
+(287, 34),
+(288, 34),
+(288, 35),
+(289, 34),
+(289, 36),
+(290, 34),
+(290, 37),
+(291, 34),
+(291, 35),
+(292, 34),
+(292, 36),
+(293, 28),
+(293, 38),
+(294, 28),
+(294, 35),
+(295, 28),
+(295, 35),
+(296, 28),
+(296, 35),
+(297, 28),
+(297, 37),
+(298, 15),
+(298, 28),
+(299, 28),
+(299, 39),
+(300, 28),
+(300, 40),
+(301, 28),
+(301, 34),
+(302, 28),
+(302, 39),
+(303, 28),
+(303, 29),
+(304, 28),
+(304, 40),
+(305, 28),
+(305, 39),
+(306, 28),
+(306, 41),
+(307, 14),
+(307, 24),
+(308, 24),
+(308, 42),
+(309, 24),
+(309, 42),
+(310, 24),
+(310, 42),
+(311, 24),
+(311, 39),
+(312, 24),
+(312, 43),
+(313, 24),
+(313, 39),
+(314, 24),
+(314, 39),
+(315, 24),
+(315, 44),
+(316, 24),
+(316, 42),
+(317, 24),
+(317, 41),
+(318, 24),
+(318, 41),
+(319, 24),
+(319, 41),
+(320, 24),
+(320, 41),
+(321, 14),
+(321, 24),
+(322, 24),
+(322, 26),
+(323, 45),
+(324, 45),
+(325, 45),
+(326, 45),
+(327, 45),
+(328, 45),
+(329, 45),
+(330, 45),
+(331, 45),
+(332, 45),
+(333, 45),
+(334, 45),
+(335, 45),
+(336, 45),
+(337, 45),
+(338, 45),
+(339, 45),
+(340, 45),
+(341, 46),
+(342, 46),
+(343, 46),
+(344, 46),
+(345, 46),
+(346, 46),
+(347, 46),
+(348, 46),
+(349, 46),
+(350, 46);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `notificaciones`
+--
+
+CREATE TABLE `notificaciones` (
+  `id_notificacion` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `mensaje` text NOT NULL,
+  `leido` tinyint(1) DEFAULT 0,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `notificaciones`
+--
+
+INSERT INTO `notificaciones` (`id_notificacion`, `id_usuario`, `mensaje`, `leido`, `fecha_creacion`) VALUES
+(1, 13, '📘 Has devuelto el libro «2001: Una odisea espacial». Gracias por devolverlo.', 0, '2026-02-09 18:24:53'),
+(2, 14, '📘 Has devuelto el libro «Antes de diciembre». Gracias por devolverlo.', 0, '2026-02-09 18:24:59'),
+(3, 14, '📖 Tu préstamo del libro «Cuentos completos» fue registrado con éxito. Fecha de devolución: 2026-02-16.', 0, '2026-02-09 18:27:54'),
+(4, 14, '📘 Has devuelto el libro «Cuentos completos». Gracias por devolverlo.', 0, '2026-02-09 18:38:47'),
+(5, 14, '📘 Has devuelto el libro «1984». Gracias por devolverlo.', 0, '2026-02-09 18:38:55'),
+(6, 25, '📘 Has devuelto el libro «The Girl with the Dragon Tattoo». Gracias por devolverlo.', 0, '2026-02-09 18:39:07'),
+(7, 14, '📖 Tu préstamo del libro «23 otoños antes de ti» fue registrado con éxito. Fecha de devolución: 2026-02-16.', 0, '2026-02-09 19:52:40'),
+(8, 25, '📖 Tu préstamo del libro «Antes de diciembre» fue registrado con éxito. Fecha de devolución: 2026-02-16.', 0, '2026-02-09 19:54:00'),
+(9, 25, '✅ Tu solicitud de aplazamiento fue aprobada. La nueva fecha de devolución es: 2026-02-22.', 0, '2026-02-09 20:14:56'),
+(10, 1, '📋 Nueva solicitud de aplazamiento:\nUsuario: Junior Santamaria\nLibro: Antes de diciembre\nDías solicitados: 7\nFecha devolución actual: 2026-02-22\nMotivo: vsvwv', 0, '2026-02-09 20:16:13'),
+(11, 25, '✅ Tu solicitud de aplazamiento fue aprobada. La nueva fecha de devolución es: 2026-03-01.', 0, '2026-02-09 20:16:38'),
+(12, 25, '📖 Tu préstamo del libro «23 otoños antes de ti» fue registrado con éxito. Fecha de devolución: 2026-02-16.', 0, '2026-02-09 20:38:50');
 
 -- --------------------------------------------------------
 
@@ -1575,15 +2167,32 @@ CREATE TABLE `prestamo` (
   `id_libro` int(11) DEFAULT NULL,
   `fecha_prestamo` date NOT NULL,
   `fecha_devolucion` date DEFAULT NULL,
-  `estado` enum('activo','devuelto','retrasado') DEFAULT 'activo'
+  `estado` enum('activo','devuelto','retrasado') DEFAULT 'activo',
+  `notificado_3dias` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `prestamo`
 --
 
-INSERT INTO `prestamo` (`id_prestamo`, `id_usuario`, `id_libro`, `fecha_prestamo`, `fecha_devolucion`, `estado`) VALUES
-(2, 1, 87, '2026-01-17', '2026-01-24', 'devuelto');
+INSERT INTO `prestamo` (`id_prestamo`, `id_usuario`, `id_libro`, `fecha_prestamo`, `fecha_devolucion`, `estado`, `notificado_3dias`) VALUES
+(2, 1, 87, '2026-01-17', '2026-01-24', 'devuelto', 0),
+(3, 14, 102, '2026-01-21', '2026-01-28', 'devuelto', 0),
+(4, 24, 64, '2026-01-27', '2026-02-03', 'devuelto', 0),
+(5, 14, 180, '2026-01-27', '2026-02-03', 'devuelto', 0),
+(6, 14, 78, '2026-01-27', '2026-02-03', 'devuelto', 0),
+(7, 13, 87, '2026-01-27', '2026-02-03', 'devuelto', 0),
+(8, 14, 64, '2026-01-27', '2026-02-03', 'devuelto', 0),
+(9, 25, 115, '2026-01-27', '2026-02-03', 'devuelto', 0),
+(10, 13, 247, '2026-01-27', '2026-02-03', 'retrasado', 0),
+(11, 13, 78, '2026-01-30', '2026-02-06', 'devuelto', 0),
+(12, 25, 87, '2026-01-30', '2026-02-06', 'devuelto', 0),
+(13, 25, 20, '2026-02-02', '2026-02-09', 'devuelto', 0),
+(14, 14, 102, '2026-02-03', '2026-02-10', 'devuelto', 0),
+(15, 13, 64, '2026-02-08', '2026-02-02', 'retrasado', 0),
+(16, 14, 203, '2026-02-09', '2026-02-16', 'devuelto', 0),
+(18, 25, 64, '2026-02-09', '2026-03-01', 'activo', 0),
+(19, 25, 77, '2026-02-09', '2026-02-16', 'activo', 0);
 
 -- --------------------------------------------------------
 
@@ -1604,7 +2213,15 @@ CREATE TABLE `reserva` (
 --
 
 INSERT INTO `reserva` (`id_reserva`, `id_usuario`, `id_libro`, `fecha_reserva`, `estado`) VALUES
-(2, 1, 87, '2026-01-17', 'prestado');
+(2, 1, 87, '2026-01-17', 'prestado'),
+(4, 24, 64, '2026-01-27', 'prestado'),
+(5, 14, 78, '2026-01-27', 'prestado'),
+(6, 25, 115, '2026-01-27', 'prestado'),
+(7, 13, 247, '2026-01-27', 'prestado'),
+(8, 25, 87, '2026-01-30', 'prestado'),
+(9, 25, 20, '2026-01-30', 'prestado'),
+(11, 13, 64, '2026-02-05', 'prestado'),
+(12, 14, 203, '2026-02-05', 'prestado');
 
 -- --------------------------------------------------------
 
@@ -1642,18 +2259,39 @@ CREATE TABLE `rol_user` (
 
 INSERT INTO `rol_user` (`id_usuario`, `id_rol`) VALUES
 (1, 1),
-(5, 2),
-(8, 2),
 (11, 2),
 (12, 2),
 (13, 2),
 (14, 2),
 (15, 2),
 (17, 2),
-(18, 2),
-(21, 2),
 (22, 2),
-(23, 2);
+(25, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `solicitud_aplazamiento`
+--
+
+CREATE TABLE `solicitud_aplazamiento` (
+  `id_solicitud` int(11) NOT NULL,
+  `id_prestamo` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `dias_solicitados` int(11) NOT NULL DEFAULT 7,
+  `motivo` text DEFAULT NULL,
+  `estado` enum('pendiente','aprobado','rechazado') DEFAULT 'pendiente',
+  `fecha_solicitud` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_respuesta` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `solicitud_aplazamiento`
+--
+
+INSERT INTO `solicitud_aplazamiento` (`id_solicitud`, `id_prestamo`, `id_usuario`, `dias_solicitados`, `motivo`, `estado`, `fecha_solicitud`, `fecha_respuesta`) VALUES
+(1, 18, 25, 6, '', 'aprobado', '2026-02-09 19:57:40', '2026-02-09 15:14:56'),
+(2, 18, 25, 7, 'vsvwv', 'aprobado', '2026-02-09 20:16:13', '2026-02-09 15:16:38');
 
 -- --------------------------------------------------------
 
@@ -1679,18 +2317,15 @@ CREATE TABLE `usuario` (
 
 INSERT INTO `usuario` (`id_usuario`, `nombre`, `correo`, `contraseña`, `telefono`, `tipo_documento`, `numero_documento`, `fecha_registro`, `avatar_emoji`) VALUES
 (1, 'Admin', 'admid@gmail.com', '$2y$10$UN2yuKpUbkpWHOM.tRHqGu21oSiXJpBlvtTvvOWsCJ56TbrSL1WWW', NULL, NULL, NULL, '2025-12-10 14:47:44', NULL),
-(5, 'Marco Medina Molina1', 'marcos@gmail.com', '$2y$10$mJbttWTcdL0RvJuhooK43.cOtBz.UmypVK/q6IlK/U/TdqOX2Qafi', NULL, NULL, NULL, '2025-12-10 14:47:44', NULL),
-(8, 'Valeria pulido', 'valeria@gmail.com', '$2y$10$YEsOi07x68k0MT3h.QQ9x.jTzUuuOTNMAroC/BS2rlU8/x6A8mSsS', NULL, NULL, NULL, '2025-12-10 14:47:44', NULL),
 (11, 'Eulices Santamaria', 'eulises@gmail.com', '$2y$10$3vhHFdmOLLrKwrxQQCgYZe79DKn4zHCd8ANgfzQ.s56JlSe65hSw.', '3135224574', 'CC', '6708977', '2025-12-10 14:47:44', NULL),
 (12, 'Daniel Suarez', 'daniel@gmail.com', '$2y$10$rw3k/leScaaVhwhZH0lnWucu3naPPF9OUWQ3F1UEqU12XTpEeNTL.', '3124225212', 'CC', '00000000', '2025-12-10 14:47:44', NULL),
 (13, 'Dana Cifuentes', 'Danacici04@gmail.com', '$2y$10$.qFF/QJwrhs8I./1Pu52f.JP6zvW.wTVTCxxbxCw8g0J5hfUOSjZK', '3124750781', 'CC', '1056768630', '2025-12-10 14:47:44', NULL),
-(14, 'junior', 'santamaria@gmail.com', '$2y$10$34mB90rdFzZujUrhdn73W..w9V2HR2JX9uSuMObaEMOaulIOu2UOq', '3152417443', 'CC', '1056769689', '2025-12-10 14:47:44', NULL),
+(14, 'junior', 'santamaria@gmail.com', '$2y$10$34mB90rdFzZujUrhdn73W..w9V2HR2JX9uSuMObaEMOaulIOu2UOq', '3152417443', 'CC', '1', '2025-12-10 14:47:44', NULL),
 (15, 'Daniela Caicedo', 'daniela@gmail.com', '$2y$10$zqElRzVdBsy10oWaMZKCa.htd4o3CBdcwierwl1hddTbytZS66Qxa', '1325255432', 'CC', '123124514154', '2025-12-10 14:47:44', NULL),
 (17, 'Cataliana Gonzales', 'cata@gmail.com', '$2y$10$9xd1TGjTI9yNqK5.E57zHO7Iu8yzYS7cJvupgKxlXy8JGozqsJVSO', '12335469678', 'CC', '12435554862', '2025-12-10 14:47:44', NULL),
-(18, 'Kasandra', '12345@gmail.com', '$2y$10$DRLi09k9JEJVhUL96UYT0Oo9aushFoqxsy7d5Z6KYqf1WU4P62Fju', '3124750781', 'CC', '123456789', '2025-12-10 14:47:44', '😁'),
-(21, 'Kass', 'Kass@gmail.com', '$2y$10$O/2uITXYFSj6.yI3fDd21O7D6ncHFJzGD.RWXy5CVuIXbirwhdnly', '3124750781', 'CC', '1056768630', '2025-12-11 20:29:59', '👩‍🏫'),
 (22, 'Kass', 'kasscifuentes@gmail.com', '$2y$10$5L.T.oBVttAaU28fdCNlNurVi/.GfPC41Y6RWlWmq4RkTDYmCtfZ2', '3124750123', 'CC', '1056768630', '2025-12-11 23:39:11', '🥳'),
-(23, 'Kas', 'c@gmail.com', '$2y$10$68l812ic4NBjJjoSE.7AQuu.xb7iirpLZFNMT/YgM4MhNKIW/iyLa', '3124750782', 'CC', '1056768631', '2026-01-14 20:44:00', '👩‍🏫');
+(24, '', 'santamariajunior561@gmail.com\r\n', '$2y$10$jSZRBnWvO7wRzY5hV.6ck.eoQagq71MC2TWdR2VCzIgZ40zNvyQ9G', '3152417443', 'CC', '10567696', '2026-01-21 20:06:50', '🥳'),
+(25, 'Junior Santamaria', 'santamariajunior561@gmail.com', '$2y$10$.wMK..RRQehaBf.H6WoQA.CpDnfEsrA4yE3Qy9opoOL/scxp7HIQ2', '3152417443', 'CC', '1056769689', '2026-01-27 23:03:42', '😆');
 
 --
 -- Índices para tablas volcadas
@@ -1759,6 +2394,13 @@ ALTER TABLE `libro_genero`
   ADD KEY `id_genero` (`id_genero`);
 
 --
+-- Indices de la tabla `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  ADD PRIMARY KEY (`id_notificacion`),
+  ADD KEY `id_usuario` (`id_usuario`);
+
+--
 -- Indices de la tabla `permiso`
 --
 ALTER TABLE `permiso`
@@ -1794,6 +2436,14 @@ ALTER TABLE `rol_user`
   ADD KEY `id_rol` (`id_rol`);
 
 --
+-- Indices de la tabla `solicitud_aplazamiento`
+--
+ALTER TABLE `solicitud_aplazamiento`
+  ADD PRIMARY KEY (`id_solicitud`),
+  ADD KEY `id_prestamo` (`id_prestamo`),
+  ADD KEY `id_usuario` (`id_usuario`);
+
+--
 -- Indices de la tabla `usuario`
 --
 ALTER TABLE `usuario`
@@ -1808,19 +2458,19 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `autor`
 --
 ALTER TABLE `autor`
-  MODIFY `id_autor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=163;
+  MODIFY `id_autor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=241;
 
 --
 -- AUTO_INCREMENT de la tabla `disponibilidad`
 --
 ALTER TABLE `disponibilidad`
-  MODIFY `id_disponibilidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=247;
+  MODIFY `id_disponibilidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=336;
 
 --
 -- AUTO_INCREMENT de la tabla `editorial`
 --
 ALTER TABLE `editorial`
-  MODIFY `id_editorial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
+  MODIFY `id_editorial` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=131;
 
 --
 -- AUTO_INCREMENT de la tabla `estado`
@@ -1832,19 +2482,25 @@ ALTER TABLE `estado`
 -- AUTO_INCREMENT de la tabla `favorito`
 --
 ALTER TABLE `favorito`
-  MODIFY `id_favorito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_favorito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `genero`
 --
 ALTER TABLE `genero`
-  MODIFY `id_genero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id_genero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT de la tabla `libro`
 --
 ALTER TABLE `libro`
-  MODIFY `id_libro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=262;
+  MODIFY `id_libro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=351;
+
+--
+-- AUTO_INCREMENT de la tabla `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  MODIFY `id_notificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `permiso`
@@ -1856,13 +2512,13 @@ ALTER TABLE `permiso`
 -- AUTO_INCREMENT de la tabla `prestamo`
 --
 ALTER TABLE `prestamo`
-  MODIFY `id_prestamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_prestamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `reserva`
 --
 ALTER TABLE `reserva`
-  MODIFY `id_reserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_reserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -1871,10 +2527,16 @@ ALTER TABLE `rol`
   MODIFY `id_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT de la tabla `solicitud_aplazamiento`
+--
+ALTER TABLE `solicitud_aplazamiento`
+  MODIFY `id_solicitud` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- Restricciones para tablas volcadas
@@ -1915,6 +2577,12 @@ ALTER TABLE `libro_genero`
   ADD CONSTRAINT `libro_genero_ibfk_2` FOREIGN KEY (`id_genero`) REFERENCES `genero` (`id_genero`);
 
 --
+-- Filtros para la tabla `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  ADD CONSTRAINT `notificaciones_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE;
+
+--
 -- Filtros para la tabla `prestamo`
 --
 ALTER TABLE `prestamo`
@@ -1934,6 +2602,13 @@ ALTER TABLE `reserva`
 ALTER TABLE `rol_user`
   ADD CONSTRAINT `rol_user_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`),
   ADD CONSTRAINT `rol_user_ibfk_2` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`);
+
+--
+-- Filtros para la tabla `solicitud_aplazamiento`
+--
+ALTER TABLE `solicitud_aplazamiento`
+  ADD CONSTRAINT `solicitud_aplazamiento_ibfk_1` FOREIGN KEY (`id_prestamo`) REFERENCES `prestamo` (`id_prestamo`),
+  ADD CONSTRAINT `solicitud_aplazamiento_ibfk_2` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

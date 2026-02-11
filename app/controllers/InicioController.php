@@ -36,6 +36,9 @@ class InicioController extends BaseController {
             $this->prestamoModelo->actualizarEstadosDePrestamosRetrasados();
             $retrasadosCount = $this->prestamoModelo->contarPrestamosRetrasados();
             $retrasados = $this->prestamoModelo->obtenerPrestamosRetrasados(5);
+        
+        // Obtener solicitudes de aplazamiento pendientes
+        $solicitudesAplazamiento = $this->prestamoModelo->obtenerSolicitudesAplazamientoPendientes();
 
         // Cargar la vista del dashboard
         require_once __DIR__ . "/../views/ADMIN/Inicio.php";

@@ -193,3 +193,191 @@ function marcarLeida(idNotificacion) {
     });
 }
 
+// ========== SOLICITUD DE APLAZAMIENTO ==========
+
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn-solicitar-aplazamiento');
+    if (btn) {
+        const idPrestamo = btn.dataset.idPrestamo;
+        const titulo = btn.dataset.titulo;
+        abrirModalAplazamiento(idPrestamo, titulo);
+    }
+});
+
+function abrirModalAplazamiento(idPrestamo, titulo) {
+    // Crear modal dinámico
+    let modal = document.getElementById('modalAplazamiento');
+    if (!modal) {
+        const modalHTML = `
+        <div class="modal fade" id="modalAplazamiento" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header" style="background: linear-gradient(180deg, #D4841C, #A9541A); color: white;">
+                        <h5 class="modal-title">📋 Solicitar aplazamiento de entrega</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-3"><strong style="color: #241705;">📚 Libro:</strong> <span id="aplazamientoTitulo" style="color: #333;"></span></p>
+                        
+                        <div class="mb-3">
+                            <label class="form-label" style="color: #241705;"><strong>⏱️ Días adicionales solicitados</strong></label>
+                            <select id="aplazamientoDias" class="form-select" required style="border-color: #D4841C;">
+                                <option value="">-- Selecciona --</option>
+                                <option value="3">3 días</option>
+                                <option value="7">7 días</option>
+                                <option value="14">14 días</option>
+                                <option value="21">21 días (máximo)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label" style="color: #241705;"><strong>💬 Motivo (opcional)</strong></label>
+                            <textarea id="aplazamientoMotivo" class="form-control" rows="3" maxlength="500" placeholder="Cuéntanos por qué necesitas más tiempo..." style="border-color: #D4841C;"></textarea>
+                            <small class="text-muted">Máximo 500 caracteres</small>
+                        </div>
+                        
+                        <div id="aplazamientoError" class="alert alert-danger d-none" role="alert"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-success" id="btnEnviarAplazamiento">
+                            <i class="bi bi-send"></i> Enviar Solicitud
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        modal = document.getElementById('modalAplazamiento');
+    }
+    
+    // Llenar datos
+    document.getElementById('aplazamientoTitulo').textContent = titulo;
+    document.getElementById('aplazamientoDias').value = '';
+    document.getElementById('aplazamientoMotivo').value = '';
+    document.getElementById('aplazamientoError').classList.add('d-none');
+    
+    // Guardar el ID para luego
+    modal.dataset.idPrestamo = idPrestamo;
+    
+    // Mostrar modal
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+    
+    // Evento del botón enviar
+    const btnEnviar = document.getElementById('btnEnviarAplazamiento');
+    if (btnEnviar) {
+        btnEnviar.onclick = function() {
+            enviarSolicitudAplazamiento(idPrestamo);
+        };
+    }
+}
+
+function enviarSolicitudAplazamiento(idPrestamo) {
+    const diasSolicitados = document.getElementById('aplazamientoDias').value;
+    const motivo = document.getElementById('aplazamientoMotivo').value.trim();
+    const errorDiv = document.getElementById('aplazamientoError');
+    
+    // Validar
+    if (!diasSolicitados) {
+        errorDiv.textContent = 'Por favor selecciona la cantidad de días';
+        errorDiv.classList.remove('d-none');
+        return;
+    }
+    
+    // Desabilitar botón
+    const btnEnviar = document.getElementById('btnEnviarAplazamiento');
+    btnEnviar.disabled = true;
+    const textoOriginal = btnEnviar.innerHTML;
+    btnEnviar.innerHTML = '⏳ Enviando...';
+    
+    // Enviar petición
+    const formData = new FormData();
+    formData.append('id_prestamo', idPrestamo);
+    formData.append('dias_solicitados', diasSolicitados);
+    formData.append('motivo', motivo);
+    
+    const apiUrl = (window.AppConfig && window.AppConfig.baseUrl) 
+        ? window.AppConfig.baseUrl + '/public/api/solicitar_aplazamiento.php'
+        : '/BibliotecKJ01/public/api/solicitar_aplazamiento.php';
+    
+    fetch(apiUrl, {
+        method: 'POST',
+        body: formData
+    })
+    .then(async r => {
+        const contentType = r.headers.get('content-type');
+        console.log('Response status:', r.status, 'Content-Type:', contentType);
+        
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await r.text().catch(() => 'No body');
+            throw new Error('La respuesta no es JSON. Recibido: ' + contentType + ' - ' + text);
+        }
+        
+        // Parsear JSON sin depender de r.ok
+        const data = await r.json();
+        
+        // Ahora checar el status
+        if (!r.ok) {
+            const msg = data.message || ('HTTP ' + r.status);
+            throw new Error(msg);
+        }
+        
+        return data;
+    })
+    .then(data => {
+        if (data.success) {
+            // Cerrar modal
+            const modal = document.getElementById('modalAplazamiento');
+            if (modal) {
+                const bsModal = bootstrap.Modal.getInstance(modal);
+                if (bsModal) bsModal.hide();
+            }
+            
+            // Mostrar mensaje de éxito
+            alert(data.message || 'Solicitud enviada correctamente');
+            
+            // Recargar para actualizar la tabla
+            location.reload();
+        } else {
+            errorDiv.textContent = data.message || 'Error al enviar la solicitud';
+            errorDiv.classList.remove('d-none');
+        }
+    })
+    .catch(err => {
+        console.error('Error en solicitud de aplazamiento:', err);
+        errorDiv.textContent = '❌ Error: ' + err.message;
+        errorDiv.classList.remove('d-none');
+    })
+    .finally(() => {
+        btnEnviar.disabled = false;
+        btnEnviar.innerHTML = textoOriginal;
+    });
+}
+
+function eliminarNotificacion(id) {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta notificación?')) return;
+
+    const formData = new FormData();
+    formData.append('id_notificacion', id);
+
+    fetch(window.AppConfig.baseUrl + '/index.php?controller=Usuario&action=eliminarNotificacionAjax', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if(data.ok) {
+            const el = document.getElementById('notif-' + id);
+            if(el) {
+                el.style.transition = 'opacity 0.3s';
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 300);
+            }
+        } else {
+            alert('No se pudo eliminar la notificación.');
+        }
+    })
+    .catch(e => console.error(e));
+}

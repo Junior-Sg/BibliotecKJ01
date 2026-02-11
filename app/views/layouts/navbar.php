@@ -139,7 +139,7 @@ body{
 
 /* ====== HEADER STICKY ====== */
 .app-header{
- /* position: sticky; top:0; z-index:1200; */
+  
   background: linear-gradient(180deg, var(--dark-2), var(--dark-1));
   color:#fff;
   box-shadow: 0 1px 0 rgba(255,255,255,.06);
@@ -317,3 +317,4 @@ body{
     });
   })();
 </script>
+
