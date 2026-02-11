@@ -543,26 +543,30 @@ class PrestamoModelo {
             $nuevaFecha = $dt->format('Y-m-d');
             
             // 4. Actualizar la fecha de devolución del préstamo
-            $sqlUpdate = "UPDATE prestamo SET fecha_devolucion = ? WHERE id_prestamo = ?";
-            $stmtUpdate = $this->db->prepare($sqlUpdate);
-            if ($stmtUpdate === false) {
-                throw new Exception('Error prepare update prestamo: ' . $this->db->error);
-            }
-            $stmtUpdate->bind_param("si", $nuevaFecha, $idPrestamo);
-
-            if (!$stmtUpdate->execute()) {
-                throw new Exception("Error al actualizar el préstamo: " . $stmtUpdate->error);
-            }
-
-                // Si el préstamo estaba retrasado, cambiar a activo
-                $sqlEstado = "UPDATE prestamo SET estado = 'activo' WHERE id_prestamo = ? AND estado = 'retrasado'";
-                $stmtEstado = $this->db->prepare($sqlEstado);
-                if ($stmtEstado === false) {
-                    throw new Exception('Error prepare update estado prestamo: ' . $this->db->error);
-                }
-                $stmtEstado->bind_param("i", $idPrestamo);
-                if (!$stmtEstado->execute()) {
-                    throw new Exception("Error al actualizar estado del préstamo: " . $stmtEstado->error);
+                // Verificar estado actual del préstamo
+                $estadoPrestamo = $prestamo['estado'] ?? 'activo';
+                if ($estadoPrestamo === 'retrasado') {
+                    // Actualizar fecha y estado juntos
+                    $sqlUpdate = "UPDATE prestamo SET fecha_devolucion = ?, estado = 'activo' WHERE id_prestamo = ?";
+                    $stmtUpdate = $this->db->prepare($sqlUpdate);
+                    if ($stmtUpdate === false) {
+                        throw new Exception('Error prepare update prestamo: ' . $this->db->error);
+                    }
+                    $stmtUpdate->bind_param("si", $nuevaFecha, $idPrestamo);
+                    if (!$stmtUpdate->execute()) {
+                        throw new Exception("Error al actualizar el préstamo: " . $stmtUpdate->error);
+                    }
+                } else {
+                    // Solo actualizar fecha
+                    $sqlUpdate = "UPDATE prestamo SET fecha_devolucion = ? WHERE id_prestamo = ?";
+                    $stmtUpdate = $this->db->prepare($sqlUpdate);
+                    if ($stmtUpdate === false) {
+                        throw new Exception('Error prepare update prestamo: ' . $this->db->error);
+                    }
+                    $stmtUpdate->bind_param("si", $nuevaFecha, $idPrestamo);
+                    if (!$stmtUpdate->execute()) {
+                        throw new Exception("Error al actualizar el préstamo: " . $stmtUpdate->error);
+                    }
                 }
             
             // 5. Actualizar la solicitud como aprobada
@@ -637,28 +641,30 @@ class PrestamoModelo {
         
         try {
             // 1. Obtener datos de la solicitud
-            $sql = "SELECT id_usuario FROM solicitud_aplazamiento WHERE id_solicitud = ?";
+            // 1. Obtener datos de la solicitud y préstamo/usuario
+            $sql = "SELECT sa.id_usuario, sa.id_prestamo, u.correo, u.nombre, l.titulo FROM solicitud_aplazamiento sa
+                    JOIN usuario u ON sa.id_usuario = u.id_usuario
+                    JOIN prestamo p ON sa.id_prestamo = p.id_prestamo
+                    JOIN libro l ON p.id_libro = l.id_libro
+                    WHERE sa.id_solicitud = ?";
             $stmt = $this->db->prepare($sql);
             $stmt->bind_param("i", $idSolicitud);
             $stmt->execute();
             $resultado = $stmt->get_result();
-            
             if ($resultado->num_rows === 0) {
                 throw new Exception("Solicitud no encontrada");
             }
-            
             $solicitud = $resultado->fetch_assoc();
-            
+
             // 2. Actualizar la solicitud como rechazada
             $ahora = date('Y-m-d H:i:s');
             $sqlRechazada = "UPDATE solicitud_aplazamiento SET estado = 'rechazado', fecha_respuesta = ? WHERE id_solicitud = ?";
             $stmtRechazada = $this->db->prepare($sqlRechazada);
             $stmtRechazada->bind_param("si", $ahora, $idSolicitud);
-            
             if (!$stmtRechazada->execute()) {
                 throw new Exception("Error al rechazar la solicitud");
             }
-            
+
             // 3. Crear notificación para el usuario
             $notificacionModelo = new NotificacionModelo($this->db);
             $mensaje = "❌ Tu solicitud de aplazamiento ha sido RECHAZADA.";
@@ -666,10 +672,22 @@ class PrestamoModelo {
                 $mensaje .= " Motivo: {$notaAdmin}";
             }
             $notificacionModelo->crearNotificacion($solicitud['id_usuario'], $mensaje);
-            
+
+            // 4. Enviar email de rechazo si hay correo
+            if (!empty($solicitud['correo'])) {
+                try {
+                    $this->enviarEmailAplazamientoRechazado(
+                        $solicitud['correo'],
+                        $solicitud['nombre'],
+                        $solicitud['titulo']
+                    );
+                } catch (Exception $e) {
+                    error_log('✗ Exception enviando email de aplazamiento rechazado: ' . $e->getMessage());
+                }
+            }
+
             $this->db->commit();
             return true;
-            
         } catch (Exception $e) {
             $this->db->rollback();
             error_log("Error en rechazarAplazamiento: " . $e->getMessage());
@@ -741,5 +759,31 @@ class PrestamoModelo {
             return false;
         }
     }
-}
 
+    /**
+     * Envía email al usuario cuando se rechaza su solicitud de aplazamiento
+     */
+    private function enviarEmailAplazamientoRechazado($email, $nombre, $tituloLibro) {
+        try {
+            error_log('🔍 Iniciando envío de email de rechazo a: ' . $email);
+            $mailer = new Mailer();
+            $asunto = "📚 Actualización sobre tu solicitud de aplazamiento";
+            
+            $contenido = "
+                <h2>Hola, $nombre</h2>
+                <p>Te informamos que tu solicitud de aplazamiento para la devolución del libro <strong>«$tituloLibro»</strong> ha sido <strong style='color: red;'>❌ RECHAZADA</strong>.</p>
+                
+                <p>Por favor, asegúrate de devolver el libro en la fecha originalmente pactada para evitar sanciones.</p>
+                <p>Si tienes dudas, puedes acercarte a la biblioteca.</p>
+                <p>¡Gracias por usar BibliotecKJ!</p>
+            ";
+            
+            $resultado = $mailer->send($email, $asunto, $contenido, true);
+            
+            return $resultado;
+        } catch (Exception $e) {
+            error_log('❌ Exception en enviarEmailAplazamientoRechazado: ' . $e->getMessage());
+            return false;
+        }
+    }
+}

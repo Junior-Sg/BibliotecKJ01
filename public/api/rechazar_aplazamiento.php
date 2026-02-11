@@ -62,4 +62,3 @@ try {
         'message' => 'Error al procesar la solicitud'
     ]);
 }
-?>
