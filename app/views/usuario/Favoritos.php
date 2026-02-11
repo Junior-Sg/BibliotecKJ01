@@ -1,6 +1,6 @@
 <div class="container-fluid p-0">
     <div id="favoritosList" class="row g-3">
-        <h5 class="mt-4"><i class="bi bi-heart-fill text-danger"></i> Mis Libros Favoritos</h5>
+        <h5 class="mt-2 mb-3"><i class="bi bi-heart-fill text-danger"></i> Mis Libros Favoritos</h5>
         
         <?php if ($favoritos && $favoritos->num_rows > 0): ?>
             <?php while($f = $favoritos->fetch_assoc()): ?>

@@ -1,4 +1,4 @@
-<div class="container my-4">
+<div class="container my-3">
     <?php if (!empty($_SESSION['flash_ok'])): ?>
         <div class="alert alert-success"><?= $_SESSION['flash_ok']; unset($_SESSION['flash_ok']); ?></div>
     <?php endif; ?>

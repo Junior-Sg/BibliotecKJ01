@@ -49,7 +49,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     </div>
 
     <!-- Filtros -->
-    <ul class="nav nav-pills justify-content-center mb-4" id="reservados-tabs" role="tablist">
+    <ul class="nav nav-pills justify-content-center mb-5" id="reservados-tabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="hoy-tab" data-bs-toggle="pill" data-bs-target="#hoy" type="button" role="tab">Hoy</button>
         </li>
@@ -65,9 +65,9 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     <div class="tab-content" id="reservados-content">
         <!-- Para simplificar, usamos los mismos datos. En una app real, aquí irían datos distintos por pestaña -->
         <div class="tab-pane fade show active" id="hoy" role="tabpanel">
-            <div class="row row-cols-1 row-cols-md-3 g-4" id="lista-reservados">
+            <div class="row row-cols-2 row-cols-md-5 g-5" id="lista-reservados">
                 <?php foreach ($masreservados as $index => $l): ?>
-                    <div class="col libro-item <?= $index >= 3 ? 'hidden' : '' ?>">
+                    <div class="col libro-item <?= $index >= 5 ? 'hidden' : '' ?>">
                         <div class="mini-card mx-auto" 
                             data-id="<?= $l['id_libro'] ?>" 
                             data-genero="<?= $l['id_genero'] ?? '' ?>"
@@ -83,16 +83,16 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
                     </div>
                 <?php endforeach; ?>
             </div>
-            <?php if (count($masreservados) > 3): ?>
+            <?php if (count($masreservados) > 5): ?>
             <div class="text-center mt-4">
                 <button id="ver-mas-reservados" class="btn btn-outline-light">Ver más</button>
             </div>
             <?php endif; ?>
         </div>
         <div class="tab-pane fade" id="semanal" role="tabpanel">
-            <div class="row row-cols-1 row-cols-md-3 g-4" id="lista-semanal">
+            <div class="row row-cols-2 row-cols-md-5 g-5" id="lista-semanal">
                 <?php foreach ($semanal as $index => $l): ?>
-                    <div class="col libro-item <?= $index >= 3 ? 'hidden' : '' ?>">
+                    <div class="col libro-item <?= $index >= 5 ? 'hidden' : '' ?>">
                         <div class="mini-card mx-auto" 
                             data-id="<?= $l['id_libro'] ?>" 
                             data-genero="<?= $l['id_genero'] ?? '' ?>"
@@ -108,16 +108,16 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
                     </div>
                 <?php endforeach; ?>
             </div>
-            <?php if (count($semanal) > 3): ?>
+            <?php if (count($semanal) > 5): ?>
             <div class="text-center mt-4">
                 <button id="ver-mas-semanal" class="btn btn-outline-light">Ver más</button>
             </div>
             <?php endif; ?>
         </div>
         <div class="tab-pane fade" id="mensual" role="tabpanel">
-            <div class="row row-cols-1 row-cols-md-3 g-4" id="lista-mensual">
+            <div class="row row-cols-2 row-cols-md-5 g-5" id="lista-mensual">
                 <?php foreach ($mensual as $index => $l): ?>
-                    <div class="col libro-item <?= $index >= 3 ? 'hidden' : '' ?>">
+                    <div class="col libro-item <?= $index >= 5 ? 'hidden' : '' ?>">
                         <div class="mini-card mx-auto" 
                             data-id="<?= $l['id_libro'] ?>" 
                             data-genero="<?= $l['id_genero'] ?? '' ?>"
@@ -133,7 +133,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
                     </div>
                 <?php endforeach; ?>
             </div>
-            <?php if (count($mensual) > 3): ?>
+            <?php if (count($mensual) > 5): ?>
             <div class="text-center mt-4">
                 <button id="ver-mas-mensual" class="btn btn-outline-light">Ver más</button>
             </div>
@@ -146,9 +146,9 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
         <h2 class="section-title">LIBROS FAVORITOS DE LA COMUNIDAD</h2>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-4 g-4 mb-5" id="lista-favoritos">
+    <div class="row row-cols-2 row-cols-md-5 g-5 mb-5" id="lista-favoritos">
          <?php foreach ($favoritos as $index => $l): ?>
-            <div class="col libro-item <?= $index >= 4 ? 'hidden' : '' ?>">
+            <div class="col libro-item <?= $index >= 5 ? 'hidden' : '' ?>">
                 <div class="mini-card mx-auto" 
                     data-id="<?= $l['id_libro'] ?>"
                     data-genero="<?= $l['id_genero'] ?? '' ?>" 
@@ -164,7 +164,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
             </div>
         <?php endforeach; ?>
     </div>
-    <?php if (count($favoritos) > 4): ?>
+    <?php if (count($favoritos) > 5): ?>
     <div class="text-center mt-2 mb-5">
         <button id="ver-mas-favoritos" class="btn btn-outline-light">Ver más</button>
     </div>
@@ -175,9 +175,9 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
         <h2 class="section-title">LIBROS NUEVOS AÑADIDOS</h2>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-4 g-4 mb-5" id="lista-nuevos">
+    <div class="row row-cols-2 row-cols-md-5 g-5 mb-5" id="lista-nuevos">
         <?php foreach ($nuevos as $index => $l): ?>
-            <div class="col libro-item <?= $index >= 4 ? 'hidden' : '' ?>">
+            <div class="col libro-item <?= $index >= 5 ? 'hidden' : '' ?>">
                 <div class="mini-card mx-auto" 
                     data-id="<?= $l['id_libro'] ?>"
                     data-genero="<?= $l['id_genero'] ?? '' ?>" 
@@ -193,7 +193,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
             </div>
         <?php endforeach; ?>
     </div>
-    <?php if (count($nuevos) > 4): ?>
+    <?php if (count($nuevos) > 5): ?>
     <div class="text-center mt-2 mb-5">
         <button id="ver-mas-nuevos" class="btn btn-outline-light">Ver más</button>
     </div>

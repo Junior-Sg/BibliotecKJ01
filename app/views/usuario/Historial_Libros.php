@@ -1,6 +1,6 @@
-<div class="col-12 mt-4">
+<div class="col-12 mt-2 mb-3">
     <h4>Libros en Préstamo</h4>
-    <div id="prestamos-activos">
+    <div id="prestamos-activos" class="table-scroll">
         <?php if (!empty($prestamosActivos)): ?>
         <table class="table">
             <thead><tr><th>Libro</th><th>Fecha Devolución</th><th>Estado</th><th>Acción</th></tr></thead>
@@ -36,9 +36,9 @@
     </div>
 </div>
 
-<div class="col-12 mt-4">
+<div class="col-12 mt-2 mb-3">
     <h4>Historial de Libros Leídos</h4>
-    <div id="historial-lectura">
+    <div id="historial-lectura" class="table-scroll">
         <?php if (!empty($historialLectura)): ?>
         <table class="table">
             <thead><tr><th>Libro</th><th>Fecha Devolución</th><th>Acción</th></tr></thead>
@@ -69,6 +69,7 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
+        </div>
         <?php else: ?>
             <p class="small">Aún no has devuelto ningún libro.</p>
         <?php endif; ?>

@@ -1,7 +1,8 @@
 <div class="col-12 col-lg-8">
     <h4>Historial de reservas</h4>
-    <div id="historial">
+    <div id="historial" class="table-responsive-custom">
         <?php if ($reservas && $reservas->num_rows): ?>
+        <div class="table-scroll">
         <table class="table">
             <thead><tr><th>Libro</th><th>Fecha</th><th>Estado</th><th>Acción</th></tr></thead>
             <tbody>
@@ -24,6 +25,7 @@
                 <?php endwhile; ?>
             </tbody>
         </table>
+        </div>
         <?php else: ?>
             <p class="small">No hay reservas</p>
         <?php endif; ?>
