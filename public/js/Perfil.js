@@ -24,6 +24,8 @@ document.addEventListener('click', function (e) {
                             if (cont) cont.innerHTML = '<p class="small">No hay reservas</p>';
                         }
                     }
+                    // Recargar página para actualizar contadores y estados
+                    setTimeout(() => location.reload(), 500);
                 } else {
                     alert('No se pudo cancelar: ' + (data.error || 'error'));
                 }
@@ -83,6 +85,9 @@ document.addEventListener('click', function (e) {
                         </div>`;
                         favList?.insertAdjacentHTML('beforeend', newFavCard);
                     }
+                    
+                    // Recargar página para actualizar todos los contadores
+                    setTimeout(() => location.reload(), 500);
                 } else {
                     favButton.disabled = false;
                     alert('No se pudo añadir a favoritos: ' + (data.error || 'error'));

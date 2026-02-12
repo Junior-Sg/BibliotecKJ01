@@ -21,6 +21,7 @@
         <img src="<?= rtrim(BASE_URL, '/') ?>/public/img/Logos/L1.jpg" alt="Logo BibliotecKJ" class="f-logo" />
         <span class="f-name">BIBLIOTEC.KJ</span>
       </div>
+      <br>
       <p class="f-text">Gestión de inventarios, préstamos y reservas en un solo lugar.</p>
     </div>
 
@@ -83,14 +84,14 @@
 }
 .wave-top svg{ display:block; width:100%; height:80px; }
 
-.container{ max-width:1180px; }
+.container{ max-width:1300px; }
 
 /* Grid principal */
 .footer-inner.container{
   padding: 20px 16px 8px;
   display:grid; 
   grid-template-columns: 1fr 1fr 1fr; 
-  gap: 24px;
+  gap: 30px;
   align-items:flex-start;
 }
 .f-col-left{ text-align: left; }
@@ -107,12 +108,12 @@
 }
 
 /* Marca */
-.f-brand{ display:flex; align-items:center; gap:10px; }
-.f-logo{ width:42px; height:42px; border-radius:10px; object-fit:cover; box-shadow: 0 0 0 2px rgba(255,255,255,.08); }
-.f-name{ font-family:'Merriweather', serif; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+.f-brand{ display:flex; align-items:center; gap:20px; }
+.f-logo{ width:100px; height:100px; border-radius:10px; object-fit:cover; box-shadow: 0 0 0 2px rgba(255,255,255,.08); }
+.f-name{ font-family:'Merriweather', serif; font-weight:800; letter-spacing:.10em; text-transform:uppercase; }
 
 /* Texto y enlaces */
-.f-title{ font-family:'Merriweather', serif; font-size:18px; margin-bottom:8px; color:#FEEAF0; }
+.f-title{ font-family:'Merriweather', serif; font-size:20px; margin-bottom:20px; color:#FEEAF0; }
 .f-text{ color: rgba(255,255,255,.86); max-width:420px; }
 .f-links{ list-style:none; padding:0; margin:0; }
 .f-links a{
@@ -123,7 +124,7 @@
 
 /* Línea inferior */
 .footer-bottom.container{
-  padding: 12px 16px 22px;
+  padding: 15px 16px 22px;
   display:flex; align-items:center; justify-content:space-between;
   border-top: 1px solid rgba(255,255,255,.08);
 }
