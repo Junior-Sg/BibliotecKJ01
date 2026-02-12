@@ -42,8 +42,11 @@ class ReportesController {
     }
 
     public function exportar_nuevos_usuarios() {
+        $mes = isset($_GET['mes']) ? intval($_GET['mes']) : null;
+        $anio = isset($_GET['anio']) ? intval($_GET['anio']) : null;
+        
         $reportesModelo = new ReportesModelo();
-        $datos = $reportesModelo->obtenerNuevosUsuariosDetallado();
+        $datos = $reportesModelo->obtenerNuevosUsuariosDetallado($mes, $anio);
         $headers = ['ID Usuario', 'Nombre', 'Correo', 'Documento', 'Tipo Doc', 'Teléfono'];
         
         $excelData = [$headers];
@@ -60,13 +63,17 @@ class ReportesController {
         
         $datosExport = $excelData;
         array_shift($datosExport);
-        ExcelExporter::exportarConFormato('Nuevos_Usuarios_' . date('Y-m-d_His') . '.xls', 'Reporte de Nuevos Usuarios', $headers, $datosExport);
+        $filename = $mes && $anio ? "Nuevos_Usuarios_{$mes}_{$anio}" : "Nuevos_Usuarios_Todos";
+        ExcelExporter::exportarConFormato($filename . '_' . date('Y-m-d_His') . '.xls', 'Reporte de Nuevos Usuarios', $headers, $datosExport);
         exit; 
     }
 
     public function exportar_prestamos_mes() {
+        $mes = isset($_GET['mes']) ? intval($_GET['mes']) : null;
+        $anio = isset($_GET['anio']) ? intval($_GET['anio']) : null;
+        
         $reportesModelo = new ReportesModelo();
-        $datos = $reportesModelo->obtenerPrestamosPorMesDetallado();
+        $datos = $reportesModelo->obtenerPrestamosPorMesDetallado($mes, $anio);
         $headers = ['ID Préstamo', 'Usuario', 'Documento', 'Libro', 'Fecha Préstamo', 'Fecha Devolución', 'Estado'];
         
         $excelData = [$headers];
@@ -84,13 +91,17 @@ class ReportesController {
         
         $datosExport = $excelData;
         array_shift($datosExport);
-        ExcelExporter::exportarConFormato('Prestamos_Por_Mes_' . date('Y-m-d_His') . '.xls', 'Reporte de Préstamos por Mes', $headers, $datosExport);
+        $filename = $mes && $anio ? "Prestamos_Por_Mes_{$mes}_{$anio}" : "Prestamos_Por_Mes_Todos";
+        ExcelExporter::exportarConFormato($filename . '_' . date('Y-m-d_His') . '.xls', 'Reporte de Préstamos por Mes', $headers, $datosExport);
         exit; 
     }
 
     public function exportar_reservas_mes() {
+        $mes = isset($_GET['mes']) ? intval($_GET['mes']) : null;
+        $anio = isset($_GET['anio']) ? intval($_GET['anio']) : null;
+        
         $reportesModelo = new ReportesModelo();
-        $datos = $reportesModelo->obtenerReservasDetallado();
+        $datos = $reportesModelo->obtenerReservasDetallado($mes, $anio);
         $headers = ['ID Reserva', 'Usuario', 'Documento', 'Libro', 'Fecha Reserva', 'Estado'];
         
         $excelData = [$headers];
@@ -107,7 +118,8 @@ class ReportesController {
         
         $datosExport = $excelData;
         array_shift($datosExport);
-        ExcelExporter::exportarConFormato('Reservas_' . date('Y-m-d_His') . '.xls', 'Reporte de Reservas', $headers, $datosExport);
+        $filename = $mes && $anio ? "Reservas_{$mes}_{$anio}" : "Reservas_Todas";
+        ExcelExporter::exportarConFormato($filename . '_' . date('Y-m-d_His') . '.xls', 'Reporte de Reservas', $headers, $datosExport);
         exit; 
     }
 

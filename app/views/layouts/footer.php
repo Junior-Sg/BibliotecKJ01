@@ -15,8 +15,8 @@
   </div>
 
   <div class="footer-inner container">
-    <!-- Columna marca -->
-    <div class="f-col">
+    <!-- Columna marca - Izquierda -->
+    <div class="f-col f-col-left">
       <div class="f-brand">
         <img src="<?= rtrim(BASE_URL, '/') ?>/public/img/Logos/L1.jpg" alt="Logo BibliotecKJ" class="f-logo" />
         <span class="f-name">BIBLIOTEC.KJ</span>
@@ -24,18 +24,17 @@
       <p class="f-text">Gestión de inventarios, préstamos y reservas en un solo lugar.</p>
     </div>
 
-    <!-- Columna explorar -->
-    <div class="f-col">
+    <!-- Columna explorar - Centro -->
+    <div class="f-col f-col-center">
       <h6 class="f-title">Explorar</h6>
       <ul class="f-links">
         <li><a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Libro&action=catalogo">Catálogo</a></li>
         <li><a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Libro&action=index">Géneros</a></li>
-      
       </ul>
     </div>
 
-    <!-- Columna soporte -->
-    <div class="f-col">
+    <!-- Columna soporte - Derecha -->
+    <div class="f-col f-col-right">
       <h6 class="f-title">Soporte</h6>
       <ul class="f-links">
         <li><a href="mailto:soporte@biblioteckj.com">bibli0teckj01@gmail.com</a></li>
@@ -89,12 +88,23 @@
 /* Grid principal */
 .footer-inner.container{
   padding: 20px 16px 8px;
-  display:grid; grid-template-columns: repeat(12, 1fr); gap: 24px;
+  display:grid; 
+  grid-template-columns: 1fr 1fr 1fr; 
+  gap: 24px;
   align-items:flex-start;
 }
-.f-col{ grid-column: span 4; }
-@media (max-width: 992px){ .f-col{ grid-column: span 6; } }
-@media (max-width: 576px){ .f-col{ grid-column: span 12; } }
+.f-col-left{ text-align: left; }
+.f-col-center{ text-align: center; }
+.f-col-right{ text-align: right; }
+@media (max-width: 992px){ 
+  .footer-inner.container{ grid-template-columns: 1fr 1fr; } 
+  .f-col-right{ grid-column: span 2; text-align: center; }
+  .f-col-left, .f-col-center{ text-align: center; }
+}
+@media (max-width: 576px){ 
+  .footer-inner.container{ grid-template-columns: 1fr; } 
+  .f-col-right{ grid-column: span 1; }
+}
 
 /* Marca */
 .f-brand{ display:flex; align-items:center; gap:10px; }

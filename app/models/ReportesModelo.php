@@ -51,10 +51,15 @@ class ReportesModelo {
     }
 
     // Obtener DETALLES de nuevos usuarios (para Excel)
-    public function obtenerNuevosUsuariosDetallado() {
+    public function obtenerNuevosUsuariosDetallado($mes = null, $anio = null) {
+        $where = "";
+        if ($mes && $anio) {
+            $where = "WHERE MONTH(u.fecha_registro) = $mes AND YEAR(u.fecha_registro) = $anio";
+        }
         $sql = "SELECT u.id_usuario, u.nombre, u.correo, u.numero_documento, u.tipo_documento, u.telefono
                 FROM usuario u
-                ORDER BY u.id_usuario DESC";
+                $where
+                ORDER BY u.fecha_registro DESC";
         $result = $this->db->query($sql);
         $datos = [];
         if ($result) {
@@ -82,12 +87,17 @@ class ReportesModelo {
     }
 
     // Obtener DETALLES de prÃ©stamos (para Excel)
-    public function obtenerPrestamosPorMesDetallado() {
+    public function obtenerPrestamosPorMesDetallado($mes = null, $anio = null) {
+        $where = "";
+        if ($mes && $anio) {
+            $where = "WHERE MONTH(p.fecha_prestamo) = $mes AND YEAR(p.fecha_prestamo) = $anio";
+        }
         $sql = "SELECT p.id_prestamo, u.nombre AS usuario, u.numero_documento, l.titulo AS libro,
                        p.fecha_prestamo, p.fecha_devolucion, p.estado
                 FROM prestamo p
                 JOIN usuario u ON p.id_usuario = u.id_usuario
                 JOIN libro l ON p.id_libro = l.id_libro
+                $where
                 ORDER BY p.fecha_prestamo DESC";
         $result = $this->db->query($sql);
         $datos = [];
@@ -116,12 +126,17 @@ class ReportesModelo {
     }
 
     // Obtener DETALLES de reservas (para Excel)
-    public function obtenerReservasDetallado() {
+    public function obtenerReservasDetallado($mes = null, $anio = null) {
+        $where = "";
+        if ($mes && $anio) {
+            $where = "WHERE MONTH(r.fecha_reserva) = $mes AND YEAR(r.fecha_reserva) = $anio";
+        }
         $sql = "SELECT r.id_reserva, u.nombre AS usuario, u.numero_documento, l.titulo AS libro,
                        r.fecha_reserva, r.estado
                 FROM reserva r
                 JOIN usuario u ON r.id_usuario = u.id_usuario
                 JOIN libro l ON r.id_libro = l.id_libro
+                $where
                 ORDER BY r.fecha_reserva DESC";
         $result = $this->db->query($sql);
         $datos = [];

@@ -306,3 +306,74 @@ body {
     grid-template-columns:1fr;
   }
 }
+
+/* ============================================
+   NOTIFICACIONES: Compactar y ordenar encabezado
+   Estructura usada:
+   .notificaciones-container > h5.mb-3 + .list-group
+   ============================================ */
+
+/* Evitar colapso de márgenes del primer hijo y dar aire justo */
+.notificaciones-container {
+  padding-top: 8px;           /* un poco de aire arriba */
+  display: flow-root;         /* corta margin-collapsing */
+  overflow: hidden;           /* refuerzo */
+}
+
+/* Título "Mis Notificaciones" más compacto */
+.notificaciones-container > h5.mb-3 {
+  margin-top: 0 !important;   /* quita el hueco de arriba */
+  margin-bottom: 8px !important; /* separa lo justo de la lista */
+  line-height: 1.2;
+  font-weight: 800;           /* opcional: más presencia */
+  color: var(--dark-wood, #3d2817);
+}
+
+/* Si vienen tabs justo antes del contenedor, reduce separación */
+.custom-tabs + .container-fluid .notificaciones-container > h5.mb-3,
+.custom-tabs + .notificaciones-container > h5.mb-3 {
+  margin-top: 4px !important;
+}
+
+/* Lista más compacta y prolija */
+.notificaciones-container .list-group.list-group-flush {
+  margin-top: 0 !important;
+}
+
+/* Ítems más compactos sin perder legibilidad */
+.notificaciones-container .list-group-item {
+  padding: 10px 14px !important;   /* ajusta si lo quieres aún menor */
+  border-color: var(--border-color, #d4c4b0);
+}
+
+/* El ítem destacado (no leído) mantiene el borde lateral bonito */
+.notificaciones-container .list-group-item.border-primary {
+  border-left-width: 4px !important;
+}
+
+/* Separador sutil (opcional) debajo del título */
+.notificaciones-container .title-divider {
+  height: 6px;
+  margin: 6px 0 10px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(200,156,93,.25),
+    rgba(235,193,47,.5),
+    rgba(200,156,93,.25)
+  );
+  opacity: .6;
+}
+
+/* En móvil, microajustes */
+@media (max-width: 576px) {
+  .notificaciones-container > h5.mb-3 {
+    margin-bottom: 6px !important;
+  }
+  .notificaciones-container .list-group-item {
+    padding: 9px 12px !important;
+  }
+}
+
+
+

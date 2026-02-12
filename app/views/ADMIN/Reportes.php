@@ -91,8 +91,37 @@
                     <div class="card-body">
                         <h5 class="card-title text-center">Nuevos Usuarios por Mes</h5>
                         <canvas id="nuevosUsuariosChart"></canvas>
-                        <div class="text-center mt-3">
-                            <a href="<?php echo BASE_URL; ?>?c=Reportes&a=exportar_nuevos_usuarios" class="btn btn-primary">Exportar Datos</a>
+                        <div class="mt-3">
+                            <div class="row g-2">
+                                <div class="col-5">
+                                    <select id="nuevosUsuariosMes" class="form-select form-select-sm">
+                                        <option value="">-- Mes --</option>
+                                        <option value="1">Enero</option>
+                                        <option value="2">Febrero</option>
+                                        <option value="3">Marzo</option>
+                                        <option value="4">Abril</option>
+                                        <option value="5">Mayo</option>
+                                        <option value="6">Junio</option>
+                                        <option value="7">Julio</option>
+                                        <option value="8">Agosto</option>
+                                        <option value="9">Septiembre</option>
+                                        <option value="10">Octubre</option>
+                                        <option value="11">Noviembre</option>
+                                        <option value="12">Diciembre</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <select id="nuevosUsuariosAnio" class="form-select form-select-sm">
+                                        <option value="">-- Año --</option>
+                                        <option value="2024">2024</option>
+                                        <option value="2025">2025</option>
+                                        <option value="2026">2026</option>
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <button id="btnExportarNuevosUsuarios" class="btn btn-primary btn-sm w-100">Exportar</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -102,8 +131,37 @@
                     <div class="card-body">
                         <h5 class="card-title text-center">Préstamos por Mes</h5>
                         <canvas id="prestamosPorMesChart"></canvas>
-                        <div class="text-center mt-3">
-                            <a href="<?php echo BASE_URL; ?>?c=Reportes&a=exportar_prestamos_mes" class="btn btn-primary">Exportar Datos</a>
+                        <div class="mt-3">
+                            <div class="row g-2">
+                                <div class="col-5">
+                                    <select id="prestamosMes" class="form-select form-select-sm">
+                                        <option value="">-- Mes --</option>
+                                        <option value="1">Enero</option>
+                                        <option value="2">Febrero</option>
+                                        <option value="3">Marzo</option>
+                                        <option value="4">Abril</option>
+                                        <option value="5">Mayo</option>
+                                        <option value="6">Junio</option>
+                                        <option value="7">Julio</option>
+                                        <option value="8">Agosto</option>
+                                        <option value="9">Septiembre</option>
+                                        <option value="10">Octubre</option>
+                                        <option value="11">Noviembre</option>
+                                        <option value="12">Diciembre</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <select id="prestamosAnio" class="form-select form-select-sm">
+                                        <option value="">-- Año --</option>
+                                        <option value="2024">2024</option>
+                                        <option value="2025">2025</option>
+                                        <option value="2026">2026</option>
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <button id="btnExportarPrestamos" class="btn btn-primary btn-sm w-100">Exportar</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -113,8 +171,37 @@
                     <div class="card-body">
                         <h5 class="card-title text-center">Reservas por Mes</h5>
                         <canvas id="reservasPorMesChart"></canvas>
-                        <div class="text-center mt-3">
-                            <a href="<?php echo BASE_URL; ?>?c=Reportes&a=exportar_reservas_mes" class="btn btn-primary">Exportar Datos</a>
+                        <div class="mt-3">
+                            <div class="row g-2">
+                                <div class="col-5">
+                                    <select id="reservasMes" class="form-select form-select-sm">
+                                        <option value="">-- Mes --</option>
+                                        <option value="1">Enero</option>
+                                        <option value="2">Febrero</option>
+                                        <option value="3">Marzo</option>
+                                        <option value="4">Abril</option>
+                                        <option value="5">Mayo</option>
+                                        <option value="6">Junio</option>
+                                        <option value="7">Julio</option>
+                                        <option value="8">Agosto</option>
+                                        <option value="9">Septiembre</option>
+                                        <option value="10">Octubre</option>
+                                        <option value="11">Noviembre</option>
+                                        <option value="12">Diciembre</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <select id="reservasAnio" class="form-select form-select-sm">
+                                        <option value="">-- Año --</option>
+                                        <option value="2024">2024</option>
+                                        <option value="2025">2025</option>
+                                        <option value="2026">2026</option>
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <button id="btnExportarReservas" class="btn btn-primary btn-sm w-100">Exportar</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -233,6 +320,48 @@
             }
 
             const url = '<?php echo BASE_URL; ?>?c=Reportes&a=generarReportePdf&mes=' + mes + '&anio=' + anio;
+            window.location.href = url;
+        });
+
+        // Manejador para exportar nuevos usuarios por mes
+        document.getElementById('btnExportarNuevosUsuarios').addEventListener('click', function() {
+            const mes = document.getElementById('nuevosUsuariosMes').value;
+            const anio = document.getElementById('nuevosUsuariosAnio').value;
+
+            if (!mes || !anio) {
+                alert('Por favor selecciona mes y año');
+                return;
+            }
+
+            const url = '<?php echo BASE_URL; ?>?c=Reportes&a=exportar_nuevos_usuarios&mes=' + mes + '&anio=' + anio;
+            window.location.href = url;
+        });
+
+        // Manejador para exportar préstamos por mes
+        document.getElementById('btnExportarPrestamos').addEventListener('click', function() {
+            const mes = document.getElementById('prestamosMes').value;
+            const anio = document.getElementById('prestamosAnio').value;
+
+            if (!mes || !anio) {
+                alert('Por favor selecciona mes y año');
+                return;
+            }
+
+            const url = '<?php echo BASE_URL; ?>?c=Reportes&a=exportar_prestamos_mes&mes=' + mes + '&anio=' + anio;
+            window.location.href = url;
+        });
+
+        // Manejador para exportar reservas por mes
+        document.getElementById('btnExportarReservas').addEventListener('click', function() {
+            const mes = document.getElementById('reservasMes').value;
+            const anio = document.getElementById('reservasAnio').value;
+
+            if (!mes || !anio) {
+                alert('Por favor selecciona mes y año');
+                return;
+            }
+
+            const url = '<?php echo BASE_URL; ?>?c=Reportes&a=exportar_reservas_mes&mes=' + mes + '&anio=' + anio;
             window.location.href = url;
         });
     });
