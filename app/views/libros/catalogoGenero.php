@@ -35,18 +35,18 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
         <?php if (!empty($librosDelGenero)): ?>
             <?php foreach($librosDelGenero as $libro): ?>
                 <div class="book-card" 
-                     role="button" 
-                     tabindex="0" 
-                     data-bs-toggle="modal" 
-                     data-bs-target="#modalDetalle" 
-                     data-id="<?= (int)$libro['id_libro'] ?>"
-                     aria-label="Ver detalles de <?= htmlspecialchars($libro['titulo']) ?>">
+                    role="button" 
+                    tabindex="0" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalDetalle" 
+                    data-id="<?= (int)$libro['id_libro'] ?>"
+                    aria-label="Ver detalles de <?= htmlspecialchars($libro['titulo']) ?>">
                     
                     <div class="book-cover-wrapper">
                         <img src="<?= BASE_URL ?>public/img/Libros/<?= htmlspecialchars($libro['Imagen']) ?>" 
-                             alt="Portada de <?= htmlspecialchars($libro['titulo']) ?>" 
-                             class="book-cover"
-                             loading="lazy">
+                            alt="Portada de <?= htmlspecialchars($libro['titulo']) ?>" 
+                            class="book-cover"
+                            loading="lazy">
                     </div>
                     
                     <div class="book-info">

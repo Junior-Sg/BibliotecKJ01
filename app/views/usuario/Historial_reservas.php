@@ -1,6 +1,6 @@
 <div class="col-12 col-lg-8">
     <h4>Historial de reservas</h4>
-    <div id="historial" class="table-responsive-custom">
+    <div id="reservas-historial" class="table-responsive-custom">
         <?php if ($reservas && $reservas->num_rows): ?>
         <div class="table-scroll">
         <table class="table">

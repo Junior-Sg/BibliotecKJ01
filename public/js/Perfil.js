@@ -16,8 +16,14 @@ document.addEventListener('click', function (e) {
             .then(data => {
                 if (data.ok) {
                     const tr = document.getElementById('res-' + id);
-                    if (tr) tr.querySelector('.estado').textContent = 'cancelada';
-                    if (tr) tr.querySelector('.btn-cancelar')?.remove();
+                    if (tr) {
+                        tr.remove();
+                        const tbody = document.querySelector('#reservas-historial tbody');
+                        if (tbody && tbody.children.length === 0) {
+                            const cont = document.getElementById('reservas-historial');
+                            if (cont) cont.innerHTML = '<p class="small">No hay reservas</p>';
+                        }
+                    }
                 } else {
                     alert('No se pudo cancelar: ' + (data.error || 'error'));
                 }
