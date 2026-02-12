@@ -251,7 +251,7 @@ function abrirModalAplazamiento(idPrestamo, titulo) {
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-success" id="btnEnviarAplazamiento">
+                        <button type="button" class="btn btn-outline-success" id="btnEnviarAplazamiento">
                             <i class="bi bi-send"></i> Enviar Solicitud
                         </button>
                     </div>
