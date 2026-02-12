@@ -8,10 +8,11 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mi Perfil - BibliotecKJ</title>
 
-    <link rel="stylesheet" href="<?= rtrim(BASE_URL, '/') ?>/public/css/perfil/perfil.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Coloca el CSS propio después de Bootstrap para que no lo sobrescriba -->
+    <link rel="stylesheet" href="<?= rtrim(BASE_URL, '/') ?>/public/css/perfil/perfil.css">
 
     <script>
         // Pasar la base URL a los archivos JS externos
@@ -68,32 +69,34 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
         </li>
     </ul>
 
-    <div class="tab-content profile-content p-4 shadow-sm rounded-bottom bg-white">
-        
-        <div class="tab-pane fade show active" id="datos" role="tabpanel">
-            <?php include __DIR__ . '/datos.php'; ?>
-        </div>
-
-        <div class="tab-pane fade" id="favoritos" role="tabpanel">
-            <?php include __DIR__ . '/Favoritos.php'; ?>
-        </div>
-
-        <div class="tab-pane fade" id="historial" role="tabpanel">
-            <div class="row g-3">
-                <?php include __DIR__ . '/Historial_reservas.php'; ?>
-                <hr>
-                <?php include __DIR__ . '/Historial_Libros.php'; ?>
+    <div class="profile-content p-4 shadow-sm rounded-bottom bg-white">
+        <div class="tab-content">
+            
+            <div class="tab-pane fade show active" id="datos" role="tabpanel">
+                <?php include __DIR__ . '/datos.php'; ?>
             </div>
-        </div>
 
-        <div class="tab-pane fade" id="notificaciones" role="tabpanel">
-            <div class="row">
-                <div class="col-12">
-                    <?php include __DIR__ . '/Notificaciones.php'; ?>
+            <div class="tab-pane fade" id="favoritos" role="tabpanel">
+                <?php include __DIR__ . '/Favoritos.php'; ?>
+            </div>
+
+            <div class="tab-pane fade" id="historial" role="tabpanel">
+                <div class="row g-3">
+                    <?php include __DIR__ . '/Historial_reservas.php'; ?>
+                    <hr>
+                    <?php include __DIR__ . '/Historial_Libros.php'; ?>
                 </div>
             </div>
-        </div>
 
+            <div class="tab-pane fade" id="notificaciones" role="tabpanel">
+                <div class="row">
+                    <div class="col-12">
+                        <?php include __DIR__ . '/Notificaciones.php'; ?>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 </main>
 

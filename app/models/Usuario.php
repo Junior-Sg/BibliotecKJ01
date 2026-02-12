@@ -367,12 +367,16 @@ class Usuario
         }
 
     // Historial reservas: asume tabla reserva (id_reserva, id_usuario, id_libro, fecha_reserva, estado)
+    /**
+     * Reservas activas del usuario (solo pendientes).
+     * Si el administrador convierte en préstamo o la cancela, ya no aparecen aquí.
+     */
     public function obtenerReservas(int $idUsuario)
     {
         $sql = "SELECT r.id_reserva, r.id_libro, r.fecha_reserva, r.estado, l.titulo, l.Imagen 
                 FROM reserva r 
                 LEFT JOIN libro l ON r.id_libro = l.id_libro
-                WHERE r.id_usuario = ?
+                WHERE r.id_usuario = ? AND r.estado = 'pendiente'
                 ORDER BY r.fecha_reserva DESC";
         $stmt = $this->conexion->prepare($sql);
         if (!$stmt) {
@@ -408,11 +412,11 @@ class Usuario
             $data = $res->fetch_assoc();
             $tituloLibro = $data['titulo'];
 
-            // 2. Cancelar la reserva (Actualizar estado para mantener historial)
-            $sqlUpd = "UPDATE reserva SET estado = 'cancelada' WHERE id_reserva = ? AND id_usuario = ? AND estado = 'pendiente'";
-            $stmtUpd = $this->conexion->prepare($sqlUpd);
-            $stmtUpd->bind_param("ii", $idReserva, $idUsuario);
-            $stmtUpd->execute();
+            // 2. Eliminar la reserva (ya no debe aparecer en el historial)
+            $sqlDel = "DELETE FROM reserva WHERE id_reserva = ? AND id_usuario = ? AND estado = 'pendiente'";
+            $stmtDel = $this->conexion->prepare($sqlDel);
+            $stmtDel->bind_param("ii", $idReserva, $idUsuario);
+            $stmtDel->execute();
 
             // 3. Crear notificación
             require_once __DIR__ . '/NotificacionModelo.php';
