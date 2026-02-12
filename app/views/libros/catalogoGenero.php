@@ -78,6 +78,17 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 <script src="<?= BASE_URL ?>public/js/reserva.js"></script>
 
 <script>
+    // variables que esperan reserva.js y otros
+  window.BASE_URL    = "<?= rtrim(BASE_URL, '/') ?>";
+  window.USER_LOGGED = <?= isset($_SESSION['id_usuario']) ? 'true' : 'false' ?>;
+
+  // Configuración actual
+  window.AppConfig = {
+    baseUrl: window.BASE_URL,
+    isLogged: window.USER_LOGGED,
+    openModalId: "<?= $_GET['openModal'] ?? '' ?>"
+  };
+
 /**
  * Lógica para manejar la apertura automática de modales vía URL
  */
