@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-12">
             <div class="notificaciones-container">
-                <h5 class="mb-4">Mis Notificaciones</h5>
+                <h5 class="mb-3">Mis Notificaciones</h5>
 
                 <?php if (!empty($notificaciones)): ?>
                     <div class="list-group list-group-flush">
@@ -20,11 +20,11 @@
 
                                 <div class="d-flex flex-column gap-1 ms-2">
                                     <?php if ($n['leido'] == 0): ?>
-                                        <button class="btn btn-sm btn-outline-primary rounded-pill" 
-                                                onclick="marcarLeida(<?= $n['id_notificacion'] ?>)"
-                                                style="font-size: 0.7rem; white-space: nowrap;">
-                                            Marcar leída
-                                        </button>
+                                        <button class="btn btn-sm btn-gold rounded-pill" 
+                                            onclick="marcarLeida(<?= $n['id_notificacion'] ?>)"
+                                            style="font-size: 0.7rem; white-space: nowrap;">
+                                        Marcar leída
+                                    </button>
                                     <?php endif; ?>
                                     <button class="btn btn-sm btn-outline-danger rounded-pill" 
                                             onclick="eliminarNotificacion(<?= $n['id_notificacion'] ?>)"
@@ -71,3 +71,4 @@ function eliminarNotificacion(id) {
     .catch(e => console.error(e));
 }
 </script>
+

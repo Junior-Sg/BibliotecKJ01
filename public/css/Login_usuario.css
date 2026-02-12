@@ -10,15 +10,17 @@ body {
   background-size: cover;
   background-position: center;  
   background-repeat: no-repeat;
+  min-height: 100vh;
 }
 
 /* CONTENEDOR CENTRAL DEL LIBRO */
 .book-container {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  box-sizing: border-box;
 }
 
 /* LIBRO */
@@ -67,6 +69,20 @@ body {
   box-shadow: 0 8px 18px rgba(0,0,0,0.35);
   border: 3px solid rgba(255,255,255,0.12);
 }
+
+/* TÍTULO EN PORTADA */
+.cover h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+}
+
+.cover p {
+  font-size: 1.1rem;
+  margin: 0 0 25px 0;
+  opacity: 0.9;
+}
+
 /* PÁGINAS INTERNAS */
 .page {
   position: absolute;
@@ -79,6 +95,7 @@ body {
   transform-origin: left;
   transition: transform 1.2s ease;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .page-login { z-index: 2; }
@@ -97,7 +114,6 @@ form {
   border-radius: 20px;
 }
 
-
 .input-group {
   display: flex;
   flex-direction: column;
@@ -108,22 +124,55 @@ form {
   border: 1px solid #ccc;
 }
 
+.input-group label {
+  font-weight: 500;
+  color: #3b2b21;
+  font-size: 0.95rem;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 1rem;
+  color: #241705;
+  box-sizing: border-box;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  outline: none;
+}
 
 button {
-  padding: 10px 15px;
+  padding: 12px 20px;
   cursor: pointer;
   border: none;
   background: #6b4949;
   color: white;
   border-radius: 6px;
   font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #5a3b3b;
+}
+
+button:focus {
+  outline: 3px solid rgba(107,73,73,0.18);
+  outline-offset: 2px;
 }
 
 /* Hacer que el enlace 'Volver' tenga el mismo estilo que el botón 'Ver libro' */
 #backToHome,
 .cover #openBook {
   display: inline-block;
-  padding: 10px 15px;
+  padding: 12px 20px;
   cursor: pointer;
   border: none;
   background: #6b4949;
@@ -131,6 +180,9 @@ button {
   border-radius: 6px;
   font-weight: 600;
   text-decoration: none;
+  text-align: center;
+  min-width: 160px;
+  transition: background 0.3s ease;
 }
 
 #backToHome:hover,
@@ -138,19 +190,34 @@ button {
   background: #5a3b3b;
 }
 
-#backToHome:focus {
+#backToHome:focus,
+.cover #openBook:focus {
   outline: 3px solid rgba(107,73,73,0.18);
   outline-offset: 2px;
 }
 
 .extra, .back {
   margin-top: 10px;
+  text-align: center;
 }
 
 .extra a, .back a {
   color: #6b4949;
   text-decoration: none;
   font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.extra a:hover, .back a:hover {
+  text-decoration: underline;
+}
+
+/* TÍTULOS DE FORMULARIOS */
+.page h2 {
+  text-align: center;
+  color: #4b2e2e;
+  font-size: 1.8rem;
+  margin: 0 0 20px 0;
 }
 
 /* ALERTAS PERSONALIZADAS  */
@@ -167,21 +234,20 @@ button {
   font-weight: 600;
   color: #3b2b21;
 }
+
 .alert-success.alert-custom {
   background: linear-gradient(90deg, #efe6dc, #e6d6c3);
   border: 1px solid rgba(107,73,73,0.12);
 }
+
 .alert-info.alert-custom {
   background: linear-gradient(90deg, #f7efe6, #efe1d0);
   border: 1px solid rgba(107,73,73,0.06);
 }
+
 .alert-danger.alert-custom {
   background: linear-gradient(90deg, #f3dfd9, #efd1c8);
   border: 1px solid rgba(160,60,60,0.12);
-}
-
-@media (max-width: 600px) {
-  .alert-custom { top: 12px; left: 8px; transform: none; min-width: auto; max-width: calc(100% - 16px); border-radius: 8px; }
 }
 
 /* Animación y estructura del icono */
@@ -192,6 +258,7 @@ button {
   padding: 12px 16px;
   transition: opacity .45s ease, transform .45s ease;
 }
+
 .alert-custom .alert-icon {
   display: inline-flex;
   width: 36px;
@@ -200,6 +267,7 @@ button {
   justify-content: center;
   flex: 0 0 36px;
 }
+
 .alert-custom .alert-icon svg { display: block; }
 .alert-custom.fade-out { opacity: 0; transform: translateY(-8px); pointer-events: none; }
 
@@ -211,17 +279,341 @@ button {
   color: #3b2b21;
   font-weight: 700;
   cursor: pointer;
+  font-size: 1.5rem;
+  line-height: 1;
 }
 
 /* RESPONSIVE */
-@media (max-width: 900px) {
-  .book { aspect-ratio: 4/3; }
-  .page { padding: 30px 25px; }
-  .cover h1 { font-size: 2rem; }
+
+/* Tablets y pantallas medianas */
+@media (max-width: 992px) {
+  .book {
+    width: 65%;
+    max-width: 500px;
+    aspect-ratio: 4/3;
+  }
+  
+  .page {
+    padding: 30px 35px;
+  }
+  
+  .cover h1 {
+    font-size: 2.2rem;
+  }
+  
+  .cover .logo {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .page h2 {
+    font-size: 1.6rem;
+  }
 }
 
+/* Tablets pequeñas y phones grandes */
+@media (max-width: 768px) {
+  .book-container {
+    padding: 15px;
+  }
+  
+  .book {
+    width: 80%;
+    max-width: 450px;
+    aspect-ratio: 4/4.5;
+  }
+  
+  .page {
+    padding: 25px 30px;
+  }
+  
+  .cover {
+    padding: 25px;
+  }
+  
+  .cover h1 {
+    font-size: 2rem;
+  }
+  
+  .cover p {
+    font-size: 1rem;
+  }
+  
+  .cover .logo {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 15px;
+  }
+  
+  .page h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+  
+  form {
+    gap: 14px;
+  }
+  
+  button, #backToHome, .cover #openBook {
+    padding: 10px 18px;
+    font-size: 0.95rem;
+  }
+  
+  .input-group {
+    padding: 8px;
+  }
+  
+  .input-group label {
+    font-size: 0.9rem;
+  }
+  
+  .input-group input,
+  .input-group select {
+    padding: 8px;
+    font-size: 0.95rem;
+  }
+}
+
+/*Phones medianos */
+@media (max-width: 576px) {
+  .book-container {
+    padding: 10px;
+  }
+  
+  .book {
+    width: 95%;
+    max-width: 400px;
+    aspect-ratio: 4/5;
+  }
+  
+  .page {
+    padding: 20px 20px;
+  }
+  
+  .cover {
+    padding: 20px 15px;
+  }
+  
+  .cover h1 {
+    font-size: 1.6rem;
+  }
+  
+  .cover p {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+  
+  .cover .logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 12px;
+  }
+  
+  .page h2 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+  
+  form {
+    gap: 12px;
+  }
+  
+  button, #backToHome, .cover #openBook {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    min-width: 140px;
+  }
+  
+  .input-group {
+    padding: 6px 8px;
+  }
+  
+  .input-group label {
+    font-size: 0.85rem;
+  }
+  
+  .input-group input,
+  .input-group select {
+    padding: 6px 8px;
+    font-size: 0.9rem;
+  }
+  
+  .extra, .back {
+    margin-top: 8px;
+  }
+  
+  .extra a, .back a {
+    font-size: 0.85rem;
+  }
+}
+
+/*Phones pequeños */
+@media (max-width: 400px) {
+  .book {
+    width: 98%;
+    aspect-ratio: 4/5.5;
+  }
+  
+  .page {
+    padding: 15px 15px;
+  }
+  
+  .cover {
+    padding: 15px 10px;
+  }
+  
+  .cover h1 {
+    font-size: 1.4rem;
+  }
+  
+  .cover p {
+    font-size: 0.85rem;
+  }
+  
+  .cover .logo {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 10px;
+  }
+  
+  .page h2 {
+    font-size: 1.2rem;
+  }
+  
+  button, #backToHome, .cover #openBook {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    min-width: 120px;
+  }
+  
+  .input-group {
+    padding: 5px 6px;
+  }
+  
+  .input-group label {
+    font-size: 0.8rem;
+  }
+  
+  .input-group input,
+  .input-group select {
+    padding: 5px 6px;
+    font-size: 0.85rem;
+  }
+  
+  .extra a, .back a {
+    font-size: 0.8rem;
+  }
+}
+
+/* Alertas responsive */
 @media (max-width: 600px) {
-  .book { aspect-ratio: 4/4.8; }
-  .page { padding: 20px; }
-  button, input { font-size: 0.9rem; padding: 8px; }
+  .alert-custom { 
+    top: 12px; 
+    left: 8px; 
+    transform: none; 
+    min-width: auto; 
+    max-width: calc(100% - 16px); 
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .alert-custom .alert-icon {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+  }
+  
+  .alert-custom .close-small {
+    font-size: 1.3rem;
+  }
+}
+
+/* Orientación landscape en phones */
+@media (max-height: 500px) and (orientation: landscape) {
+  .book-container {
+    min-height: auto;
+    padding: 10px;
+  }
+  
+  .book {
+    width: 60%;
+    max-width: 400px;
+    aspect-ratio: 16/9;
+  }
+  
+  .page {
+    padding: 15px 20px;
+  }
+  
+  .cover .logo {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 8px;
+  }
+  
+  .cover h1 {
+    font-size: 1.3rem;
+    margin-bottom: 5px;
+  }
+  
+  .cover p {
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+  }
+  
+  .page h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+  
+  form {
+    gap: 8px;
+  }
+  
+  .input-group {
+    padding: 4px 6px;
+  }
+  
+  button, #backToHome, .cover #openBook {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    min-width: 100px;
+  }
+}
+
+/* Ajuste para notch y safe areas en móviles modernos */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .book-container {
+    padding: calc(20px + env(safe-area-inset-top)) 
+            calc(20px + env(safe-area-inset-right)) 
+            calc(20px + env(safe-area-inset-bottom)) 
+            calc(20px + env(safe-area-inset-left));
+  }
+  
+  .page {
+    padding: calc(40px + env(safe-area-inset-top)) 
+            calc(50px + env(safe-area-inset-right)) 
+            calc(40px + env(safe-area-inset-bottom)) 
+            calc(50px + env(safe-area-inset-left));
+  }
+}
+
+/* Reducir animaciones en preferencias de usuario */
+@media (prefers-reduced-motion: reduce) {
+  .cover,
+  .page,
+  .book.open .cover,
+  .book.flip .page-login,
+  .book.flip .page-register {
+    transition: none;
+  }
+  
+  .alert-custom {
+    transition: none;
+  }
+  
+  .alert-custom.fade-out {
+    transition: none;
+  }
 }

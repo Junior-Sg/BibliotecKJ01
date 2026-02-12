@@ -59,6 +59,20 @@ $activeController = strtolower($_GET['controller'] ?? 'iniciopagina');
           <a class="menu__link <?= ($activeController === 'libro' && ($_GET['action'] ?? '') === 'catalogo' ? 'is-active' : '') ?>"
             href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Libro&action=catalogo">Librería</a>
         </li>
+        <?php if ($usuarioAutenticado): ?>
+        <li class="user-menu-mobile" style="display:none;">
+          <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Usuario&action=perfil" class="menu__link user-link">
+            <i class="bi bi-person"></i> Mi Perfil
+          </a>
+        </li>
+        <li class="user-menu-mobile" style="display:none;">
+          <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Logout&action=index" class="btn btn--ghost" style="width:100%;">Cerrar sesión</a>
+        </li>
+        <?php else: ?>
+        <li class="user-menu-mobile" style="display:none;">
+          <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=LoginUsuario&action=index" class="btn btn--primary" style="width:100%;">Iniciar sesión</a>
+        </li>
+        <?php endif; ?>
       </ul>
     </nav>
 
@@ -128,6 +142,7 @@ $activeController = strtolower($_GET['controller'] ?? 'iniciopagina');
 
 /* Fondo general */
 body{
+
   margin:0;
   font-family:'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   color: var(--ink);
@@ -135,6 +150,9 @@ body{
     radial-gradient(1200px 600px at 50% -200px, rgba(188,67,13,.18), transparent 60%),
     linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
   letter-spacing:.01em;
+
+  --bg-1: #f6f0e3;
+  --bg-2: #eddbc3;
 }
 
 /* ====== HEADER STICKY ====== */
@@ -150,7 +168,7 @@ body{
 }
 
 .app-header__inner{
-  max-width:1180px; margin:0 auto; padding:12px 16px;
+  max-width:100%; margin:0 auto; padding:12px 16px;
   display:flex; align-items:center; gap:12px;
 }
 
@@ -226,11 +244,54 @@ body{
     transition: transform .18s ease, opacity .18s ease;
   }
   .menu.is-open{ transform: scale(1); opacity:1; pointer-events:auto; }
+  
+  /* Ajustes para área de usuario en móviles */
+  .user-area {
+    margin-left: auto;
+    gap: 8px;
+  }
+  
+  .user-link {
+    order: 1;
+  }
+  
+  .notification-bell {
+    order: 2;
+  }
+  
+  .btn--ghost {
+    order: 3;
+    padding: 6px 12px !important;
+    font-size: 0.85rem;
+    border-width: 1px !important;
+  }
 }
 
 @media (max-width: 600px){
   .brand__name{ display:none; } /* compacta marca en móviles */
   .user-name{ display:none; }
+  
+  /* Ocultar completamente el área de usuario en móvil pequeño, mantener solo el menú */
+  .user-area {
+    display: none;
+  }
+  
+  /* Mostrar opciones de usuario en el menú desplegable */
+  .menu .user-menu-mobile {
+    display: flex !important;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: 8px;
+  }
+  
+  .menu .user-menu-mobile .user-link,
+  .menu .user-menu-mobile .notification-bell,
+  .menu .user-menu-mobile .btn--ghost {
+    display: flex !important;
+    justify-content: center;
+  }
 }
 
 .notification-bell{

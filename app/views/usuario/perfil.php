@@ -24,10 +24,10 @@ if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
 <?php include __DIR__ . '/../layouts/navbar.php'; ?>
 
-<main class="container mt-5 mb-5">
+<main class="container mt-4 mb-3">
     
-    <div class="row">
-        <div class="col-12">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
             <?php if (isset($_SESSION['flash_error'])): ?>
                 <div class="alert alert-danger alert-dismissible fade show">
                     <?= $_SESSION['flash_error']; unset($_SESSION['flash_error']); ?>

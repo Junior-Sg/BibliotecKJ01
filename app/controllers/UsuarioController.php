@@ -34,8 +34,13 @@ class UsuarioController extends BaseController {
         
         $notificacionModelo = new NotificacionModelo($this->db);
         $notificaciones     = $notificacionModelo->obtenerPorUsuario($id);
-        $totalSinLeer       = $notificacionModelo->contarNoLeidas($id);
+        $totalSinLeer       = $notificacionModelo->contarNoLeidas($id); 
 
+      // Agregar conteos al objeto usuario para las tarjetas
+        $usuario['favoritos_count'] = $favoritos->num_rows ?? count($favoritos);
+        $usuario['reservas_activas'] = $reservas->num_rows ?? count($reservas);
+        $usuario['notificaciones_no_leidas'] = $totalSinLeer;
+        
         render_view('usuario/perfil', [
             'usuario'           => $usuario,
             'favoritos'         => $favoritos,

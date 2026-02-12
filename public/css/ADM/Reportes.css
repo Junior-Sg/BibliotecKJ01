@@ -227,14 +227,169 @@ canvas {
 @media (max-width: 1200px) {
   .report-title { font-size: 2.4rem; }
 }
+
 @media (max-width: 992px) {
   .main-content { margin-left: 0; padding: 22px; }
   .report-title { font-size: 2.2rem; }
+  
+  .kpi-card .display-4 { font-size: 3.5rem; }
 }
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: 18px;
+    margin-bottom: 70px;
+  }
+  
+  .report-title { 
+    font-size: 1.8rem; 
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .kpi-card {
+    padding: 14px;
+    border-radius: 12px;
+  }
+  
+  .kpi-card .card-title {
+    font-size: 1.1rem;
+  }
+  
+  .kpi-card .display-4 { 
+    font-size: 2.8rem; 
+    margin: 0.6rem 0 0.8rem 0;
+  }
+  
+  .kpi-card .btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+  
+  .card {
+    border-radius: 12px;
+    margin-bottom: 15px;
+  }
+  
+  .card-body {
+    padding: 1.2rem;
+  }
+  
+  .card-title {
+    font-size: 1rem;
+    padding-bottom: 0.5rem;
+  }
+  
+  .chart-card {
+    padding: 0.8rem;
+    border-radius: 12px;
+  }
+  
+  canvas {
+    max-height: 250px;
+  }
+  
+  .btn-primary,
+  .btn-warm {
+    padding: 0.6rem 1.3rem;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+}
+
 @media (max-width: 576px) {
-  .report-title { font-size: 1.9rem; }
-  .kpi-card .display-4 { font-size: 3.2rem; }
-  .card { border-radius: 12px; }
+  .main-content {
+    padding: 12px;
+    margin-bottom: 65px;
+  }
+  
+  .report-title { 
+    font-size: 1.5rem; 
+    border-bottom-width: 3px;
+  }
+  
+  .kpi-card {
+    padding: 12px;
+  }
+  
+  .kpi-card .card-title {
+    font-size: 1rem;
+  }
+  
+  .kpi-card .display-4 { 
+    font-size: 2.2rem; 
+  }
+  
+  .kpi-card .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .card-title {
+    font-size: 0.95rem;
+  }
+  
+  .info-block {
+    padding: 0.8rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .info-block h6 {
+    font-size: 0.95rem;
+  }
+  
+  .info-block ul {
+    padding-left: 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .btn-primary,
+  .btn-warm {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .section-divider {
+    margin: 1rem 0;
+  }
+}
+
+@media (max-width: 400px) {
+  .main-content {
+    padding: 8px;
+    margin-bottom: 60px;
+  }
+  
+  .report-title { 
+    font-size: 1.3rem; 
+  }
+  
+  .kpi-card {
+    padding: 10px;
+    border-radius: 10px;
+  }
+  
+  .kpi-card .display-4 { 
+    font-size: 1.8rem; 
+  }
+  
+  .card-body {
+    padding: 0.8rem;
+  }
+  
+  .card-title {
+    font-size: 0.9rem;
+  }
+  
+  canvas {
+    max-height: 200px;
+  }
 }
 
 /* ===== Modo impresión básico ===== */

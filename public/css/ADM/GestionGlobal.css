@@ -74,3 +74,101 @@ h1, h2, h3, h4, h5, h6 {
     border-color: #44290e;
     color: #fff;
 }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+    .main-content {
+        padding-left: 80px;
+        padding: 20px;
+    }
+    
+    .card-img-top {
+        height: 18vw;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding-left: 0;
+        padding: 15px;
+    }
+    
+    .card-img-top {
+        height: 25vw;
+    }
+    
+    h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.3rem; }
+    h3 { font-size: 1.2rem; }
+    
+    .card {
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .main-content {
+        padding: 10px;
+    }
+    
+    .card-img-top {
+        height: 35vw;
+    }
+    
+    h1 { font-size: 1.3rem; }
+    h2 { font-size: 1.1rem; }
+    h3 { font-size: 1rem; }
+    
+    .card {
+        padding: 12px;
+    }
+    
+    .btn {
+        padding: 8px 14px;
+        font-size: 0.9rem;
+    }
+    
+    .btn-primary,
+    .btn-success,
+    .btn-warning,
+    .seleccionar-libro-btn {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .main-content {
+        padding: 8px;
+    }
+    
+    .card-img-top {
+        height: 45vw;
+    }
+    
+    h1 { font-size: 1.1rem; }
+    h2 { font-size: 1rem; }
+    h3 { font-size: 0.9rem; }
+    
+    .card {
+        padding: 10px;
+        border-radius: 10px;
+    }
+    
+    .card-img-top {
+        border-radius: 8px 8px 0 0;
+    }
+    
+    .btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .btn-primary,
+    .btn-success,
+    .btn-warning,
+    .seleccionar-libro-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+}
