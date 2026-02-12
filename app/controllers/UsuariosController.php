@@ -126,29 +126,4 @@ class UsuariosController extends BaseController {
     }
 }
 
-// Esta parte es el "router" antiguo. Lo eliminamos para que solo el index.php principal controle todo.
-/*
-$action = $_GET['action'] ?? $_POST['action'] ?? '';
-$controller = new UsuariosController();
 
-switch ($action) {
-    case 'guardar':
-        $controller->guardar();
-        break;
-    case 'actualizar':
-        $controller->actualizar();
-        break;
-    case 'eliminar':
-        $controller->eliminar();
-        break;
-    default:
-        // Si no hay acción, muestra la lista de usuarios
-        if (empty($action)) {
-            $controller->index();
-        } else {
-            header('Location: /BibliotecKJ01/index.php?c=Usuarios&a=index&error=Accion_no_valida');
-            exit;
-        }
-        break;
-}
-*/
