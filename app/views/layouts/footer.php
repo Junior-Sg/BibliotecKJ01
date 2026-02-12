@@ -83,14 +83,14 @@
 }
 .wave-top svg{ display:block; width:100%; height:80px; }
 
-.container{ max-width:1180px; }
+.container{ max-width:1500px; }
 
 /* Grid principal */
 .footer-inner.container{
   padding: 20px 16px 8px;
   display:grid; 
   grid-template-columns: 1fr 1fr 1fr; 
-  gap: 24px;
+  gap: 30px;
   align-items:flex-start;
 }
 .f-col-left{ text-align: left; }
@@ -107,8 +107,8 @@
 }
 
 /* Marca */
-.f-brand{ display:flex; align-items:center; gap:10px; }
-.f-logo{ width:42px; height:42px; border-radius:10px; object-fit:cover; box-shadow: 0 0 0 2px rgba(255,255,255,.08); }
+.f-brand{ display:flex; align-items:center; gap:15px; }
+.f-logo{ width:100px; height:100px; border-radius:10px; object-fit:cover; box-shadow: 0 0 0 2px rgba(255,255,255,.08); }
 .f-name{ font-family:'Merriweather', serif; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
 
 /* Texto y enlaces */
