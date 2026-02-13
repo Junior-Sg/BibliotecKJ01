@@ -325,7 +325,8 @@ class ReservaController extends BaseController
             }
         }
 
-        header("Location: index.php?controller=Reserva&action=confirmacion");
+        // Redirigir al catálogo (el toast se mostrará vía AJAX)
+        header("Location: index.php?controller=Libro&action=catalogo&reserva_ok=1");
     }
 
     public function confirmacion()

@@ -1,80 +1,53 @@
-<?php
-if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-?>
 <!doctype html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Reserva confirmada</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="<?= rtrim(BASE_URL, '/') ?>/public/css/bootstrap.min.css">
-    <style>
-        :root {
-            --bg-light: #f7f5f2;
-            --bg-secondary: #e8dcd0;
-            --primary-brown: #6B4F4B;
-            --accent-gold: #c89c5d;
-            --dark-wood: #3d2817;
-            --text-dark: #3d2817;
-            --white: #ffffff;
-            --border-color: #d4c4b0;
-        }
-        body {
-            background: linear-gradient(180deg, var(--bg-secondary), var(--bg-light));
-            font-family: 'Poppins', sans-serif;
-            color: var(--text-dark);
-            min-height: 100vh;
-        }
-        .confirm-box {
-            max-width: 600px;
-            margin: 60px auto;
-            text-align: center;
-            padding: 40px;
-            border-radius: 16px;
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 30px rgba(61, 40, 23, 0.1);
-        }
-        .icon-wrapper {
-            font-size: 48px;
-            margin: 0 auto 20px auto;
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #fdfaf5;
-            border: 2px solid var(--accent-gold);
-            border-radius: 50%;
-            box-shadow: 0 4px 12px rgba(200, 156, 93, 0.2);
-        }
-        h1 { color: var(--primary-brown); font-weight: 700; }
-        .btn-primary {
-            background-color: var(--accent-gold); border-color: var(--accent-gold); font-weight: 600; padding: 10px 24px;
-        }
-        .btn-primary:hover { background-color: #b48b51; border-color: #b48b51; }
-        .btn-outline-secondary {
-            color: var(--primary-brown); border-color: var(--primary-brown); font-weight: 600; padding: 10px 24px;
-        }
-        .btn-outline-secondary:hover { background-color: var(--primary-brown); color: var(--white); }
-    </style>
+    <title>Reserva Confirmada - BibliotecKJ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="<?= rtrim(BASE_URL, '/') ?>/public/css/perfil/perfil.css">
 </head>
 <body>
 <?php include __DIR__ . '/../layouts/navbar.php'; ?>
-<div class="container">
-    <div class="confirm-box">
-        <div class="icon-wrapper">✅</div>
-        <h1 class="h4 mb-2">Reserva registrada</h1>
-        <p class="text-muted mb-3">Tu reserva se ha creado correctamente. Te enviaremos notificaciones cuando cambie su estado.</p>
 
-        <div class="d-flex justify-content-center gap-2">
-            <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Libro&action=index" class="btn btn-primary">Volver al catálogo</a>
-            <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Usuario&action=perfil#historial" class="btn btn-outline-secondary">Ver mi historial</a>
+<!-- Toast de Reserva Exitosa -->
+<div class="position-fixed p-3" style="z-index: 2100; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <div id="reservaExitosaToast" class="toast border-0" role="alert" aria-live="assertive" aria-atomic="true" style="background: linear-gradient(135deg, #2C5282 0%, #1A365D 100%); box-shadow: 0 12px 32px rgba(44, 82, 130, 0.35); min-width: 380px;">
+        <div class="p-4">
+            <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+                <div class="icon-wrapper" style="width: 50px; height: 50px; background-color: rgba(72, 187, 120, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i class="bi bi-check-lg" style="font-size: 1.5rem; color: #48BB78;"></i>
+                </div>
+                <div style="flex: 1;">
+                    <h6 class="text-white mb-1" style="font-size: 1.1rem;">¡Reserva Exitosa!</h6>
+                    <p class="text-white-50 mb-0" style="font-size: 0.95rem;">Tu reserva se ha realizado correctamente. Te enviaremos una notificación cuando esté lista para recoger.</p>
+                </div>
+            </div>
+            <div class="d-flex gap-2" style="margin-top: 16px;">
+                <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Libro&action=catalogo" class="btn btn-sm text-white flex-grow-1" style="background-color: #48BB78; border: none; font-weight: 500;">Ver Catálogo</a>
+                <a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Usuario&action=perfil#historial" class="btn btn-sm text-white flex-grow-1" style="background-color: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.25); font-weight: 500;">Mi Historial</a>
+            </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<?php include __DIR__ . '/../layouts/footer.php'; ?>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Mostrar toast automáticamente
+    const toastEl = document.getElementById('reservaExitosaToast');
+    const toast = new bootstrap.Toast(toastEl, {
+        autohide: false,
+        delay: 5000
+    });
+    toast.show();
+    
+    // Acción del toast - redirigir al catálogo
+    toastEl.querySelector('.btn-outline-success, a[href*="catalogo"]')?.addEventListener('click', function() {
+        toast.hide();
+    });
+});
+</script>
 </body>
 </html>

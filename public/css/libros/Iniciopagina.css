@@ -2,6 +2,8 @@
 body {
     background: linear-gradient(135deg, #f6f6f6, #f2d5b2);
     background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
     font-family: 'Poppins', sans-serif;
     color: #241705;
     --bg-1: #f6f0e3;
@@ -93,7 +95,7 @@ body {
     /* background: #BC430D; */
     margin: 20px auto;
     max-width: 1500px;
-    height: 700px;
+    height: 500px;
     border-radius: 14px;
     position: relative;
     overflow: hidden;
@@ -105,9 +107,6 @@ body {
     background-position: center;
     width: calc(100% - 30px);
     box-sizing: border-box;
-
-
-
 }
 
 .carrusel-box::before {

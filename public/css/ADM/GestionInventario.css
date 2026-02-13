@@ -49,6 +49,7 @@ body .main-content > * {
   border-radius: 8px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  max-width: 100%;
 }
 
 /* Tarjeta para filtros */
@@ -78,7 +79,8 @@ body .main-content > * {
 }
 
 .table {
-  min-width: 800px;
+  min-width: 100%;
+  width: auto;
 }
 
 .table thead th {
@@ -96,7 +98,10 @@ body .main-content > * {
 .table td {
   vertical-align: middle;
   padding: 12px 15px;
-  white-space: nowrap;
+  white-space: normal;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Botones */
