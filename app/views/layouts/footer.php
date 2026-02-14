@@ -31,7 +31,8 @@
       <ul class="f-links">
         <li><a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Libro&action=catalogo">Catálogo</a></li>
         <li><a href="<?= rtrim(BASE_URL, '/') ?>/index.php?controller=Libro&action=index">Géneros</a></li>
-      </ul>
+        <li><a class='text-center' style='display:inline-block; margin:12px 0;' href='javascript:void(0)' onclick='abrirCreditos()'>Ver Creditos</a>
+            <?php include __DIR__ . '/../Creditos/Creditos.php'; ?></li>
     </div>
 
     <!-- Columna soporte - Derecha -->
@@ -60,6 +61,7 @@
       </a>
     </div>
   </div>
+
 </footer>
 
 <style>
@@ -143,15 +145,59 @@
 @media (max-width: 576px){
   .footer-bottom.container{ flex-direction:column; gap:10px; text-align:center; }
 }
+
+/* Modal Creditos */
+.modal-bibliotec{
+  display:none; position:fixed; inset:0; z-index:1000;
+  background:rgba(0,0,0,0.7); backdrop-filter:blur(5px);
+  align-items:center; justify-content:center; padding:32px 16px;
+}
+.modal-content-bibliotec{
+  background: #ffffffde; padding:25px; width:90%; max-width:720px;
+  border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.3);
+  position:relative; font-family:"Poppins", Arial, sans-serif;
+  max-height:90vh; overflow:auto;
+}
+.close-modal{
+  position:absolute; top:12px; right:16px; color:#aaa;
+  font-size:28px; font-weight:700; cursor:pointer;
+}
+.close-modal:hover{ color:#d9534f; }
+.modal-header h2{ color: #9b631b; border-bottom:2px solid #966600; padding-bottom:10px; }
+.creditos-section h3{ color: #854d03; font-size:1.05rem; margin-top:15px; }
+.creditos-section p{ line-height:1.6; color: #291c0c; margin-bottom:8px; }
+.creditos-section a{ line-height:1.6; color: #9b6e33; margin-bottom:8px; }
+.modal-footer{ margin-top:14px; text-align:right; color: #be6e04b2; font-size:0.9rem; }
+@media (max-width:640px){
+  .modal-content-bibliotec{ padding:18px; }
+}
+
 </style>
 
 <script>
-  // Mantener tu lógica anti caché tras logout
+  // Mantiene la lógica anti caché tras logout
   window.addEventListener('pageshow', function(event) {
     if (event.persisted) {
       window.location.reload();
     }
   });
+
+function abrirCreditos(){
+  const modal = document.getElementById('modalCreditos');
+  modal.style.display='flex';
+  document.body.style.overflow='hidden';
+}
+
+function cerrarCreditos(){
+  const modal = document.getElementById('modalCreditos');
+  modal.style.display='none';
+  document.body.style.overflow='';
+}
+
+window.onclick = function(e){
+  const modal = document.getElementById('modalCreditos');
+  if(e.target === modal){ cerrarCreditos(); }
+};
 </script>
 
 </body>
