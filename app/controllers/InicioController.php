@@ -27,7 +27,7 @@ class InicioController extends BaseController {
     }
 
     public function index() {
-        // La lógica de la dashboard del administrador
+        // lógica de la dashboard del administrador
         $totalLibros = $this->libroModelo->contarTotalLibros();
         $prestamosActivos = $this->prestamoModelo->contarPrestamosActivos();
         $totalUsuarios = $this->usuarioModelo->contarTotalUsuarios();

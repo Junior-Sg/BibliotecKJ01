@@ -2,7 +2,7 @@
   <nav class="sidebar bg-dark text-white p-3">
 
     <div class="sidebar-brand text-center mb-4">
-      <img src="/BibliotecKJ01/public/img/Logos/L1.jpg" class="logo-sidebar mb-2" alt="Logo">
+      <img src="<?= BASE_URL ?>public/img/Logos/L1.jpg" class="logo-sidebar mb-2" alt="Logo">
       <h4 class="fw-bold">Bibliotec_KJ</h4>
     </div>
 

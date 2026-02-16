@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function(){
         spinner.classList.remove('d-none');
         resultDiv.innerHTML = '<div class="alert alert-secondary">Buscando...</div>';
 
-        fetch('/BibliotecKJ01/public/api/buscar_usuario.php?numero_documento=' + encodeURIComponent(num))
+        fetch('<?= BASE_URL ?>public/api/buscar_usuario.php?numero_documento=' + encodeURIComponent(num))
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Error en la respuesta del servidor.');

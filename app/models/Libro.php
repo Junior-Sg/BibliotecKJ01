@@ -207,4 +207,3 @@ class Libro
         return $fila['total'] ?? 0;
     }
 }
-?>

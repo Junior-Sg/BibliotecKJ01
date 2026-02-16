@@ -104,5 +104,3 @@ foreach ($methodParams as $param) {
 
 call_user_func_array([$controller, $action], $callArgs);
 exit();
-
-

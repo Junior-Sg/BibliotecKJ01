@@ -33,7 +33,7 @@ class SessionGuard {
         // Asumimos que guardas el ID del usuario en $_SESSION['id_usuario'] al hacer login.
         if (!isset($_SESSION['id_usuario'])) {
             // 3. Si no hay sesión, redirigir al login
-            header('Location: /BibliotecKJ01/index.php?c=LoginUsuario&a=index');
+            header('Location: ' . BASE_URL . 'index.php?c=LoginUsuario&a=index');
             exit(); // Detener la ejecución del script para evitar que se muestre contenido protegido.
         }
     }

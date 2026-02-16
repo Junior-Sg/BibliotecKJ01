@@ -15,7 +15,7 @@ class InventarioController extends BaseController {
     }
 
     public function index() {
-        // 1. El controlador se encarga de recoger y preparar TODA la información de la petición.
+        // 1. recoleccion de datos
         $filters = [
             'estante' => $_GET['estante'] ?? '',
             'autor' => $_GET['autor'] ?? '',
@@ -29,13 +29,13 @@ class InventarioController extends BaseController {
         $libros = $this->modelo->obtenerLibrosFiltrados($filters);
         
         $editorialesResult = $this->modelo->obtenerEditoriales();
-        $editoriales = []; // Un array simple, más fácil de usar en la vista.
+        $editoriales = []; 
         if ($editorialesResult && $editorialesResult->num_rows > 0) {
             $editoriales = $editorialesResult->fetch_all(MYSQLI_ASSOC);
         }
 
         // 3. El controlador carga la vista. 
-        // Las variables ($libros, $editoriales, $filters, $msg, $error) se pasan implícitamente.
+
         require_once __DIR__ . '/../views/ADMIN/GestionInventario.php';
     }
 
@@ -64,7 +64,7 @@ class InventarioController extends BaseController {
             $this->redirigirConError('Todos los campos son obligatorios.');
         }
 
-        // Validar imagen (obligatoria para registrar nuevo libro)
+        // Validar imagen (
         if (!$idLibro && (empty($_FILES['imagen']) || $_FILES['imagen']['error'] !== UPLOAD_ERR_OK)) {
             $this->redirigirConError('Debe seleccionar una imagen para registrar el libro.');
         }
@@ -80,7 +80,7 @@ class InventarioController extends BaseController {
         $generosIds = $this->procesarNombres($generosStr, 'getGeneroByName', 'insertarGenero');
 
         // Gestionar Imagen
-        $nombreImagen = null; // Por defecto, no se cambia la imagen
+        $nombreImagen = null; 
         if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
             $dirDestino = __DIR__ . '/../../public/img/libros/';
             if (!is_dir($dirDestino)) {
@@ -91,7 +91,7 @@ class InventarioController extends BaseController {
             if ($idLibro) {
                 $imagenAntigua = $this->modelo->obtenerImagenLibro($idLibro);
                 if ($imagenAntigua && file_exists($dirDestino . $imagenAntigua)) {
-                    @unlink($dirDestino . $imagenAntigua); // Usar @ para suprimir errores si el archivo no existe
+                    @unlink($dirDestino . $imagenAntigua); 
                 }
             }
             

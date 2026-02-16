@@ -28,18 +28,17 @@ function to_array_list($res) {
 }
 
 
-    /* ============================================================
-    CATALOGO DE LIBRERIA
-    ============================================================ */
+        // CATALOGO DE LIBRERIA
+    
     public function catalogo()
     {
         $libros = $this->Libro->obtenerTodos(0, 20);
         require __DIR__ . "/../views/libros/catalogo.php";
     }
 
-    /* ============================================================
-    CATALOGO POR GENERO
-    ============================================================ */
+
+    // CATALOGO POR GENERO
+
     public function catalogoGenero($id)
     {
         $id = $id ?? $_GET['id'] ?? 0;
@@ -56,12 +55,12 @@ function to_array_list($res) {
         require __DIR__ . "/../views/libros/catalogoGenero.php";
     }
 
-    /* ============================================================
-    CATALOGO PRINCIPAL
-    ============================================================ */
+
+    // CATALOGO PRINCIPAL
+
     public function index()
     {
-        // Listas para filtros, la vista espera arrays con estos nombres
+        // Listas para filtros, la vista 
         $generosRes = $this->Libro->obtenerGenerosTodos();
         $autoresRes = $this->Libro->obtenerAutoresTodos();
 
@@ -93,7 +92,7 @@ function to_array_list($res) {
         $generosList = $generos;
         $autoresList = $autores;
 
-        // Active filters for checkboxes
+        // Check list de los libros activos
         $activeGeneros = isset($_GET['generos']) && $_GET['generos'] ? explode(',', $_GET['generos']) : [];
         $activeAutores = isset($_GET['autores']) && $_GET['autores'] ? explode(',', $_GET['autores']) : [];
         $singleGenreId = !empty($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -223,61 +222,67 @@ function to_array_list($res) {
     {
         header('Content-Type: application/json; charset=utf-8');
 
-        $id = (int)($_GET["id"] ?? 0);
+        try {
+            $id = (int)($_GET["id"] ?? 0);
 
-        if ($id <= 0) {
-            echo json_encode(['ok' => false, 'error' => 'ID inválido']);
-            return;
-        }
-
-        // Obtener libro como array
-        $libro = $this->Libro->obtenerPorId($id);
-        if (!$libro) {
-            echo json_encode(['ok' => false, 'error' => 'Libro no encontrado']);
-            return;
-        }
-
-        // Autores
-        $autoresRes = $this->Libro->obtenerAutores($id);
-        $autores = [];
-        if ($autoresRes) {
-            while ($row = $autoresRes->fetch_assoc()) {
-                $autores[] = $row["nombre"];
+            if ($id <= 0) {
+                echo json_encode(['ok' => false, 'error' => 'ID inválido']);
+                return;
             }
-        }
 
-        // Géneros
-        $generosRes = $this->Libro->obtenerGeneros($id);
-        $generos = [];
-        if ($generosRes) {
-            while ($row = $generosRes->fetch_assoc()) {
-                $generos[] = $row["nombre"];
+            // Obtener libro como array
+            $libro = $this->Libro->obtenerPorId($id);
+            if (!$libro) {
+                echo json_encode(['ok' => false, 'error' => 'Libro no encontrado']);
+                return;
             }
-        }
 
-        // Disponibilidad
-        $disp = $this->Libro->obtenerDisponibilidad($id);
-        $cantidad = 0;
-        if ($disp) {
-            $d = is_array($disp) ? $disp : $disp->fetch_assoc();
-            $cantidad = $d["cantidad_disponible"] ?? 0;
-        }
+            // Autores
+            $autoresRes = $this->Libro->obtenerAutores($id);
+            $autores = [];
+            if ($autoresRes) {
+                while ($row = $autoresRes->fetch_assoc()) {
+                    $autores[] = $row["nombre"];
+                }
+            }
 
-        echo json_encode([
-            "ok" => true,
-            "data" => [
-                "id_libro"        => $id,
-                "titulo"          => $libro["titulo"] ?? "",
-                "editorial"       => $libro["editorial"] ?? "",
-                "año_publicacion" => $libro["año_publicacion"] ?? "",
-                "Estante"         => $libro["Estante"] ?? "",
-                "Imagen"          => $libro["Imagen"] ?? "",
-                "autores"         => $autores,
-                "generos"         => $generos,
-                "disponibilidad"  => (int)$cantidad,
-                "sinopsis"        => $libro["sinopsis"] ?? $libro["sipnosis"] ?? "Sin sinopsis disponible."
-            ]
-        ]);
+            // Géneros
+            $generosRes = $this->Libro->obtenerGeneros($id);
+            $generos = [];
+            if ($generosRes) {
+                while ($row = $generosRes->fetch_assoc()) {
+                    $generos[] = $row["nombre"];
+                }
+            }
+
+            // Disponibilidad
+            $disp = $this->Libro->obtenerDisponibilidad($id);
+            $cantidad = 0;
+            if ($disp) {
+                $d = is_array($disp) ? $disp : $disp->fetch_assoc();
+                $cantidad = $d["cantidad_disponible"] ?? 0;
+            }
+
+            echo json_encode([
+                "ok" => true,
+                "data" => [
+                    "id_libro"        => $id,
+                    "titulo"          => $libro["titulo"] ?? "",
+                    "editorial"       => $libro["editorial"] ?? "",
+                    "año_publicacion" => $libro["año_publicacion"] ?? "",
+                    "Estante"         => $libro["Estante"] ?? "",
+                    "Imagen"          => $libro["Imagen"] ?? "",
+                    "autores"         => $autores,
+                    "generos"         => $generos,
+                    "disponibilidad"  => (int)$cantidad,
+                    "sinopsis"        => $libro["sinopsis"] ?? $libro["sipnosis"] ?? "Sin sinopsis disponible."
+                ]
+            ]);
+        } catch (Exception $e) {
+            // En caso de error, devolver JSON válido en lugar de HTML
+            echo json_encode(['ok' => false, 'error' => 'Error al obtener los datos del libro']);
+            error_log('Error en detalleJson: ' . $e->getMessage());
+        }
     }
 
     /* ============================================================

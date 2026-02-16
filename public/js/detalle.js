@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = button.getAttribute('data-id');
 
     try {
-      const resp = await fetch(`${baseUrl}/index.php?controller=Libro&action=detalleJson&id=${id}`);
+      const resp = await fetch(`${baseUrl}index.php?controller=Libro&action=detalleJson&id=${id}`);
       const json = await resp.json();
 
       if (!json.ok) throw new Error(json.error || 'Error al obtener detalle');

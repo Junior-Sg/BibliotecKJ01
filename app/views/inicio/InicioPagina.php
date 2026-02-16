@@ -187,7 +187,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
                     data-bs-content="<?= htmlspecialchars($l['sinopsis'] ?? 'Sin sinopsis disponible') ?>"
                     data-bs-trigger="click"
                     data-bs-container="body">
-                    <img src="<?= BASE_URL ?>/public/img/libros/<?= $l['Imagen'] ?>" alt="<?= htmlspecialchars($l['titulo']) ?>">
+                    <img src="<?= BASE_URL ?>/public/img/Libros/<?= $l['Imagen'] ?>" alt="<?= htmlspecialchars($l['titulo']) ?>">
                     <p class="mt-2 small fw-bold"><?= htmlspecialchars($l['titulo']) ?></p>
                 </div>
             </div>

@@ -311,7 +311,7 @@ function enviarSolicitudAplazamiento(idPrestamo) {
     
     const apiUrl = (window.AppConfig && window.AppConfig.baseUrl) 
         ? window.AppConfig.baseUrl + '/public/api/solicitar_aplazamiento.php'
-        : '/BibliotecKJ01/public/api/solicitar_aplazamiento.php';
+        : window.BASE_URL + 'public/api/solicitar_aplazamiento.php';
     
     fetch(apiUrl, {
         method: 'POST',

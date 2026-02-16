@@ -12,8 +12,7 @@ ini_set('display_errors', 1);
 date_default_timezone_set('America/Bogota');
 
 // Cargar la configuración y dependencias
-define('BASE_URL', '/BibliotecKJ01/');
-define('APP_PATH', __DIR__ . '/../../app');
+require_once __DIR__ . '/../../config/config.php';
 
 require_once APP_PATH . '/core/helpers.php';
 require_once APP_PATH . '/../config/Conexion.php';

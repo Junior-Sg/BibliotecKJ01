@@ -8,7 +8,7 @@
     <!-- Tailwind CDN (solo para utilidades rápidas en entorno de desarrollo) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- CSS Original -->
-    <link rel="stylesheet" href="/BibliotecKJ01/public/css/ADM/GestionInventario.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>public/css/ADM/GestionInventario.css">
     
     <title>Inventario</title>
 </head>
@@ -100,7 +100,7 @@ include __DIR__ . '/../layouts/alerts.php';
                     <tr>
                         <td>
                             <?php if (!empty($l['Imagen'])): ?>
-                                <img src="/BibliotecKJ01/public/img/libros/<?= htmlspecialchars($l['Imagen']) ?>" 
+                                <img src="<?= BASE_URL ?>public/img/Libros/<?= htmlspecialchars($l['Imagen']) ?>" 
                                      width="60" height="80" class="rounded shadow-sm">
                             <?php else: ?>
                                 <span class="text-muted">Sin imagen</span>

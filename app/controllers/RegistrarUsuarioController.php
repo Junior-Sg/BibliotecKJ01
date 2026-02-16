@@ -28,7 +28,7 @@ class RegistrarUsuarioController {
         $tipo_documento = trim($_POST["tipo_documento"] ?? "");
         $numero_documento = trim($_POST["numero_documento"] ?? "");
 
-        $redirect_url = "/BibliotecKJ01/index.php?c=LoginUsuario&a=index";
+        $redirect_url = BASE_URL . "index.php?c=LoginUsuario&a=index";
 
         if (empty($nombre) || empty($correo) || empty($clave) || empty($tipo_documento) || empty($numero_documento)) {
             header("Location: " . $redirect_url . "&error=Datos incompletos");
