@@ -49,18 +49,68 @@ include __DIR__ . '/../layouts/alerts.php';
     <form id="formFiltros" class="row g-2 mb-0 align-items-end" method="GET" action="index.php">
         <input type="hidden" name="controller" value="Inventario">
         <input type="hidden" name="action" value="index">
+        
+        <!-- Filtro por Título -->
         <div class="col-md-2">
-            <input type="text" name="estante" class="form-control form-control-sm" placeholder="Estante" value="<?= htmlspecialchars($filters['estante']) ?>">
+            <label class="form-label small mb-1">Título</label>
+            <select name="titulo" class="form-control form-control-sm">
+                <option value="">Todos los títulos</option>
+                <?php if (!empty($titulos)): ?>
+                    <?php foreach ($titulos as $t): ?>
+                        <?php $sel = ($filters['titulo'] == $t['id_libro']) ? 'selected' : ''; ?>
+                        <option value="<?= htmlspecialchars($t['id_libro']) ?>" <?= $sel ?>><?= htmlspecialchars($t['titulo']) ?></option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </select>
         </div>
-        <div class="col-md-3">
-            <input type="text" name="autor" class="form-control form-control-sm" placeholder="Autor (nombre)" value="<?= htmlspecialchars($filters['autor']) ?>">
-        </div>
-        <div class="col-md-3">
-            <input type="text" name="genero" class="form-control form-control-sm" placeholder="Género" value="<?= htmlspecialchars($filters['genero']) ?>">
-        </div>
+        
+        <!-- Filtro por Estante -->
         <div class="col-md-2">
+            <label class="form-label small mb-1">Estante</label>
+            <select name="estante" class="form-control form-control-sm">
+                <option value="">Todos los estantes</option>
+                <?php if (!empty($estantes)): ?>
+                    <?php foreach ($estantes as $es): ?>
+                        <?php $sel = ($filters['estante'] == $es['Estante']) ? 'selected' : ''; ?>
+                        <option value="<?= htmlspecialchars($es['Estante']) ?>" <?= $sel ?>><?= htmlspecialchars($es['Estante']) ?></option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </select>
+        </div>
+        
+        <!-- Filtro por Autor -->
+        <div class="col-md-2">
+            <label class="form-label small mb-1">Autor</label>
+            <select name="autor" class="form-control form-control-sm">
+                <option value="">Todos los autores</option>
+                <?php if (!empty($autores)): ?>
+                    <?php foreach ($autores as $a): ?>
+                        <?php $sel = ($filters['autor'] == $a['id_autor']) ? 'selected' : ''; ?>
+                        <option value="<?= htmlspecialchars($a['id_autor']) ?>" <?= $sel ?>><?= htmlspecialchars($a['nombre']) ?></option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </select>
+        </div>
+        
+        <!-- Filtro por Género -->
+        <div class="col-md-2">
+            <label class="form-label small mb-1">Género</label>
+            <select name="genero" class="form-control form-control-sm">
+                <option value="">Todos los géneros</option>
+                <?php if (!empty($generos)): ?>
+                    <?php foreach ($generos as $g): ?>
+                        <?php $sel = ($filters['genero'] == $g['id_genero']) ? 'selected' : ''; ?>
+                        <option value="<?= htmlspecialchars($g['id_genero']) ?>" <?= $sel ?>><?= htmlspecialchars($g['nombre']) ?></option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </select>
+        </div>
+        
+        <!-- Filtro por Editorial -->
+        <div class="col-md-2">
+            <label class="form-label small mb-1">Editorial</label>
             <select name="editorial" class="form-control form-control-sm">
-                <option value="">Todas editoriales</option>
+                <option value="">Todas las editoriales</option>
                 <?php if (!empty($editoriales)): ?>
                     <?php foreach ($editoriales as $er): ?>
                         <?php $sel = ($filters['editorial'] == $er['id_editorial']) ? 'selected' : ''; ?>

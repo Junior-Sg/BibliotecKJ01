@@ -81,16 +81,36 @@ class PasswordResetController {
      * Verifica el código y muestra el formulario para cambiar la contraseña si es válido.
      */
     public function verifyCode() {
-        $email = $_POST['email'] ?? '';
-        $code = $_POST['code'] ?? '';
+        $email = trim($_POST['email'] ?? '');
+        $code = trim($_POST['code'] ?? '');
 
         if (empty($email) || empty($code)) {
             $this->redirect('PasswordReset', 'request', '&error=Datos incompletos.');
             exit;
         }
 
+        // Asegurar que el código sea solo dígitos y de 6 caracteres
+        if (!preg_match('/^\d{6}$/', $code)) {
+            $error = 'El código debe tener exactamente 6 dígitos.';
+            require_once __DIR__ . '/../views/auth/verify_code.php';
+            exit;
+        }
+
         $user = $this->model->findByResetToken($code);
         $dbUser = $this->model->findByEmail($email);
+
+        // Depuración: registrar qué está pasando
+        error_log("Código enviado: $code");
+        error_log("Token encontrado: " . ($user ? "sí" : "no"));
+        error_log("Usuario encontrado: " . ($dbUser ? "sí" : "no"));
+        if ($user) {
+            error_log("Token id_usuario: " . $user['id_usuario']);
+            error_log("Token expires_at: " . $user['expires_at']);
+            error_log("Token expirado: " . (strtotime($user['expires_at']) <= time() ? "sí" : "no"));
+        }
+        if ($dbUser) {
+            error_log("Usuario id_usuario: " . $dbUser['id_usuario']);
+        }
 
         // Validar que el token (código) exista, no haya expirado y corresponda al usuario correcto.
         if ($user && $dbUser && $user['id_usuario'] == $dbUser['id_usuario'] && strtotime($user['expires_at']) > time()) {
@@ -102,6 +122,7 @@ class PasswordResetController {
             // En lugar de redirigir, volvemos a cargar la vista con el mensaje de error.
             $error = 'El código es incorrecto o ha expirado.';
             // La vista verify_code.php necesita la variable $email para el campo oculto.
+            $email = $email; // Mantener el email para la vista
             require_once __DIR__ . '/../views/auth/verify_code.php';
         }
     }

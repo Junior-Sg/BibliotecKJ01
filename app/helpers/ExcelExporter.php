@@ -47,7 +47,7 @@ class ExcelExporter {
                 $rowClass = ($rowIndex % 2 === 0) ? 'even' : 'odd';
                 $html .= '<tr class="' . $rowClass . '">';
                 foreach ($fila as $celda) {
-                    $html .= '<td>' . htmlspecialchars($celda) . '</td>';
+                    $html .= '<td>' . htmlspecialchars($celda ?? '') . '</td>';
                 }
                 $html .= '</tr>';
                 $rowIndex++;
@@ -71,4 +71,3 @@ class ExcelExporter {
         exit;
     }
 }
-?>

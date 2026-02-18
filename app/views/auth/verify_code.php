@@ -12,6 +12,9 @@
     <div class="book-container" style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
         <div class="book open">
             <div class="page page-login" style="display: block;">
+                <?php if (isset($error)): ?>
+                    <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+                <?php endif; ?>
                 <form action="<?= BASE_URL ?>index.php?controller=PasswordReset&action=verifyCode" method="POST">
                     <h2>Verificar Código</h2>
                     <p>Ingresa el código de 6 dígitos que enviamos a tu correo electrónico.</p>

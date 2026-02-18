@@ -105,10 +105,10 @@ class ReservaController extends BaseController
             } catch (Exception $e) {
                 error_log("Error al enviar notificación de reserva (admin): " . $e->getMessage());
             }
-            ob_clean();
+            if (ob_get_level() > 0) ob_clean();
             echo json_encode(['success' => true, 'message' => 'Reserva registrada correctamente.']);
         } else {
-            ob_clean();
+            if (ob_get_level() > 0) ob_clean();
             echo json_encode(['success' => false, 'message' => 'Error al registrar la reserva.']);
         }
         exit;
@@ -117,19 +117,19 @@ class ReservaController extends BaseController
     public function convertirReservaAPrestamo() {
         if (!$this->isAdmin()) {
             header('Content-Type: application/json');
-            ob_clean();
+            if (ob_get_level() > 0) ob_clean();
             echo json_encode(['success' => false, 'message' => 'Acceso denegado.']);
             exit;
         }
         header('Content-Type: application/json');
-        ob_clean();
+        if (ob_get_level() > 0) ob_clean();
         try {
             $idReserva = $_POST['id_reserva'] ?? null;
             $idUsuario = $_POST['id_usuario'] ?? null;
             $idLibro = $_POST['id_libro'] ?? null;
 
             if (!$idReserva || !$idUsuario || !$idLibro) {
-                ob_clean();
+                if (ob_get_level() > 0) ob_clean();
                 echo json_encode(['success' => false, 'message' => 'Datos incompletos para generar el préstamo.']);
                 exit;
             }
@@ -194,21 +194,21 @@ class ReservaController extends BaseController
                         error_log("Error al enviar notificación de préstamo: " . $e->getMessage());
                     }
                     
-                    ob_clean();
+                    if (ob_get_level() > 0) ob_clean();
                     echo json_encode(['success' => true, 'message' => 'Préstamo generado y reserva actualizada.']);
-                        exit;
-                    } else {
-                    ob_clean();
+                    exit;
+                } else {
+                    if (ob_get_level() > 0) ob_clean();
                     echo json_encode(['success' => false, 'message' => 'Préstamo generado, pero hubo un error al actualizar el estado de la reserva.']);
-                        exit;
+                    exit;
                 }
             } else {
-                ob_clean();
+                if (ob_get_level() > 0) ob_clean();
                 echo json_encode(['success' => false, 'message' => 'Error al generar el préstamo. Verifique la disponibilidad del libro.']);
-                    exit;
+                exit;
             }
         } catch (Exception $e) {
-            ob_clean();
+            if (ob_get_level() > 0) ob_clean();
             echo json_encode(['success' => false, 'message' => 'Error al procesar la solicitud: ' . $e->getMessage()]);
                 exit;
         }

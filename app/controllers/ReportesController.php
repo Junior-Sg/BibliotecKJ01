@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once 'app/models/ReportesModelo.php';
 require_once 'app/helpers/ExcelExporter.php';
 require_once 'app/helpers/PdfExporter.php';

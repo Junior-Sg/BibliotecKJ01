@@ -17,6 +17,7 @@ class InventarioController extends BaseController {
     public function index() {
         // 1. recoleccion de datos
         $filters = [
+            'titulo' => $_GET['titulo'] ?? '',
             'estante' => $_GET['estante'] ?? '',
             'autor' => $_GET['autor'] ?? '',
             'genero' => $_GET['genero'] ?? '',
@@ -28,10 +29,35 @@ class InventarioController extends BaseController {
         // 2. El controlador pide al modelo los datos necesarios.
         $libros = $this->modelo->obtenerLibrosFiltrados($filters);
         
+        // Obtener listas para dropdowns de filtros
         $editorialesResult = $this->modelo->obtenerEditoriales();
         $editoriales = []; 
         if ($editorialesResult && $editorialesResult->num_rows > 0) {
             $editoriales = $editorialesResult->fetch_all(MYSQLI_ASSOC);
+        }
+
+        $titulosResult = $this->modelo->obtenerTitulos();
+        $titulos = [];
+        if ($titulosResult && $titulosResult->num_rows > 0) {
+            $titulos = $titulosResult->fetch_all(MYSQLI_ASSOC);
+        }
+
+        $estantesResult = $this->modelo->obtenerEstantes();
+        $estantes = [];
+        if ($estantesResult && $estantesResult->num_rows > 0) {
+            $estantes = $estantesResult->fetch_all(MYSQLI_ASSOC);
+        }
+
+        $autoresResult = $this->modelo->obtenerAutores();
+        $autores = [];
+        if ($autoresResult && $autoresResult->num_rows > 0) {
+            $autores = $autoresResult->fetch_all(MYSQLI_ASSOC);
+        }
+
+        $generosResult = $this->modelo->obtenerGeneros();
+        $generos = [];
+        if ($generosResult && $generosResult->num_rows > 0) {
+            $generos = $generosResult->fetch_all(MYSQLI_ASSOC);
         }
 
         // 3. El controlador carga la vista. 
@@ -82,7 +108,7 @@ class InventarioController extends BaseController {
         // Gestionar Imagen
         $nombreImagen = null; 
         if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
-            $dirDestino = __DIR__ . '/../../public/img/libros/';
+            $dirDestino = __DIR__ . '/../../public/img/Libros/';
             if (!is_dir($dirDestino)) {
                 mkdir($dirDestino, 0777, true);
             }

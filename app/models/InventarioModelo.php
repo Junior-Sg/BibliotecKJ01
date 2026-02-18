@@ -54,6 +54,19 @@ class InventarioModelo {
         $types = '';
         $values = [];
 
+        // título exacto o parcial
+        if (!empty($filters['titulo'])) {
+            if (ctype_digit(strval($filters['titulo']))) {
+                $where[] = 'l.id_libro = ?';
+                $types .= 'i';
+                $values[] = intval($filters['titulo']);
+            } else {
+                $where[] = 'l.titulo LIKE ?';
+                $types .= 's';
+                $values[] = '%' . $filters['titulo'] . '%';
+            }
+        }
+
         // estante exacto
         if (!empty($filters['estante'])) {
             $where[] = 'l.Estante = ?';
@@ -93,17 +106,29 @@ class InventarioModelo {
         // autor (usar EXISTS para no romper agrupación)
         if (!empty($filters['autor'])) {
             $sql .= "\n LEFT JOIN libro_autor _la_filter ON _la_filter.id_libro = l.id_libro\n LEFT JOIN autor _a_filter ON _a_filter.id_autor = _la_filter.id_autor";
-            $where[] = '_a_filter.nombre LIKE ?';
-            $types .= 's';
-            $values[] = '%' . $filters['autor'] . '%';
+            if (ctype_digit(strval($filters['autor']))) {
+                $where[] = '_a_filter.id_autor = ?';
+                $types .= 'i';
+                $values[] = intval($filters['autor']);
+            } else {
+                $where[] = '_a_filter.nombre LIKE ?';
+                $types .= 's';
+                $values[] = '%' . $filters['autor'] . '%';
+            }
         }
 
         // genero (similar)
         if (!empty($filters['genero'])) {
             $sql .= "\n LEFT JOIN libro_genero _lg_filter ON _lg_filter.id_libro = l.id_libro\n LEFT JOIN genero _g_filter ON _g_filter.id_genero = _lg_filter.id_genero";
-            $where[] = '_g_filter.nombre LIKE ?';
-            $types .= 's';
-            $values[] = '%' . $filters['genero'] . '%';
+            if (ctype_digit(strval($filters['genero']))) {
+                $where[] = '_g_filter.id_genero = ?';
+                $types .= 'i';
+                $values[] = intval($filters['genero']);
+            } else {
+                $where[] = '_g_filter.nombre LIKE ?';
+                $types .= 's';
+                $values[] = '%' . $filters['genero'] . '%';
+            }
         }
 
         if (!empty($where)) {
@@ -181,6 +206,16 @@ class InventarioModelo {
 
     public function obtenerEditoriales() {
         return $this->db->query("SELECT * FROM editorial");
+    }
+
+    // Obtener todos los títulos de libros para el filtro dropdown
+    public function obtenerTitulos() {
+        return $this->db->query("SELECT id_libro, titulo FROM libro ORDER BY titulo ASC");
+    }
+
+    // Obtener todos los estantes únicos para el filtro dropdown
+    public function obtenerEstantes() {
+        return $this->db->query("SELECT DISTINCT Estante FROM libro WHERE Estante IS NOT NULL AND Estante != '' ORDER BY Estante ASC");
     }
 
     /*============================
