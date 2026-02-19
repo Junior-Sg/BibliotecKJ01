@@ -350,6 +350,26 @@ class ReservaController extends BaseController
             exit;
         }
 
+        // Verificar disponibilidad del libro usando conexión directa
+        require_once __DIR__ . '/../../config/Conexion.php';
+        $db = (new Conexion())->conectar();
+        
+        $stmtDisp = $db->prepare("SELECT cantidad_disponible FROM disponibilidad WHERE id_libro = ?");
+        $stmtDisp->bind_param("i", $idLibro);
+        $stmtDisp->execute();
+        $resultDisp = $stmtDisp->get_result();
+        
+        if ($resultDisp->num_rows === 0) {
+            echo json_encode(['ok' => false, 'error' => 'El libro no existe en el sistema']);
+            exit;
+        }
+        
+        $filaDisp = $resultDisp->fetch_assoc();
+        if ($filaDisp['cantidad_disponible'] <= 0) {
+            echo json_encode(['ok' => false, 'error' => 'No hay libros disponibles para reservar. Actualmente la cantidad disponible es 0.']);
+            exit;
+        }
+
         // Límite de reservas por usuario (misma regla que en guardar())
         $reservasActivas = $this->reservaModel->contarReservasActivasPorUsuario($idUsuario);
         if ($reservasActivas >= 3) {
