@@ -145,6 +145,17 @@ body {
   color: #4A3325; /* texto secundario en café oscuro */
 }
 
+/* Color KPI Rojo para libros no disponibles */
+.tarjeta-dashboard.kpi-red {
+  background: rgba(255, 255, 255, 0.88);
+}
+.tarjeta-dashboard.kpi-red i {
+  color: #DC3545;
+}
+.tarjeta-dashboard.kpi-red:hover {
+  box-shadow: 0 12px 28px rgba(220, 53, 69, 0.25);
+}
+
 /* ===== Tabla ===== */
 .tabla-prestamos {
   background: #FFFFFF;

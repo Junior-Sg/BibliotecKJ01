@@ -37,8 +37,12 @@ class InicioController extends BaseController {
             $retrasadosCount = $this->prestamoModelo->contarPrestamosRetrasados();
             $retrasados = $this->prestamoModelo->obtenerPrestamosRetrasados(5);
         
-        // Obtener solicitudes de aplazamiento pendientes
+        // Obtener solicitudes de aplauso pendientes
         $solicitudesAplazamiento = $this->prestamoModelo->obtenerSolicitudesAplazamientoPendientes();
+
+        // Obtener libros no disponibles
+        $librosNoDisponiblesCount = $this->libroModelo->contarLibrosNoDisponibles();
+        $librosNoDisponibles = $this->libroModelo->obtenerLibrosNoDisponibles(5);
 
         // Cargar la vista del dashboard
         require_once __DIR__ . "/../views/ADMIN/Inicio.php";

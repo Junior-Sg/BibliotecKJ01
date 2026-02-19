@@ -59,6 +59,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
                                     </div>
                                 </div>
                             </div>
+                          
                         </div>
 
                         <div class="card shadow border-0">
@@ -146,6 +147,32 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
                                 <?php if (count($solicitudesAplazamiento ?? []) > 5): ?>
                                     <a href="<?= BASE_URL ?>index.php?controller=Reportes&action=aplazamientos" class="btn btn-sm mt-3" style="background: #D4841C; color: white; border: none;">Ver todas (<?= count($solicitudesAplazamiento) ?>)</a>
                                 <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <!-- Tarjeta de Libros No Disponibles -->
+                        <div class="retrasados-card shadow-sm mb-4" style="border-left: 4px solid #DC3545 !important;">
+                            <div class="card-body text-center">
+                                <h5 class="card-title" style="color: #DC3545;">📕 Libros No Disponibles</h5>
+                                <div class="retrasados-count" style="color: #DC3545;"><?= $librosNoDisponiblesCount ?? 0 ?></div>
+                                <p class="text-muted small">Libros actualmente en préstamo</p>
+
+                                <div class="list-group list-group-flush mt-3">
+                                    <?php if (!empty($librosNoDisponibles)): ?>
+                                        <?php foreach ($librosNoDisponibles as $libro): ?>
+                                            <div class="list-group-item" style="background: rgba(220, 53, 69, 0.05); border-left: 3px solid #DC3545 !important;">
+                                                <strong style="color: #241705;"><?= htmlspecialchars($libro['titulo']) ?></strong>
+                                                <div class="small text-muted">
+                                                    Total: <?= htmlspecialchars($libro['cantidad_total']) ?> | Disponibles: <?= htmlspecialchars($libro['cantidad_disponible']) ?>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <div class="text-muted small">✓ Todos los libros disponibles.</div>
+                                    <?php endif; ?>
+                                </div>
+
+                                <a href="<?= BASE_URL ?>index.php?controller=Inventario&action=index" class="btn btn-outline-light btn-sm mt-3" style="background: #DC3545; color: white; border: none;">Ver inventario</a>
                             </div>
                         </div>
                     </aside>

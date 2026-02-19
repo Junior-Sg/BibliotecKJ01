@@ -159,9 +159,13 @@ function to_array_list($res) {
         require __DIR__ . "/../views/libros/libros.php";
     }
 
-    /* ============================================================
-    DETALLE HTML (NO JSON)
-    ============================================================ */
+
+
+    
+    /* DETALLE HTML (NO JSON) */
+
+
+
     public function detalle($id)
     {
         $libro = $this->Libro->obtenerPorId($id);

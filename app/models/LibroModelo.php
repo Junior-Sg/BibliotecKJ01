@@ -239,5 +239,52 @@ class LibroModelo {
         }
         return $libros;
     }
+
+    /**
+     * Cuenta los libros que no están disponibles (cantidad_disponible = 0)
+     */
+    public function contarLibrosNoDisponibles() {
+        $sql = "
+            SELECT COUNT(*) as total 
+            FROM disponibilidad 
+            WHERE cantidad_disponible = 0
+        ";
+        $resultado = $this->db->query($sql);
+        $fila = $resultado->fetch_assoc();
+        return $fila['total'] ?? 0;
+    }
+
+    /**
+     * Obtiene los libros que no están disponibles con sus detalles
+     */
+    public function obtenerLibrosNoDisponibles($limite = 10) {
+        $sql = "
+            SELECT 
+                l.id_libro,
+                l.titulo,
+                l.Imagen,
+                d.cantidad_disponible,
+                l.cantidad_total
+            FROM disponibilidad d
+            INNER JOIN libro l ON d.id_libro = l.id_libro
+            WHERE d.cantidad_disponible = 0
+            ORDER BY l.titulo ASC
+            LIMIT ?
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $limite);
+        $stmt->execute();
+        $res = $stmt->get_result();
+
+        $libros = [];
+        if ($res) {
+            while ($fila = $res->fetch_assoc()) {
+                $libros[] = $fila;
+            }
+        } else {
+            error_log("Error en obtenerLibrosNoDisponibles: " . $this->db->error);
+        }
+        return $libros;
+    }
 }
 ?>
